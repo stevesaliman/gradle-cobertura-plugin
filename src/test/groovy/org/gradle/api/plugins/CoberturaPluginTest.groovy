@@ -48,7 +48,7 @@ class CoberturaPluginTest {
         startParameter.setGradleUserHomeDir(new File(childProjectDir, "userHome"));
         DefaultProjectDescriptor projectDescriptor = new DefaultProjectDescriptor(null, "child", childProjectDir, new DefaultProjectDescriptorRegistry());
         projectDescriptor.path = ':child'
-        ProjectInternal childProject = topLevelRegistry.get(IProjectFactory.class).createProject(projectDescriptor, project, project.gradle);
+        ProjectInternal childProject = topLevelRegistry.get(IProjectFactory).createProject(projectDescriptor, project, project.gradle);
 
         project.childProjects['child'] = childProject
         project.apply plugin: CoberturaPlugin

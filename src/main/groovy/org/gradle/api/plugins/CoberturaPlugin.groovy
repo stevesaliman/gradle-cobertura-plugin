@@ -40,7 +40,7 @@ class CoberturaPlugin implements Plugin<Project> {
     private def configureTestTask() {
         AsmBackedClassGenerator generator = new AsmBackedClassGenerator()
         Class<? extends InstrumentCodeAction> instrumentClass = generator.generate(InstrumentCodeAction)
-        Constructor<InstrumentCodeAction> constructor = instrumentClass.getConstructor(Project.class)
+        Constructor<InstrumentCodeAction> constructor = instrumentClass.getConstructor(Project)
         
         InstrumentCodeAction instrument = constructor.newInstance(project)
         instrument.runner = project.coberturaRunner
