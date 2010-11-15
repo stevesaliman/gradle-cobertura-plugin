@@ -1,14 +1,13 @@
-package com.orbitz.gradle.cobertura
+package org.gradle.api.plugins
 
 import java.lang.reflect.Constructor;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.AsmBackedClassGenerator;
+import org.gradle.api.tasks.cobertura.GenerateCoverageReportTask 
+import org.gradle.api.tasks.cobertura.InstrumentCodeAction 
 import org.gradle.api.tasks.testing.Test;
-
-import com.orbitz.gradle.cobertura.tasks.GenerateCoverageReportTask;
-import com.orbitz.gradle.cobertura.tasks.InstrumentCodeAction;
 
 class CoberturaPlugin implements Plugin<Project> {
     Project project
@@ -17,7 +16,7 @@ class CoberturaPlugin implements Plugin<Project> {
         this.project = project
         project.apply plugin: 'java'
         initCoberturaClassLoader()
-        project.coberturaRunner = Class.forName('com.orbitz.gradle.cobertura.CoberturaRunner', true,
+        project.coberturaRunner = Class.forName('org.gradle.cobertura.CoberturaRunner', true,
             project.rootProject.coberturaClassLoader).newInstance()
         
         project.convention.plugins.cobertura = new CoberturaConvention(project);

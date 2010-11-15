@@ -1,4 +1,4 @@
-package com.orbitz.gradle.cobertura;
+package org.gradle.cobertura;
 
 import java.util.ArrayList;
 import java.util.List;

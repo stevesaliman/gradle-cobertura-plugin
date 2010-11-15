@@ -1,4 +1,4 @@
-package com.orbitz.gradle.cobertura
+package org.gradle.cobertura
 
 import groovy.io.FileType;
 import org.testng.annotations.Test;

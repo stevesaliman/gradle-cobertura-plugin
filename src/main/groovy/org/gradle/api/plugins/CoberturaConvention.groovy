@@ -1,4 +1,4 @@
-package com.orbitz.gradle.cobertura
+package org.gradle.api.plugins
 
 
 import org.gradle.api.Project;

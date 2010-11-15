@@ -1,5 +1,4 @@
-package com.orbitz.gradle.cobertura.tasks
-
+package org.gradle.api.tasks.cobertura
 
 import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.tasks.TaskAction;
