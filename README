@@ -1,0 +1,20 @@
+To use, add the following to your build.gradle file:
+
+buildscript {
+    repositories {
+        mavenCentral()
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+            name = "cobertura"
+            addArtifactPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[module]/[revision]/[module].[ext]'
+        }
+    }
+    dependencies {
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc1'
+    }
+}
+
+apply plugin: org.gradle.api.plugins.Cobertura
+
+
+------------------------
+This will add the 'cobertura' task to your project which instruments your code, executes your tests and outputs to build/reports/cobertura.
