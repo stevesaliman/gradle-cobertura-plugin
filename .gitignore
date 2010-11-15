@@ -1,0 +1,5 @@
+build
+test-output
+.classpath
+.project
+.gradle
