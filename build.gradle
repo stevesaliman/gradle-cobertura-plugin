@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
-version='1.0'
+version='1.0-rc1'
 
 configurations {
     source {
@@ -12,6 +12,11 @@ configurations {
 
 repositories {
     mavenCentral()
+    add (new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
+        name = 'localIvyRepository'
+        addArtifactPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/[artifact](.[ext])"
+        addIvyPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/ivy.xml"
+    }
 }
 
 dependencies {
@@ -39,7 +44,15 @@ artifacts {
     source jarSrc
 }
 
+uploadArchives {
+    uploadDescriptor = true
+    configuration = configurations.source
+    repositories {
+        add project.repositories.localIvyRepository
+    }
+}
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '0.9-rc-1'
+    gradleVersion = '0.9-rc-3'
 }
 
