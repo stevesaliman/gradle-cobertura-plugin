@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-	<info organisation=""
+	<info organisation="gradle_cobertura"
 		module="gradle_cobertura"
 		revision="1.0-rc2"
 		status="integration"
-		publication="20110128234159"
+		publication="20110129002751"
 	/>
 	<configurations>
 		<conf name="archives" visibility="public" description="Configuration for the default artifacts."/>
