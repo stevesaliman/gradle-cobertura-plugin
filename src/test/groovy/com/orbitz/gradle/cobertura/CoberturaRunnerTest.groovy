@@ -4,6 +4,11 @@ import groovy.io.FileType;
 import org.testng.annotations.Test;
 import static org.testng.AssertJUnit.assertEquals;
 
+/**
+ * Test class for Cobertura Runner
+ *
+ * Copyright 2011 Orbitz, LLC
+ */
 class CoberturaRunnerTest {
     
     @Test

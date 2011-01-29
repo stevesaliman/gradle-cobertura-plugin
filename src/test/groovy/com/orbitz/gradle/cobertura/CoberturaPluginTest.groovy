@@ -21,6 +21,11 @@ import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.fail;
 
+/**
+ * Test case for Cobertura plugin
+ * 
+ * Copyright 2011 Orbitz, LLC
+ */
 class CoberturaPluginTest {
 
     Project project

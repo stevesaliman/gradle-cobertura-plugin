@@ -5,6 +5,11 @@ import java.util.List;
 
 import net.sourceforge.cobertura.instrument.Main;
 
+/**
+ * Mediates between plugin and Cobertura classes
+ * 
+ * Copyright 2011 Orbitz, LLC
+ */
 public class CoberturaRunner {
 
     public void instrument(String basedir, String datafile, String destination, List<String> ignore,

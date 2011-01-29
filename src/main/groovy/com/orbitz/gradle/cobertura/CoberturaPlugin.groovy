@@ -10,6 +10,11 @@ import org.gradle.api.tasks.testing.Test;
 import com.orbitz.gradle.cobertura.tasks.GenerateCoverageReportTask;
 import com.orbitz.gradle.cobertura.tasks.InstrumentCodeAction;
 
+/**
+ * Provides Cobertura coverage for Test tasks.
+ * 
+ * Copyright 2011 Orbitz, LLC
+ */
 class CoberturaPlugin implements Plugin<Project> {
     Project project
     

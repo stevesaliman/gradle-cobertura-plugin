@@ -3,6 +3,11 @@ package com.orbitz.gradle.cobertura
 
 import org.gradle.api.Project;
 
+/**
+ * Convention class for Cobertura plugin
+ *
+ * Copyright 2011 Orbitz, LLC
+ */
 class CoberturaConvention {
     
     /**
