@@ -3,3 +3,5 @@ test-output
 .classpath
 .project
 .gradle
+.settings
+bin

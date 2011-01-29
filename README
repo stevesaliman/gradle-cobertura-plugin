@@ -4,17 +4,37 @@ buildscript {
     repositories {
         mavenCentral()
         add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-            name = "cobertura"
+            name = 'cobertura'
             addArtifactPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[module]/[revision]/[module].[ext]'
+            addIvyPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[module]/[revision]/ivy.xml'
         }
     }
     dependencies {
-        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc1'
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc2'
     }
 }
 
-apply plugin: org.gradle.api.plugins.Cobertura
+apply plugin: com.orbitz.gradle.cobertura.CoberturaPlugin
 
 
 ------------------------
 This will add the 'cobertura' task to your project which instruments your code, executes your tests and outputs to build/reports/cobertura.
+
+To build from source:
+./gradlew uploadArchives
+
+This will create a local jar which you can reference in your builds like this:
+
+buildscript {
+    repositories {
+        add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
+            name = 'local_cobertura' // or whatever you want to put here
+            addArtifactPattern '${ cobertura project directory }/ivy/[module]/[revision]/[module].[ext]' // replace 'cobertura project directory' with real directory
+            addIvyPattern '${ cobertura project directory }/ivy/[module]/[revision]/ivy.xml'
+        }
+    }
+    dependencies {
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc2'
+    }
+}
+
