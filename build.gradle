@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
-version='1.0-rc2'
+version='1.0-rc3'
 
 configurations {
     source {
@@ -51,7 +51,7 @@ uploadArchives {
         add project.repositories.localIvyRepository
     }
 }
-group = 'gradle-plugins'
+group = 'gradle_cobertura'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '0.9.2'

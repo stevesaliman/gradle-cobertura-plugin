@@ -43,9 +43,6 @@ class CoberturaPlugin implements Plugin<Project> {
             format = 'xml'
         }
         configureTestTask()
-        if (!project.repositories.asMap.containsKey('MavenRepo')) {
-            project.repositories.mavenCentral()
-        }
         project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.coberturaVersion}")
     }
     
