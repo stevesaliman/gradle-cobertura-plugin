@@ -34,7 +34,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc2'
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc3'
     }
 }
 
