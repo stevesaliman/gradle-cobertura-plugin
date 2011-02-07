@@ -2,7 +2,7 @@ buildscript {
 
     def pathParts = sourceURI.path.split('/')
     def version = pathParts[-2]
-    def basePath = sourceURI.path.substring(0, sourceURI.path.indexOf("${version}/${pathParts[-1]}"))
+    def basePath = pathParts[0..(pathParts.size()-4)].join('/')
     println "${basePath}"
 
     repositories {
