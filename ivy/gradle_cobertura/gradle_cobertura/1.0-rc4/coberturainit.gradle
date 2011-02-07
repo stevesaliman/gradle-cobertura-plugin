@@ -4,7 +4,7 @@ buildscript {
     def version = pathParts[-2]
     def basePath = pathParts[0..(pathParts.size()-2)].join('/')
     if (sourceURI.scheme != 'file') {
-        basePath = "${sourceURI.scheme}:/"
+        basePath = "${sourceURI.scheme}:/${basePath}"
     }
     println basePath
 
