@@ -1,0 +1,21 @@
+buildscript {
+
+    def pathParts = sourceURI.path.split('/')
+    def version = pathParts[-2]
+    def basePath = sourceURI.path.substring(0, sourceURI.path.indexOf("${version}/${pathParts[-1]}"))
+    println "${basePath}"
+
+    repositories {
+        mavenCentral()
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+            name = 'cobertura'
+            addArtifactPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/[artifact]-[revision].[ext]'
+            addIvyPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/ivy.xml'
+        }
+    }
+    dependencies {
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc4'
+    }
+}
+
+
