@@ -4,7 +4,8 @@ buildscript {
     def version = pathParts[-2]
     def basePath = pathParts[0..(pathParts.size()-2)].join('/')
     if (sourceURI.scheme != 'file') {
-        basePath = "${sourceURI.scheme}:/${basePath}"
+        def uri = new java.net.URI(sourceURI.scheme, sourceURI.userInfo, sourceURI.host, sourceURI.port, basePath)
+        basePath = "${uri.toString()}"
     }
     println basePath
 
