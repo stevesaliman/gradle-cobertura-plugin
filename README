@@ -1,20 +1,8 @@
 To use, add the following to your build.gradle file:
 
 buildscript {
-    repositories {
-        mavenCentral()
-        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-            name = 'cobertura'
-            addArtifactPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/[artifact]-[revision].[ext]'
-            addIvyPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/ivy.xml'
-        }
-    }
-    dependencies {
-        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc4'
-    }
+    apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
 }
-
-apply plugin: com.orbitz.gradle.cobertura.CoberturaPlugin
 
 
 ------------------------

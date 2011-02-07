@@ -50,6 +50,13 @@ uploadArchives {
             addIvyPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/ivy.xml"
         }
     }
+    // this is hacky, but Gradle doesn't yet provide a way to publish non-archive objects
+    doLast {
+        copy {
+            from "${projectDir}/src/coberturainit"
+            into "${projectDir}/ivy/gradle_cobertura/gradle_cobertura/${version}/"
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
