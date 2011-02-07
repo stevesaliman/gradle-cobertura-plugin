@@ -5,3 +5,4 @@ test-output
 .gradle
 .settings
 bin
+gradle-app.setting

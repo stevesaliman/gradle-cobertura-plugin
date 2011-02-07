@@ -5,12 +5,12 @@ buildscript {
         mavenCentral()
         add(new org.apache.ivy.plugins.resolver.URLResolver()) {
             name = 'cobertura'
-            addArtifactPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/[module].[ext]'
+            addArtifactPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/[artifact]-[revision].[ext]'
             addIvyPattern 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/[organization]/[module]/[revision]/ivy.xml'
         }
     }
     dependencies {
-        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc2'
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc4'
     }
 }
 
@@ -29,12 +29,12 @@ buildscript {
     repositories {
         add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
             name = 'local_cobertura' // or whatever you want to put here
-            addArtifactPattern '${ cobertura project directory }/ivy/[organization]/[module]/[revision]/[module].[ext]' // replace 'cobertura project directory' with real directory
+            addArtifactPattern '${ cobertura project directory }/ivy/[organization]/[module]/[revision]/[artifact]-[revision].[ext]' // replace 'cobertura project directory' with real directory
             addIvyPattern '${ cobertura project directory }/ivy/[organization]/[module]/[revision]/ivy.xml'
         }
     }
     dependencies {
-        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc3'
+        classpath 'gradle_cobertura:gradle_cobertura:1.0-rc4'
     }
 }
 

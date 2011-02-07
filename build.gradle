@@ -2,7 +2,8 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
-version='1.0-rc3'
+version='1.0-rc4'
+group = 'gradle_cobertura'
 
 configurations {
     source {
@@ -12,11 +13,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    add (new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
-        name = 'localIvyRepository'
-        addArtifactPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/[artifact](.[ext])"
-        addIvyPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/ivy.xml"
-    }
 }
 
 dependencies {
@@ -48,10 +44,13 @@ uploadArchives {
     uploadDescriptor = true
     configuration = configurations.source
     repositories {
-        add project.repositories.localIvyRepository
+        add (new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
+            name = 'localIvyRepository'
+            addArtifactPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/[artifact]-[revision](.[ext])"
+            addIvyPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/ivy.xml"
+        }
     }
 }
-group = 'gradle_cobertura'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '0.9.2'
