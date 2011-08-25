@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
-version='1.0-rc4'
+version='1.0-rc5'
 group = 'gradle_cobertura'
 
 configurations {
