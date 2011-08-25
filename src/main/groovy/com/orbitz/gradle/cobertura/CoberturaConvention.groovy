@@ -44,7 +44,12 @@ class CoberturaConvention {
      * List of exclude patterns
      */
     List<String> coverageExcludes
-    
+
+	/**
+     * List of ignore patterns
+     */
+    List<String> coverageIgnores
+        
     /**
      * Version of cobertura to use for the plugin. Defaults to 1.9.4.1
      */

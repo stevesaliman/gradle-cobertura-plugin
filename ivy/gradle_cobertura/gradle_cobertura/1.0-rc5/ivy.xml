@@ -4,7 +4,7 @@
 		module="gradle_cobertura"
 		revision="1.0-rc5"
 		status="integration"
-		publication="20110825145020"
+		publication="20110825171822"
 	/>
 	<configurations>
 		<conf name="archives" visibility="public" description="Configuration for the default artifacts."/>

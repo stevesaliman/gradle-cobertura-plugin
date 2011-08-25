@@ -65,6 +65,9 @@ class CoberturaPlugin implements Plugin<Project> {
         instrument.conventionMapping.map('excludes') {
             project.coverageExcludes as Set
         }
+        instrument.conventionMapping.map('ignores') {
+            project.coverageIgnores as Set
+        }
         project.gradle.taskGraph.whenReady {
             if (project.gradle.taskGraph.allTasks.find { it instanceof GenerateCoverageReportTask } != null) {
                 project.tasks.withType(Test).each { Test test ->
