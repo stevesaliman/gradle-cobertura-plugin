@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
 
 version='1.0-rc4'
 group = 'gradle_cobertura'
@@ -48,6 +49,9 @@ uploadArchives {
             name = 'localIvyRepository'
             addArtifactPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/[artifact]-[revision](.[ext])"
             addIvyPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/ivy.xml"
+        }
+        mavenDeployer {
+          repository(url: "file://${projectDir}/maven")
         }
     }
     // this is hacky, but Gradle doesn't yet provide a way to publish non-archive objects
