@@ -12,11 +12,7 @@ buildscript {
 
     repositories {
         mavenCentral()
-        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-            name = 'cobertura'
-            addArtifactPattern "${basePath}/[organization]/[module]/[revision]/[artifact]-[revision].[ext]"
-            addIvyPattern "${basePath}/[organization]/[module]/[revision]/ivy.xml"
-        }
+        mavenRepo urls: basePath
     }
     dependencies {
         classpath "gradle_cobertura:gradle_cobertura:${version}"
