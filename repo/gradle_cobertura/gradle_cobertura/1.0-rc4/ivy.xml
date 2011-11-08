@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="gradle_cobertura"
+		module="gradle_cobertura"
+		revision="1.0-rc4"
+		status="integration"
+		publication="20111108093056"
+	/>
+	<configurations>
+		<conf name="archives" visibility="public" description="Configuration for the default artifacts."/>
+		<conf name="compile" visibility="private" description="Classpath for compiling the sources." extends="groovy"/>
+		<conf name="default" visibility="public" description="Configuration for the default artifacts and their dependencies." extends="archives,runtime"/>
+		<conf name="groovy" visibility="private" description="The groovy libraries to be used for this Groovy project." transitive="false"
+/>
+		<conf name="runtime" visibility="private" description="Classpath for running the compiled sources." extends="compile"/>
+		<conf name="source" visibility="public" extends="archives"/>
+		<conf name="testCompile" visibility="private" description="Classpath for compiling the test sources." extends="compile"/>
+		<conf name="testRuntime" visibility="private" description="Classpath for running the test sources." extends="runtime,testCompile"/>
+	</configurations>
+	<publications>
+		<artifact name="gradle_cobertura" type="jar" ext="jar" conf="archives"/>
+		<artifact name="gradle_cobertura-src" type="jar" ext="jar" conf="archives" m:classifier="src"/>
+	</publications>
+	<dependencies>
+		<dependency org="net.sourceforge.cobertura" name="cobertura" rev="1.9.4.1" conf="compile->default"/>
+		<dependency org="org.codehaus.groovy" name="groovy" rev="1.7.3" conf="groovy->default"/>
+		<dependency org="junit" name="junit" rev="3.8.2" conf="testCompile->default"/>
+		<dependency org="org.testng" name="testng" rev="5.8" conf="testCompile->default">
+			<artifact name="testng" type="jar" ext="jar" conf="" m:classifier="jdk15"/>
+		</dependency>
+	</dependencies>
+</ivy-module>

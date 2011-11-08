@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>gradle_cobertura</groupId>
-  <artifactId>gradle_cobertura-src</artifactId>
+  <artifactId>gradle_cobertura</artifactId>
   <version>1.0-rc4</version>
   <dependencies>
     <dependency>

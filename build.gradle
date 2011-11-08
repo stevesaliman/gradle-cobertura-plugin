@@ -38,27 +38,26 @@ task jarSrc(type: Jar) {
 }
 
 artifacts {
-    source jarSrc
+    archives jarSrc
 }
 
 uploadArchives {
     uploadDescriptor = true
-    configuration = configurations.source
     repositories {
         add (new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
             name = 'localIvyRepository'
-            addArtifactPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/[artifact]-[revision](.[ext])"
-            addIvyPattern "${projectDir}/ivy/[organisation]/[module]/[revision]/ivy.xml"
+            addArtifactPattern "${projectDir}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](.[ext])"
+            addIvyPattern "${projectDir}/repo/[organisation]/[module]/[revision]/ivy.xml"
         }
         mavenDeployer {
-          repository(url: "file://${projectDir}/maven")
+          repository(url: "file://${projectDir}/repo")
         }
     }
     // this is hacky, but Gradle doesn't yet provide a way to publish non-archive objects
     doLast {
         copy {
             from "${projectDir}/src/coberturainit"
-            into "${projectDir}/ivy/gradle_cobertura/gradle_cobertura/${version}/"
+            into "${projectDir}/repo/gradle_cobertura/gradle_cobertura/${version}/"
         }
     }
 }

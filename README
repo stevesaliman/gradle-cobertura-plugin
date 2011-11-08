@@ -1,7 +1,7 @@
 To use, add the following to your build.gradle file:
 
 buildscript {
-    apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
+    apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/repo/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
 }
 
 
@@ -17,8 +17,8 @@ buildscript {
     repositories {
         add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
             name = 'local_cobertura' // or whatever you want to put here
-            addArtifactPattern '${ cobertura project directory }/ivy/[organization]/[module]/[revision]/[artifact]-[revision].[ext]' // replace 'cobertura project directory' with real directory
-            addIvyPattern '${ cobertura project directory }/ivy/[organization]/[module]/[revision]/ivy.xml'
+            addArtifactPattern '${ cobertura project directory }/repo/[organization]/[module]/[revision]/[artifact]-[revision].[ext]' // replace 'cobertura project directory' with real directory
+            addIvyPattern '${ cobertura project directory }/repo/[organization]/[module]/[revision]/ivy.xml'
         }
     }
     dependencies {
