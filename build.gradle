@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
-version='1.0-rc4'
+version='1.0-rc5'
 group = 'gradle_cobertura'
 
 configurations {
@@ -18,17 +18,17 @@ repositories {
 
 dependencies {
     compile gradleApi()
+    groovy localGroovy()
     compile 'net.sourceforge.cobertura:cobertura:1.9.4.1'
-    groovy 'org.codehaus.groovy:groovy:1.7.3'
     testCompile 'junit:junit:3.8.2'
     testCompile group: 'org.testng', name: 'testng', version: '5.8', classifier: 'jdk15'
 }
 
-project.tasks['test'].configure {
+project.tasks.test.configure {
     includes = [ '**/*Test.class' ]
     useTestNG()
 }
-project.tasks['uploadArchives'].dependsOn 'test'
+project.tasks.uploadArchives.dependsOn 'test'
 
 task jarSrc(type: Jar) {
     classifier = 'src'
@@ -61,8 +61,3 @@ uploadArchives {
         }
     }
 }
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '0.9.2'
-}
-

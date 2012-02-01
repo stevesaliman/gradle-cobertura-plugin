@@ -13,7 +13,6 @@ import org.gradle.initialization.DefaultProjectDescriptor;
 import org.gradle.initialization.DefaultProjectDescriptorRegistry;
 import org.gradle.invocation.DefaultGradle;
 import org.gradle.testfixtures.ProjectBuilder 
-import org.gradle.testfixtures.ProjectBuilder.TestTopLevelBuildServiceRegistry;
 import org.gradle.util.Path;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
