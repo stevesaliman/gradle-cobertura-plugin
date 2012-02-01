@@ -1,5 +1,11 @@
 To use, add the following to your build.gradle file:
 
+Gradle 1.0-milestone-7 and later:
+buildscript {
+    apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/repo/gradle_cobertura/gradle_cobertura/1.0/coberturainit.gradle'
+}
+
+Gradle 1.0-milestone-6 and earlier:
 buildscript {
     apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/repo/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
 }
