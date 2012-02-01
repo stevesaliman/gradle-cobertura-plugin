@@ -2,9 +2,9 @@
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
 	<info organisation="gradle_cobertura"
 		module="gradle_cobertura"
-		revision="1.0-rc5"
+		revision="1.0"
 		status="integration"
-		publication="20120201141810"
+		publication="20120201142709"
 	/>
 	<configurations>
 		<conf name="archives" visibility="public" description="Configuration for archive artifacts."/>

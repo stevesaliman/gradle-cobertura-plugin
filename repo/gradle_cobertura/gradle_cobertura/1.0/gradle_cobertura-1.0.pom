@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gradle_cobertura</groupId>
   <artifactId>gradle_cobertura</artifactId>
-  <version>1.0-rc5</version>
+  <version>1.0</version>
   <dependencies>
     <dependency>
       <groupId>org.testng</groupId>
