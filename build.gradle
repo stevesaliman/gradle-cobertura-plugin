@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
-version='1.0-rc4'
+version='1.0-rc4.1'
 group = 'gradle_cobertura'
 
 configurations {
@@ -38,12 +38,6 @@ task jarSrc(type: Jar) {
     from sourceSets.main.java.srcDirs
     from sourceSets.main.groovy.srcDirs
 }
-
-//jar {
-//    metaInf {
-//        from 'src/main/META-INF'
-//    }
-//}
 
 artifacts {
     archives jarSrc
