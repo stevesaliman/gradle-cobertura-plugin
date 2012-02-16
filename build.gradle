@@ -29,11 +29,19 @@ project.tasks['test'].configure {
 }
 project.tasks['uploadArchives'].dependsOn 'test'
 
+
+
 task jarSrc(type: Jar) {
     classifier = 'src'
     baseName = "${project.name}-src"
     from sourceSets.main.java.srcDirs
     from sourceSets.main.groovy.srcDirs
+}
+
+jar {
+    metaInf {
+        from 'src/main/META-INF'
+    }
 }
 
 artifacts {
