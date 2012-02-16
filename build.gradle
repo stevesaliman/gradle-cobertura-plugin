@@ -38,11 +38,11 @@ task jarSrc(type: Jar) {
     from sourceSets.main.groovy.srcDirs
 }
 
-jar {
-    metaInf {
-        from 'src/main/META-INF'
-    }
-}
+//jar {
+//    metaInf {
+//        from 'src/main/META-INF'
+//    }
+//}
 
 artifacts {
     source jarSrc
