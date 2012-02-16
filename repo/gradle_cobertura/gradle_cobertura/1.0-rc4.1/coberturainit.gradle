@@ -1,0 +1,22 @@
+import org.gradle.api.internal.GradleInternal
+import org.gradle.api.internal.project.ProjectInternal
+
+buildscript {
+    def pathParts = sourceURI.path.split('/')
+    def version = pathParts[-2]
+    def basePath = pathParts[0..(pathParts.size()-5)].join('/')
+    if (sourceURI.scheme != 'file') {
+        def uri = new java.net.URI(sourceURI.scheme, sourceURI.userInfo, sourceURI.host, sourceURI.port, basePath, null, null)
+        basePath = "${uri.toString()}"
+    }
+
+    repositories {
+        mavenCentral()
+        mavenRepo urls: basePath
+    }
+    dependencies {
+        classpath "gradle_cobertura:gradle_cobertura:${version}"
+    }
+}
+apply plugin: com.orbitz.gradle.cobertura.CoberturaPlugin
+
