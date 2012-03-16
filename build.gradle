@@ -12,6 +12,10 @@ configurations {
     }
 }
 
+task createWrapper(type: Wrapper) {
+    gradleVersion = '1.0-milestone-9'
+}
+
 repositories {
     mavenCentral()
 }
