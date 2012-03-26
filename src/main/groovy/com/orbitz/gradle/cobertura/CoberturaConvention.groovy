@@ -56,7 +56,7 @@ class CoberturaConvention {
         this.project = project
         coverageDirs = [ project.sourceSets.main.output.classesDir.path ]
         coverageDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
-        coverageReportDir = new File("${project.reportsDir.path}/cobertura")
+        coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
         coverageSourceDirs = project.sourceSets.main.java.srcDirs
     }
     

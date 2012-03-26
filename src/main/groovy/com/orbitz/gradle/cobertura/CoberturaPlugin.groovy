@@ -21,7 +21,7 @@ class CoberturaPlugin implements Plugin<Project> {
     def void apply(Project project) {
         this.project = project
         project.apply plugin: 'java'
-        project.coberturaRunner = new CoberturaRunner()
+        project.extensions.coberturaRunner = new CoberturaRunner()
         
         project.convention.plugins.cobertura = new CoberturaConvention(project);
         if (!project.configurations.asMap['cobertura']) {
