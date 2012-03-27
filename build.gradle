@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
-version='1.0'
+version='1.0.1'
 group = 'gradle_cobertura'
 
 configurations {
