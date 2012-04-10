@@ -12,7 +12,7 @@ buildscript {
 
     repositories {
         mavenCentral()
-        mavenRepo urls: basePath
+        mavenRepo url: basePath
     }
     dependencies {
         classpath "gradle_cobertura:gradle_cobertura:${version}"
