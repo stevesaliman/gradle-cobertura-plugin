@@ -6,3 +6,9 @@ test-output
 .settings
 bin
 gradle-app.setting
+*.iml
+*.iws
+*.ipr
+testclient/gradlew
+testclient/gradlew.bat
+testclient/gradle/wrapper/*

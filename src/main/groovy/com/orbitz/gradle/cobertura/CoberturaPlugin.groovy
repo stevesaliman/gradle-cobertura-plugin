@@ -1,98 +1,123 @@
 package com.orbitz.gradle.cobertura
 
-import java.lang.reflect.Constructor;
-
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.internal.AsmBackedClassGenerator;
-import org.gradle.api.tasks.testing.Test;
-
-import com.orbitz.gradle.cobertura.tasks.GenerateCoverageReportTask;
-import com.orbitz.gradle.cobertura.tasks.InstrumentCodeAction;
+import org.gradle.api.DefaultTask
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.execution.TaskExecutionGraph
 
 /**
  * Provides Cobertura coverage for Test tasks.
- * 
+ *
+ * This plugin will create 2 tasks.
+ *
+ * The first is a "cobertura" task that users may call to generate coverage
+ * reports.  The plugin will make the cobertura task depend on all test tasks,
+ * but it won't actually do any work because the cobertura task won't run if
+ * there are any test failures.
+ *
+ * The second task is an "instrument" task, that will instrument the Java source
+ * code.  Users won't call it directly, but the plugin will make all test
+ * tasks depend on it so that instrumentation only happens once, and only if
+ * the task graph has the "cobertura task"
+ *
+ * This plugin also defines a "cobertura" extension with properties that are
+ * used to configure the operation of the plugin and its taksks.
+ *
+ * The plugin runs cobertura coverage reports for sourceSets.main.  A project
+ * might have have multiple artifacts that use different parts of the code, and
+ * there may be different test tasks that test different parts of the source,
+ * but there is almost always only one main source set.
+ *
+ * Most of the magic of this plugin happens not at apply time, but when the
+ * task graph is ready.  If the graph contains the "cobertura" task, it will
+ * make sure the instrument task is configured to do actual work, and it will
+ * enhance each test task so that it runs the cobertura report before it fails
+ * the build.
+ *
  * Copyright 2011 Orbitz, LLC
  */
 class CoberturaPlugin implements Plugin<Project> {
-    Project project
-    
-    def void apply(Project project) {
-        this.project = project
-        project.apply plugin: 'java'
-        project.extensions.coberturaRunner = new CoberturaRunner()
-        
-        project.convention.plugins.cobertura = new CoberturaConvention(project);
-        if (!project.configurations.asMap['cobertura']) {
-            project.configurations.add('cobertura') {
-                extendsFrom project.configurations['testCompile']
-            }
-            project.dependencies {
-                cobertura "net.sourceforge.cobertura:cobertura:${project.coberturaVersion}"
-            }
-        }
+	def void apply(Project project) {
+		println "Applying cobertura plugin..."
+		project.apply plugin: 'java'
+		project.extensions.coberturaRunner = new CoberturaRunner()
 
-        project.tasks.withType(GenerateCoverageReportTask).whenTaskAdded {
-            configureCoverageReportTask it
-        }
-        GenerateCoverageReportTask coverageReport = project.tasks.add(name: 'cobertura', dependsOn: [ 'coberturaXml' ], type: GenerateCoverageReportTask)
-        coverageReport.description = "Generate Cobertura code coverage report"
-        coverageReport.group = "Report"
-        GenerateCoverageReportTask xmlCoverageReport = project.tasks.add(name: 'coberturaXml', dependsOn: [ 'cleanTest', 'test' ], type: GenerateCoverageReportTask) {
-            format = 'xml'
-        }
-        configureTestTask()
-        project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.coberturaVersion}")
-    }
-    
-    private def configureTestTask() {
-        AsmBackedClassGenerator generator = new AsmBackedClassGenerator()
-        Class<? extends InstrumentCodeAction> instrumentClass = generator.generate(InstrumentCodeAction)
-        Constructor<InstrumentCodeAction> constructor = instrumentClass.getConstructor(Project.class)
-        
-        InstrumentCodeAction instrument = constructor.newInstance(project)
-        instrument.runner = project.coberturaRunner
-        instrument.conventionMapping.map('datafile') {
-            project.coverageDatafile
-        }
-        instrument.conventionMapping.map('classesDirs') {
-            project.files(project.coverageDirs).files
-        }
-        instrument.conventionMapping.map('includes') {
-            project.coverageIncludes as Set
-        }
-        instrument.conventionMapping.map('excludes') {
-            project.coverageExcludes as Set
-        }
-        instrument.conventionMapping.map('ignores') {
-            project.coverageIgnores as Set
-        }
-        project.gradle.taskGraph.whenReady {
-            if (project.gradle.taskGraph.allTasks.find { it instanceof GenerateCoverageReportTask } != null) {
-                project.tasks.withType(Test).each { Test test ->
-                    test.systemProperties.put('net.sourceforge.cobertura.datafile', project.coverageDatafile)
-                    test.classpath += project.configurations['cobertura']
-                    test.doFirst instrument
-                }
-            }
-        }
-    }
-    
-    private def configureCoverageReportTask(GenerateCoverageReportTask coverageReport) {
-        coverageReport.runner = project.coberturaRunner
-        coverageReport.conventionMapping.map('datafile') {
-            project.coverageDatafile
-        }
-        coverageReport.conventionMapping.map('srcDirs') {
-            project.files(project.coverageSourceDirs).files
-        }
-        coverageReport.conventionMapping.map('format') {
-            project.coverageFormat
-        }
-        coverageReport.conventionMapping.map('reportdir') {
-            project.coverageReportDir
-        }
-    }
+		project.extensions.create('cobertura', CoberturaExtension, project)
+		if (!project.configurations.asMap['cobertura']) {
+			project.configurations.add('cobertura') {
+				extendsFrom project.configurations['testCompile']
+			}
+			project.dependencies {
+				cobertura "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}"
+			}
+		}
 
+		//Add an instrument task, but don't have it do anything yet because we
+		// don't know if we need to run cobertura yet. We need to process all new
+		// tasks as they are added, so we can't use withType.
+		project.tasks.add(name: 'instrument', type: InstrumentTask, {configuration = project.extensions.cobertura})
+		project.tasks.add(name: 'cobertura', type:  DefaultTask)
+		Task coberturaTask = project.tasks.getByName("cobertura")
+		coberturaTask.setDescription("Generate Cobertura coverage reports after running tests.")
+		println "Looking for tests..."
+		project.tasks.all { task ->
+			if ( task instanceof  Test ) {
+				println "Changing dependencies for task ${task.name}"
+				task.dependsOn 'instrument'
+				coberturaTask.dependsOn task
+			}
+		}
+
+		project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
+		// If we need to run cobertura, fix tests, set instrument's runner...
+		project.gradle.taskGraph.whenReady { graph ->
+			println "Cobertura message: ${project.extensions.cobertura.coverageMessage}"
+			if (graph.allTasks.find { it.name == "cobertura" } != null) {
+				println "Enhancing test tasks for Cobertura"
+				InstrumentTask instrumentTask = graph.allTasks.find { it.name == "instrument" }
+				configureInstrumentation(project, graph, instrumentTask)
+				println "Project runner = ${project.coberturaRunner}"
+// We want to generate a report if we're in the cobertura task, or if we're about to fail a test task.
+				graph.afterTask() { task, state ->
+					if ( (task.name == "cobertura" ||
+									(task instanceof Test && state.failure != null)) ) {
+						project.coberturaRunner.generateCoverageReport project.extensions.cobertura.coverageDatafile.path, project.extensions.cobertura.coverageReportDir.path, project.extensions.cobertura.coverageFormat, project.files(project.extensions.cobertura.coverageSourceDirs).files.collect { it.path }
+					}
+				}
+				// Fix the classpath of any test task we are actually running.
+				project.tasks.withType(Test).each { Test test ->
+					test.systemProperties.put('net.sourceforge.cobertura.datafile', project.extensions.cobertura.coverageDatafile)
+					test.classpath += project.configurations['cobertura']
+					fixTestClasspath(project, test)
+					// afterSuite instead of doLast because doLast won't run if a test fails
+				}
+			}
+		}
+	}
+
+	/**
+	 * Configure a test task.  remove source dirs and add the instrumented dir
+	 * @param test
+	 * @return
+	 */
+	def fixTestClasspath(Project project, Task test) {
+		def instrumentDirs = [] as Set
+		project.files(project.sourceSets.main.output.classesDir.path).each { File f ->
+			if (f.isDirectory()) {
+				test.classpath = test.classpath - project.files(f)
+			}
+		}
+		test.classpath = test.classpath + project.files("${project.buildDir}/instrumented_classes")
+	}
+
+	// Copy the soruce dirs to the instrumented dir Create list of dirs and files
+	def configureInstrumentation(Project project, TaskExecutionGraph graph, InstrumentTask instrumentTask) {
+		// if for some reason, the user specified "-x instrument"...
+		if (graph.allTasks.find { it.name == "instrument" } != null) {
+			instrumentTask.runner = project.coberturaRunner
+		}
+	}
 }

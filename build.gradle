@@ -1,7 +1,18 @@
+#!groovy
+// The above triggers groovy syntax highlighting in vim
+
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'eclipse'
 apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+version = "2.0.0"
+group = "net.saliman"
+archivesBaseName = "gradle-cobertura-plugin"
+
+def mavenRepoUploadUrl = "scp://maxdevcloud/var/www/maven/repo"
+def mavenRepoUploadUser = "git"
 
 configurations {
     source {
@@ -19,6 +30,8 @@ dependencies {
     compile 'net.sourceforge.cobertura:cobertura:1.9.4.1'
     testCompile 'junit:junit:3.8.2'
     testCompile group: 'org.testng', name: 'testng', version: '5.8', classifier: 'jdk15'
+	archives "org.apache.maven.wagon:wagon-ssh:2.2"
+	    archives "org.apache.maven.wagon:wagon-ssh-external:2.2"
 }
 
 project.tasks.test.configure {
@@ -28,8 +41,7 @@ project.tasks.test.configure {
 project.tasks.uploadArchives.dependsOn 'test'
 
 task jarSrc(type: Jar) {
-    classifier = 'src'
-    baseName = "${project.name}-src"
+    classifier = 'sources'
     from sourceSets.main.java.srcDirs
     from sourceSets.main.groovy.srcDirs
 }
@@ -39,26 +51,100 @@ artifacts {
 }
 
 uploadArchives {
-    uploadDescriptor = true
-    repositories {
-        add (new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
-            name = 'localIvyRepository'
-            addArtifactPattern "${projectDir}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](.[ext])"
-            addIvyPattern "${projectDir}/repo/[organisation]/[module]/[revision]/ivy.xml"
-        }
-        mavenDeployer {
-          repository(url: "file://${projectDir}/repo")
-        }
-    }
-    // this is hacky, but Gradle doesn't yet provide a way to publish non-archive objects
-    doLast {
-        copy {
-            from "${projectDir}/src/coberturainit"
-            into "${projectDir}/repo/gradle_cobertura/gradle_cobertura/${version}/"
+	doFirst {
+		repositories {
+            mavenDeployer {
+                configuration = configurations.archives
+                repository(url: mavenRepoUploadUrl) {
+                    authentication(userName: mavenRepoUploadUser,
+                                   privateKey: file("${privateKeyFile}"),
+                                   passphrase: "${privateKeyPassphrase}")
+                }
+            }
+
         }
     }
 }
 
 task createWrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-9'
+    gradleVersion = '1.0'
 }
+
+idea {
+    module {
+
+        //if you prefer different output folders
+        inheritOutputDirs = false
+        outputDir = file('build/idea/out')
+        testOutputDir = file('build/idea/testOut')
+        //if you love browsing Javadoc
+        downloadJavadoc = true
+        //and hate reading sources :)
+        downloadSources = false
+    }
+}
+
+// Configure Idea plugin so that it generates project files that use git for 
+// source control.  Thank you to Eric Wendelin for showing me this trick.
+idea.project.ipr.withXml { provider ->
+    def node = provider.asNode()
+    def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
+    vcsConfig.mapping[0].'@vcs' = 'Git'
+
+    // set gradle home
+    def gradleSettings = node.appendNode('component',[name: 'GradleSettings'])
+    gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir.absolutePath])
+}
+
+// Get the keyfile, user, and passphrase for uploading, if they aren't already
+// defined.
+gradle.taskGraph.whenReady { taskGraph ->
+    if ( taskGraph.allTasks.find { it.name == "uploadArchives" } != null ) {
+        Console console = System.console()
+
+        if ( !project.hasProperty("privateKeyFile") ) {
+            if ( console == null ) {
+                throw new MissingPropertyException("No privateKeyFile given")
+            }
+            def keyfile = console.readLine("\nPrivate Key file: ")
+            project.ext.privateKeyFile = keyfile
+        }
+
+        if ( !project.hasProperty("privateKeyPassphrase") ) {
+            if ( console == null ) {
+                throw new MissingPropertyException("No privateKeyPassphrase given")
+            }
+            def passphrase = console.readPassword("\nPassphrase for ${privateKeyFile}: ")
+            project.ext.privateKeyPassphrase = passphrase
+        }
+    }
+}
+
+def getPomConfiguration() {
+    return {
+        name 'Gradle Cobertura Plugin'
+        packaging 'jar'
+        description 'A Gradle plugin for runing Cobertura coverage reports.'
+        url 'https://github.com/stevesaliman/gradle-cobertura-plugin'
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id 'stevesaliman'
+                name 'Steven C. Saliman'
+                email 'support@saliman.net'
+            }
+        }
+        scm {
+            connection 'scm:https://stevesaliman@github.com/stevesaliman/gradle-cobertura-plugin'
+            developerConnection 'scm:git@github.com:stevesaliman/gradle-cobertura-plugin.git'
+            url 'https://github.com/stevesaliman/gradle-cobertura-plugin'
+        }
+    }
+}
+

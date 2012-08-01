@@ -1,0 +1,4 @@
+This is a Java project with a class to test and a series of tests designed to
+be broken up into different gradle test tasks.
+
+It is meant to be a standalone project that applies the compiled plugin.
