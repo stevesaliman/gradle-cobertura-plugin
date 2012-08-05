@@ -24,7 +24,7 @@ import org.gradle.api.execution.TaskExecutionGraph
  * the task graph has the "cobertura task"
  *
  * This plugin also defines a "cobertura" extension with properties that are
- * used to configure the operation of the plugin and its taksks.
+ * used to configure the operation of the plugin and its tasks.
  *
  * The plugin runs cobertura coverage reports for sourceSets.main.  A project
  * might have have multiple artifacts that use different parts of the code, and
@@ -113,9 +113,21 @@ class CoberturaPlugin implements Plugin<Project> {
 		test.classpath = test.classpath + project.files("${project.buildDir}/instrumented_classes")
 	}
 
-	// Copy the soruce dirs to the instrumented dir Create list of dirs and files
+	// Copy the source dirs to the instrumented dir Create list of dirs and files
+	/**
+	 * Configure the instrumentation task to actually instrument code.  When the
+	 * instrumentation task is first created, it doesn't know if the user is
+	 * going to be running coverage reports or not.  This helper method will be
+	 * called once the plugin determines that instrumentation is actually needed.
+	 * @param project the project we're dealing with.
+	 * @param graph the task graph being executed.
+	 * @param instrumentTask the instrumentation task to configure.
+	 * @return
+	 */
 	def configureInstrumentation(Project project, TaskExecutionGraph graph, InstrumentTask instrumentTask) {
-		// if for some reason, the user specified "-x instrument"...
+		// We tell the instrumentation task to do its thing by setting a runner,
+		// but before we do, make sure the user hasn't done a "-x instrument" for
+		// some bizarre reason.
 		if (graph.allTasks.find { it.name == "instrument" } != null) {
 			instrumentTask.runner = project.coberturaRunner
 		}

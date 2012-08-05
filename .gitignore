@@ -9,6 +9,7 @@ gradle-app.setting
 *.iml
 *.iws
 *.ipr
+testclient/buildSrc/
 testclient/gradlew
 testclient/gradlew.bat
 testclient/gradle/wrapper/*

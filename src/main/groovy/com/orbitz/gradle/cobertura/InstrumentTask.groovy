@@ -17,27 +17,23 @@ class InstrumentTask extends DefaultTask {
 	CoberturaExtension configuration
 	def runner
 
-	@InputFiles
+//	@InputFiles
 	def getClassesDirs() {
 		configuration.coverageDirs
 	}
 
-	@OutputFile
+//	@OutputFile
 	def getDatafile () {
 		configuration.coverageDatafile
 	}
 
 	@TaskAction
 	def instrument() {
-		println "Instrumenting..."
-		println "Inst. message = ${configuration.coverageMessage}"
-		println "Runner = ${runner}"
-		println "Datafile path = ${getDatafile().path}"
-
 		// Only do the instrumentation if the plugin gave us a runner when the
 		// task graph was ready.  That is how we'll detect that the user wanted to
 		// generate coverage reports.
 		if ( runner != null ) {
+			println "Instrumenting..."
 			// Before we instrument, copy from the main source to the instrumented path.
 			// Doing this here means we only need to do it when we need to instrument.
 			def instrumentDirs = [] as Set
@@ -60,6 +56,8 @@ class InstrumentTask extends DefaultTask {
 							configuration.coverageIgnores as List,
 							configuration.coverageIncludes as List,
 							configuration.coverageExcludes as List, instrumentDirs as List
+		} else {
+			println "Skipping instrumentation..."
 		}
 	}
 }
