@@ -67,20 +67,16 @@ Building
 --------
 To build from source:
 
-    ./gradlew uploadArchives
+    ./gradlew install
 
-This will create a local jar which you can reference in your builds like this:
+This will create a local jar and put it in your local maven repository. you can reference it in your builds like this:
 
     buildscript {
         repositories {
-            add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
-                name = 'local_cobertura' // or whatever you want to put here
-                addArtifactPattern '${ cobertura project directory }/repo/[organization]/[module]/[revision]/[artifact]-[revision].[ext]' // replace 'cobertura project directory' with real directory
-                addIvyPattern '${ cobertura project directory }/repo/[organization]/[module]/[revision]/ivy.xml'
-            }
+            mavenLocal()
         }
         dependencies {
-            classpath 'gradle_cobertura:gradle_cobertura:1.0-rc4'
+            classpath 'net.saliman:gradle-cobertura-plugin:${coberturaPluginVersion}'
         }
     }
 
