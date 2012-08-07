@@ -1,15 +1,19 @@
 Introduction
 ------------
 
-This is a fork of the excellent Cobertura plugin by valkolovos and jvanderpol. This fork addresses a couple of things with the Cobertura plugin.
+This plugin was inspired by the Cobertura plugin by valkolovos and jvanderpol. This plugin is an improvement over the the original in a few important ways.
 
-- The biggest change is that the plugin now runs a Cobertura coverage report even if tests fail.  If there are multiple test tasks, it will run the cobertura reports after the last test task that ran.
+- The biggest difference is that the plugin now runs a Cobertura coverage report even if tests fail.  If there are multiple test tasks, it will run the cobertura reports after the last test task that ran.
 
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go, I've replaced conventions with extensions.
 
 - Works with 1.0 and 1.1 without deprecation warnings.
 
-- Worked a lot with build lifecycle to make sure that things only happen if they need to happen, and when they need to happen.  For example, we only instrument code if we are going to run tests, and then it instruments right before the tests so that time is not spent instrumenting if the build fails due to earlier errors.
+- I've worked a lot with build lifecycle to make sure that things only happen if they need to happen, and when they need to happen.  For example, we only instrument code if we are going to run tests, and then it instruments right before the tests so that time is not spent instrumenting if the build fails due to earlier errors.
+
+- This plugin is published and available on Maven Central, separating use of the plugin from the source tree on GitHub.
+
+- Most importantly, this plugin is clearly licensed as an Apache 2.0 licensed project so users can use this plugin as part of any project they are building.
 
 Todo:
 -----
@@ -31,7 +35,7 @@ Add the following to your build.gradle file and replace the coberturaPluginVersi
 ```groovy
 buildscript {
     repositories {
-        maven { url "https://raw.github.com/stevesaliman/gradle-cobertura-plugin/master/repo" }
+        mavenCentral()
     }
     dependencies {
         classpath "gradle_cobertura:gradle_cobertura:${coberturaPluginVersion}"
@@ -39,29 +43,6 @@ buildscript {
 }
 apply plugin: 'cobertura'
 ```
-
-Compatibility
--------------
-
-    +----------------+--------------+
-    |Gradle Version  |Plugin version|
-    +----------------+--------------+
-    |1.1             |2.0           |
-    +----------------+--------------+
-    |1.0             |2.0           |
-    +----------------+--------------+
-    |1.0-milestone-9 |1.2           |
-    +----------------+--------------+
-    |1.0-milestone-8 |1.1           |
-    +----------------+--------------+
-    |1.0-milestone-7 |1.0           |
-    +----------------+--------------+
-    |1.0-milestone-6 |1.0-rc4       |
-    +----------------+--------------+
-    |All older revs  |1.0-rc4       |
-    +----------------+--------------+
-
-This will add the 'cobertura' and 'instrument' tasks to your project which instruments your code, executes your tests and outputs to build/reports/cobertura if gradle is invoked with the cobertura task.
 
 Building
 --------
