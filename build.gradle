@@ -34,8 +34,7 @@ dependencies {
 	groovy localGroovy()
 	compile gradleApi()
 	compile 'net.sourceforge.cobertura:cobertura:1.9.4.1'
-	testCompile 'junit:junit:3.8.2'
-	testCompile group: 'org.testng', name: 'testng', version: '5.8', classifier: 'jdk15'
+	testCompile 'junit:junit:4.10'
 	archives "org.apache.maven.wagon:wagon-ssh:2.2"
 	archives "org.apache.maven.wagon:wagon-ssh-external:2.2"
 }

@@ -26,8 +26,6 @@ This is still a work in progress.  If anyone would like to help out, here are a 
 
 - I'd like to have the coverage reports only run if the source or the tests have changed, but I haven't started that yet.
 
-- There's been a suggestion (https://github.com/valkolovos/gradle_cobertura/issues/6) that this plugin should be published to Maven Central.  This would make it easier for people to use older versions as the plugin changes.  I can publish to Maven Central, but I don't really want to do this without the blessing of the original authors.
-
 Usage
 -----
 Add the following to your build.gradle file and replace the coberturaPluginVersion variable with the version of the plugin you wish to use

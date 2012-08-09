@@ -13,3 +13,4 @@ testclient/buildSrc/
 testclient/gradlew
 testclient/gradlew.bat
 testclient/gradle/wrapper/*
+*.bak

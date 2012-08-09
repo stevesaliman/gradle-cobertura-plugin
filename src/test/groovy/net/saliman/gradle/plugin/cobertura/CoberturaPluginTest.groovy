@@ -11,52 +11,39 @@ import org.gradle.initialization.DefaultProjectDescriptor;
 import org.gradle.initialization.DefaultProjectDescriptorRegistry;
 
 
-import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.util.Path;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 
 import net.saliman.gradle.plugin.cobertura.CoberturaPlugin;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.After;
+
+import static org.junit.Assert.assertTrue
+import static org.junit.Assert.assertNotNull
+import org.gradle.api.DefaultTask;
 
 /**
  * Test case for Cobertura plugin
- * 
- * Copyright 2011 Orbitz, LLC
+ * <p>
+ * This is far, far from being complete.  At the moment, I just see if the
+ * two tasks I expect are actually present.
  */
 class CoberturaPluginTest {
+	def project = ProjectBuilder.builder().build()
+	def plugin = new CoberturaPlugin()
 
-    Project project
-    
-    @BeforeMethod
-    public void setUp() throws Exception {
-        project = ProjectBuilder.builder().build()
-        project.version = '1.0'
-    }
-    
-    @AfterMethod
-    public void tearDown() {
-        project.projectDir.deleteDir()
-    }
-    
-    @Test
-    void canApplyPlugin() {
-        ServiceRegistryFactory topLevelRegistry = project.gradle.services        
-        File childProjectDir = new File(project.projectDir, 'child')
-        final File homeDir = new File(childProjectDir, "gradleHome");
-        StartParameter startParameter = new StartParameter();
-        startParameter.setGradleUserHomeDir(new File(childProjectDir, "userHome"));
-        DefaultProjectDescriptor projectDescriptor = new DefaultProjectDescriptor(null, "child", childProjectDir, new DefaultProjectDescriptorRegistry());
-        projectDescriptor.path = new Path(':child')
-        ProjectInternal childProject = topLevelRegistry.get(IProjectFactory.class).createProject(projectDescriptor, project, project.gradle);
-
-        project.childProjects['child'] = childProject
-        project.apply plugin: CoberturaPlugin
-        childProject.apply plugin: CoberturaPlugin
-        assert project.plugins.hasPlugin(CoberturaPlugin)
-        assert project.tasks.getByName('cobertura')
-        assert project.configurations.asMap['cobertura']
-    }
+	@Test
+	void canApplyPlugin() {
+		project.apply plugin: 'cobertura'
+		assertTrue("Project is missing plugin", project.plugins.hasPlugin(CoberturaPlugin))
+		def task = project.tasks.findByName("instrument")
+		assertNotNull("Project is missing instrument task", task)
+		assertTrue("Instrument task is the wrong type", task instanceof InstrumentTask)
+		task = project.tasks.findByName("cobertura")
+		assertNotNull("Project is missing cobertura task", task)
+		assertTrue("cobertura task is the wrong type", task instanceof DefaultTask)
+		assertNotNull("We're missing the configuration", project.configurations.asMap['cobertura'])
+	}
 
 }
