@@ -36,11 +36,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "gradle_cobertura:gradle_cobertura:${coberturaPluginVersion}"
+        classpath "net.saliman:gradle-cobertura-plugin:1.0.0"
     }
 }
 apply plugin: 'cobertura'
 ```
+
+There are sensible defaults for most things, but if needed, you can change some of the properties to get different behavior.  The complete set is in the CoberturaExtensions.groovy file, but the two most common are:
+
+- cobertura.coverageDataFile = <file>: the file object refering to the .ser file to create
+
+- cobertura.coverageReportDir = <dir>: the file object representing the directory where coverage reports should be built.
 
 Building
 --------
@@ -55,7 +61,7 @@ This will create a local jar and put it in your local maven repository. you can 
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:${coberturaPluginVersion}'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.0.0'
         }
     }
 

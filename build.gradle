@@ -10,7 +10,7 @@ apply plugin: 'eclipse'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "2.0.0-SNAPSHOT"
+version = "1.0.0"
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
