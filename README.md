@@ -44,9 +44,9 @@ apply plugin: 'cobertura'
 
 There are sensible defaults for most things, but if needed, you can change some of the properties to get different behavior.  The complete set is in the CoberturaExtensions.groovy file, but the two most common are:
 
-- cobertura.coverageDataFile = <file>: the file object refering to the .ser file to create
+- cobertura.coverageDataFile = *file*: the file object refering to the .ser file to create
 
-- cobertura.coverageReportDir = <dir>: the file object representing the directory where coverage reports should be built.
+- cobertura.coverageReportDir = *dir*: the file object representing the directory where coverage reports should be built.
 
 Building
 --------
