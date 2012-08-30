@@ -40,7 +40,7 @@ import org.gradle.api.execution.TaskExecutionGraph
  */
 class CoberturaPlugin implements Plugin<Project> {
 	def void apply(Project project) {
-		println "Applying cobertura plugin..."
+		project.logger.info("Applying cobertura plugin...")
 		project.apply plugin: 'java'
 		project.extensions.coberturaRunner = new CoberturaRunner()
 
@@ -61,21 +61,23 @@ class CoberturaPlugin implements Plugin<Project> {
 		project.tasks.add(name: 'cobertura', type:  DefaultTask)
 		Task coberturaTask = project.tasks.getByName("cobertura")
 		coberturaTask.setDescription("Generate Cobertura coverage reports after running tests.")
+		InstrumentTask instrumentTask = project.tasks.getByName("instrument")
+		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
+		instrumentTask.runner = project.extensions.coberturaRunner
 		project.tasks.all { task ->
 			if ( task instanceof  Test ) {
-				println "Changing dependencies for task ${task.name}"
+				project.logger.info("Changing dependencies for task ${task.name}")
 				task.dependsOn 'instrument'
 				coberturaTask.dependsOn task
 			}
 		}
 
 		project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
-		// If we need to run cobertura, fix tests, set instrument's runner...
+		// If we need to run cobertura, fix test classpaths, and set them to
+		// generate reports on failure.  If not, disable instrumentation.
 		project.gradle.taskGraph.whenReady { graph ->
 			if (graph.allTasks.find { it.name == "cobertura" } != null) {
-				println "Enhancing test tasks for Cobertura"
-				InstrumentTask instrumentTask = graph.allTasks.find { it.name == "instrument" }
-				configureInstrumentation(project, graph, instrumentTask)
+				project.logger.info("Enhancing test tasks for Cobertura")
 				// We want to generate a report if we're in the cobertura task, or if
 				// we're about to fail a test task.  We need to use afterSuite instead
 				// of doLast because doLast won't run if a test fails
@@ -91,6 +93,8 @@ class CoberturaPlugin implements Plugin<Project> {
 					test.classpath += project.configurations['cobertura']
 					fixTestClasspath(project, test)
 				}
+			} else {
+				instrumentTask.enabled = false
 			}
 		}
 	}
@@ -107,23 +111,5 @@ class CoberturaPlugin implements Plugin<Project> {
 			}
 		}
 		test.classpath = test.classpath + project.files("${project.buildDir}/instrumented_classes")
-	}
-
-	/**
-	 * Configure the instrumentation task to actually instrument code.  When the
-	 * instrumentation task is first created, it doesn't know if the user is
-	 * going to be running coverage reports or not.  This helper method will be
-	 * called once the plugin determines that instrumentation is actually needed.
-	 * @param project the project we're dealing with.
-	 * @param graph the task graph being executed.
-	 * @param instrumentTask the instrumentation task to configure.
-	 */
-	def configureInstrumentation(Project project, TaskExecutionGraph graph, InstrumentTask instrumentTask) {
-		// We tell the instrumentation task to do its thing by setting a runner,
-		// but before we do, make sure the user hasn't done a "-x instrument" for
-		// some bizarre reason.
-		if (graph.allTasks.find { it.name == "instrument" } != null) {
-			instrumentTask.runner = project.coberturaRunner
-		}
 	}
 }
