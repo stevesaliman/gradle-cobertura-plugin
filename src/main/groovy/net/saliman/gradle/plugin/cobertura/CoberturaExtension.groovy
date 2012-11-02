@@ -70,7 +70,7 @@ class CoberturaExtension {
 	 * @param project the Gradle project that owns the extension.
 	 */
 	CoberturaExtension(Project project) {
-		println "Creating extension"
+		project.logger.info "creating extension"
 		this.project = project
 		coverageDirs = [ project.sourceSets.main.output.classesDir.path ]
 		coverageDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
