@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.testing.Test
 
-import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.invocation.Gradle
 
 /**
  * Provides Cobertura coverage for Test tasks.
@@ -39,8 +39,10 @@ import org.gradle.api.execution.TaskExecutionGraph
  *
  */
 class CoberturaPlugin implements Plugin<Project> {
+
 	def void apply(Project project) {
-		project.logger.info("Applying cobertura plugin...")
+
+		project.logger.info("Applying cobertura plugin to $project")
 		project.apply plugin: 'java'
 		project.extensions.coberturaRunner = new CoberturaRunner()
 
@@ -66,45 +68,58 @@ class CoberturaPlugin implements Plugin<Project> {
 		instrumentTask.runner = project.extensions.coberturaRunner
 		project.tasks.all { task ->
 			if ( task instanceof  Test ) {
-				project.logger.info("Changing dependencies for task ${task.name}")
+				project.logger.info("Changing dependencies for task ${task.project}:${task.name}")
 				task.dependsOn 'instrument'
 				coberturaTask.dependsOn task
 			}
 		}
 
 		project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
-		// If we need to run cobertura, fix test classpaths, and set them to
-		// generate reports on failure.  If not, disable instrumentation.
-		project.gradle.taskGraph.whenReady { graph ->
-			if (graph.allTasks.find { it.name == "cobertura" } != null) {
-				project.logger.info("Enhancing test tasks for Cobertura")
-				// We want to generate a report if we're in the cobertura task, or if
-				// we're about to fail a test task.  We need to use afterSuite instead
-				// of doLast because doLast won't run if a test fails
-				graph.afterTask() { task, state ->
-					if ( (task.name == "cobertura" ||
-									(task instanceof Test && state.failure != null)) ) {
-						project.coberturaRunner.generateCoverageReport project.extensions.cobertura.coverageDatafile.path, project.extensions.cobertura.coverageReportDir.path, project.extensions.cobertura.coverageFormat, project.files(project.extensions.cobertura.coverageSourceDirs).files.collect { it.path }
-					}
-				}
-				// Fix the classpath of any test task we are actually running.
-				project.tasks.withType(Test).each { Test test ->
-					test.systemProperties.put('net.sourceforge.cobertura.datafile', project.extensions.cobertura.coverageDatafile)
-					test.classpath += project.configurations['cobertura']
-					fixTestClasspath(project, test)
-				}
-			} else {
-				instrumentTask.enabled = false
-			}
-		}
-	}
 
-	/**
+        registerTaskFixupListener(project.gradle)
+
+    }
+
+    private void registerTaskFixupListener(Gradle gradle) {
+        // If we need to run cobertura, fix test classpaths, and set them to
+        // generate reports on failure.  If not, disable instrumentation.
+        // "whenReady()" is a global event, so closure should be registered exactly once for single and multi-project builds.
+        if (!gradle.ext.has('coberturaPluginListenerRegistered')) {
+            gradle.ext.coberturaPluginListenerRegistered = true
+            gradle.taskGraph.whenReady { graph ->
+                if (graph.allTasks.find { it.name == "cobertura" } != null) {
+                     gradle.rootProject.logger.info("Enhancing test tasks for Cobertura")
+                    // We want to generate a report if we're in the cobertura task, or if
+                    // we're about to fail a test task.  We need to use afterSuite instead
+                    // of doLast because doLast won't run if a test fails
+                    graph.afterTask() { task, state ->
+                        if ((task.name == "cobertura" || (task instanceof Test && state.failure != null))) {
+                            task.project.coberturaRunner.generateCoverageReport task.project.extensions.cobertura.coverageDatafile.path, task.project.extensions.cobertura.coverageReportDir.path, task.project.extensions.cobertura.coverageFormat, task.project.files(task.project.extensions.cobertura.coverageSourceDirs).files.collect { it.path }
+                        }
+                    }
+                    // Fix the classpath of any test task we are actually running.
+                    graph.allTasks.findAll { it instanceof Test}.each { Test test ->
+                        test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageDatafile)
+                        test.classpath += test.project.configurations['cobertura']
+                        fixTestClasspath(test)
+                    }
+                } else {
+                    // Disable all instrument tasks.
+                    graph.allTasks.findAll { it instanceof InstrumentTask}.each {
+                        it.enabled = false
+                    }
+                }
+            }
+        }
+    }
+
+    /**
 	 * Configure a test task.  remove source dirs and add the instrumented dir
 	 * @param test the test task to fix
 	 */
-	def fixTestClasspath(Project project, Task test) {
+	def fixTestClasspath(Task test) {
 		def instrumentDirs = [] as Set
+        def project = test.project
 		project.files(project.sourceSets.main.output.classesDir.path).each { File f ->
 			if (f.isDirectory()) {
 				test.classpath = test.classpath - project.files(f)
