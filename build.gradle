@@ -10,7 +10,7 @@ apply plugin: 'eclipse'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "1.0.1"
+version = "1.0.2"
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
@@ -85,12 +85,12 @@ gradle.taskGraph.whenReady { taskGraph ->
 			console.printf "\n\nWe have to sign some things in this build...\n\n"
 
 			if ( !project.hasProperty('signing.keyId') ) {
-				def id = console.readLine("PGP Key Id: ")
+				def id = console.readLine("PGP Public Key Id: ")
 				allprojects { ext."signing.keyId" = id }
 			}
 
 			if ( !project.hasProperty('signing.secretKeyRingFile') ) {
-				ef file = console.readLine("PGP Secret Key Ring File (absolute path): ")
+				def file = console.readLine("PGP Secret Key Ring File (absolute path): ")
 				allprojects { ext."signing.secretKeyRingFile" = file }
 			}
 
@@ -110,7 +110,7 @@ uploadArchives {
 	repositories {
 		mavenDeployer {
 			if (signing.signatory) {
-				beforeDeployment { signPom(it) }
+				beforeDeployment { signing.signPom(it) }
 			}
 			configuration = configurations.archives
 			//repository(url: "file://$buildDir/m2repo")
