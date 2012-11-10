@@ -1,0 +1,16 @@
+#!groovy
+//apply plugin: 'java'
+//Closure c1 = { task -> println "I'm $task.project.name" }
+//task hello << c1
+//project(':calculator') {
+  //task hello << c1
+//}
+subprojects {
+  apply plugin: 'java'
+}
+project(':calculator') {
+  dependencies {
+    compile project(':logger')
+    runtime project(':logger')
+  }
+}

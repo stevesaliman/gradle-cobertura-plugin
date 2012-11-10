@@ -1,4 +1,4 @@
-package net.saliman.gradle.plugin.cobertura.testclient;
+package net.saliman.gradle.plugin.cobertura.testclient.calculator;
 
 import org.junit.Test;
 
