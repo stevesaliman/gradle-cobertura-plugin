@@ -7,6 +7,7 @@ package net.saliman.gradle.plugin.cobertura.testclient;
  */
 public class Calculator {
 	public int add(int x, int y) {
+		Logger.log("Adding");
 		return x+y;
 	}
 
