@@ -36,15 +36,8 @@ little java project that I use to manually test different scenarios  (the test
 client needs a buildSrc link back to the plugin source), but we could really use
 some proper unit tests.
 
-- I've tried to get the instrument task to perform up to date checking.  I only
-want to instrument if the main source changed, or if we are missing the .ser
-file, but tests change the .ser file, so we get instrumentation every time.  It
-doesn't run at all if we've had a successful test run without cobertura.  Since
-tests change the .ser file, it may be that having instrumentation run every
-time the plugin runs might be a desirable thing.
-
 - I'd like to have the coverage reports only run if the source or the tests have
-changed, but I haven't started that yet.
+changed, but I haven't started that yet. Instrumentation would only need to happen if coverage reports are requested, and are not up to date.
 
 Usage
 -----
@@ -56,7 +49,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.0.2"
+        classpath "net.saliman:gradle-cobertura-plugin:1.0.3"
     }
 }
 apply plugin: 'cobertura'
@@ -90,7 +83,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.0.2'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.0.3'
         }
     }
 

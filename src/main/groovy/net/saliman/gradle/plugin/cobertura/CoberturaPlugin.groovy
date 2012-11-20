@@ -56,7 +56,7 @@ class CoberturaPlugin implements Plugin<Project> {
 			}
 		}
 
-		//Add an instrument task, but don't have it do anything yet because we
+		// Add an instrument task, but don't have it do anything yet because we
 		// don't know if we need to run cobertura yet. We need to process all new
 		// tasks as they are added, so we can't use withType.
 		project.tasks.add(name: 'instrument', type: InstrumentTask, {configuration = project.extensions.cobertura})
@@ -66,6 +66,10 @@ class CoberturaPlugin implements Plugin<Project> {
 		InstrumentTask instrumentTask = project.tasks.getByName("instrument")
 		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
 		instrumentTask.runner = project.extensions.coberturaRunner
+		// instrumentation needs to depend on compiling.
+		Task compileTask = project.tasks.getByName("compileJava")
+		instrumentTask.dependsOn compileTask
+		// test tasks need to depend on instrumentation.
 		project.tasks.all { task ->
 			if ( task instanceof  Test ) {
 				project.logger.info("Changing dependencies for task ${task.project}:${task.name}")
@@ -76,55 +80,56 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
 
-        registerTaskFixupListener(project.gradle)
+		registerTaskFixupListener(project.gradle)
 
-    }
+	}
 
-    private void registerTaskFixupListener(Gradle gradle) {
-        // If we need to run cobertura, fix test classpaths, and set them to
-        // generate reports on failure.  If not, disable instrumentation.
-        // "whenReady()" is a global event, so closure should be registered exactly once for single and multi-project builds.
-        if (!gradle.ext.has('coberturaPluginListenerRegistered')) {
-            gradle.ext.coberturaPluginListenerRegistered = true
-            gradle.taskGraph.whenReady { graph ->
-                if (graph.allTasks.find { it.name == "cobertura" } != null) {
-                     gradle.rootProject.logger.info("Enhancing test tasks for Cobertura")
-                    // We want to generate a report if we're in the cobertura task, or if
-                    // we're about to fail a test task.  We need to use afterSuite instead
-                    // of doLast because doLast won't run if a test fails
-                    graph.afterTask() { task, state ->
-                        if ((task.name == "cobertura" || (task instanceof Test && state.failure != null))) {
-                            task.project.coberturaRunner.generateCoverageReport task.project.extensions.cobertura.coverageDatafile.path, task.project.extensions.cobertura.coverageReportDir.path, task.project.extensions.cobertura.coverageFormat, task.project.files(task.project.extensions.cobertura.coverageSourceDirs).files.collect { it.path }
-                        }
-                    }
-                    // Fix the classpath of any test task we are actually running.
-                    graph.allTasks.findAll { it instanceof Test}.each { Test test ->
-                        test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageDatafile)
-                        test.classpath += test.project.configurations['cobertura']
-                        fixTestClasspath(test)
-                    }
-                } else {
-                    // Disable all instrument tasks.
-                    graph.allTasks.findAll { it instanceof InstrumentTask}.each {
-                        it.enabled = false
-                    }
-                }
-            }
-        }
-    }
+	private void registerTaskFixupListener(Gradle gradle) {
+		// If we need to run cobertura, fix test classpaths, and set them to
+		// generate reports on failure.  If not, disable instrumentation.
+		// "whenReady()" is a global event, so closure should be registered exactly
+		// once for single and multi-project builds.
+		if ( !gradle.ext.has('coberturaPluginListenerRegistered') ) {
+			gradle.ext.coberturaPluginListenerRegistered = true
+			gradle.taskGraph.whenReady { graph ->
+				if (graph.allTasks.find { it.name == "cobertura" } != null) {
+					gradle.rootProject.logger.info("Enhancing test tasks for Cobertura")
+					// We want to generate a report if we're in the cobertura task, or if
+					// we're about to fail a test task.  We need to use afterSuite instead
+					// of doLast because doLast won't run if a test fails
+					graph.afterTask() { task, state ->
+						if ((task.name == "cobertura" || (task instanceof Test && state.failure != null))) {
+							task.project.coberturaRunner.generateCoverageReport task.project.extensions.cobertura.coverageDatafile.path, task.project.extensions.cobertura.coverageReportDir.path, task.project.extensions.cobertura.coverageFormat, task.project.files(task.project.extensions.cobertura.coverageSourceDirs).files.collect { it.path }
+						}
+					}
+					// Fix the classpath of any test task we are actually running.
+					graph.allTasks.findAll { it instanceof Test}.each { Test test ->
+						test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageDatafile)
+						test.classpath += test.project.configurations['cobertura']
+						fixTestClasspath(test)
+					}
+				} else {
+					// Disable all instrument tasks.
+					graph.allTasks.findAll { it instanceof InstrumentTask}.each {
+						it.enabled = false
+					}
+				}
+			}
+		}
+	}
 
-    /**
+	/**
 	 * Configure a test task.  remove source dirs and add the instrumented dir
 	 * @param test the test task to fix
 	 */
 	def fixTestClasspath(Task test) {
 		def instrumentDirs = [] as Set
-        def project = test.project
+		def project = test.project
 		project.files(project.sourceSets.main.output.classesDir.path).each { File f ->
 			if (f.isDirectory()) {
 				test.classpath = test.classpath - project.files(f)
 			}
 		}
-		test.classpath = test.classpath + project.files("${project.buildDir}/instrumented_classes")
+		test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
 	}
 }
