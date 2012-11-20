@@ -1,3 +1,8 @@
+News
+----
+Release 1.0.3 fixes a classpath issue that prevented reports from generating
+correctly on the first run after a "clean"
+
 Introduction
 ------------
 
