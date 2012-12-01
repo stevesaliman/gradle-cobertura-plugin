@@ -27,9 +27,10 @@ class CoberturaExtension {
 	File coverageReportDir
 
 	/**
-	 * Format of cobertura report. Default is 'html'
+	 * Formats of cobertura report. Default is a single report in 'html'
+	 * format.
 	 */
-	String coverageFormat = 'html'
+	Set<String> coverageFormats = ['html']
 
 	/**
 	 * Directories of source files to use. Defaults to
@@ -56,11 +57,6 @@ class CoberturaExtension {
 	 * Version of cobertura to use for the plugin. Defaults to 1.9.4.1
 	 */
 	String coberturaVersion = '1.9.4.1'
-
-	/**
-	 * Test message. Used for testing and will be removed when we're done.
-	 */
-	String coverageMessage = "Default"
 
 	private Project project
 

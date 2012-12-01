@@ -1,7 +1,16 @@
 News
 ----
-Release 1.0.3 fixes a classpath issue that prevented reports from generating
-correctly on the first run after a "clean"
+If you are running a version prior to Release 1.0.3, you should update to a 
+newer version, as version 1.0.3 fixes a classpath issue that prevented reports
+from generating correctly on the first run after a "clean"
+
+Version 1.1.0 adds support for multiple report formats (Thank you aartiPI).
+The default behavior is still to generate html reports, but you can change this
+behavior by assigning a value to ```coverageFormats``` in the cobertura 
+configuration block.  There is a slight backwards compatibility issue for 
+anyone who overrode the default format in version 1.0.3 and earlier. To fix it,
+simply change ```coverageFormat``` to ```coverageFormats``` and change the 
+value to a String array.
 
 Introduction
 ------------
@@ -54,7 +63,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.0.3"
+        classpath "net.saliman:gradle-cobertura-plugin:1.1.0"
     }
 }
 apply plugin: 'cobertura'
@@ -69,6 +78,9 @@ file to create
 
 - cobertura.coverageReportDir = *dir*: the file object representing the
 directory where coverage reports should be built.
+
+Extension properties are changed in the ```cobertura``` block in your 
+build.gradle file.
 
 To get a Cobertura coverage report, simply execute the cobertura task.  The
 plugin will make the cobertura task dependent on any Test tasks your project
@@ -88,7 +100,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.0.3'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.1.0'
         }
     }
 

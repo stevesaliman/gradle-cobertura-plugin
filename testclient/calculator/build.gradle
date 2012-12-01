@@ -13,6 +13,10 @@ dependencies {
 	testCompile "junit:junit:4.10"
 }
 
+cobertura {
+  coverageFormats = [ 'xml','html' ]
+}
+
 test {
 	include '**/*Add*'
 	doFirst {

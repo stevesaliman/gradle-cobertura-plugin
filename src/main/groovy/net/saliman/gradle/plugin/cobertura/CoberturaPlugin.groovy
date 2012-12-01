@@ -99,7 +99,14 @@ class CoberturaPlugin implements Plugin<Project> {
 					// of doLast because doLast won't run if a test fails
 					graph.afterTask() { task, state ->
 						if ((task.name == "cobertura" || (task instanceof Test && state.failure != null))) {
-							task.project.coberturaRunner.generateCoverageReport task.project.extensions.cobertura.coverageDatafile.path, task.project.extensions.cobertura.coverageReportDir.path, task.project.extensions.cobertura.coverageFormat, task.project.files(task.project.extensions.cobertura.coverageSourceDirs).files.collect { it.path }
+							// Generate a report for each provided format
+							for ( format in task.project.extensions.cobertura.coverageFormats ) {
+								task.project.coberturaRunner.generateCoverageReport(
+												task.project.extensions.cobertura.coverageDatafile.path,
+												task.project.extensions.cobertura.coverageReportDir.path,
+												format,
+												task.project.files(task.project.extensions.cobertura.coverageSourceDirs).files.collect { it.path })
+							}
 						}
 					}
 					// Fix the classpath of any test task we are actually running.
