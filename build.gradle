@@ -8,9 +8,12 @@ apply plugin: 'signing'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
+sourceCompatibility = '1.5'
+targetCompatibility = '1.5'
+
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "1.1.0"
+version = "1.1.1"
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
@@ -115,8 +118,10 @@ uploadArchives {
 			configuration = configurations.archives
 			//repository(url: "file://$buildDir/m2repo")
 			repository(url: mavenCentralUploadUrl) {
-				authentication(userName: mavenCentralUsername,
-								password: mavenCentralPassword)
+      if (project.hasProperty('mavenCentralUsername') && project.hasProperty('mavenCentralPassword')) {
+				authentication(userName: project.property('mavenCentralUsername'),
+								password: project.property('mavenCentralPassword'))
+        }
 				releases(updatePolicy: "always")
 				snapshots(updatePolicy: "always")
 			}
