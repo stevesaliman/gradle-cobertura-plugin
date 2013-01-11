@@ -65,7 +65,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.1.0"
+        classpath "net.saliman:gradle-cobertura-plugin:1.1.1"
     }
 }
 apply plugin: 'cobertura'
@@ -102,7 +102,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.1.0'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.1.1'
         }
     }
 
