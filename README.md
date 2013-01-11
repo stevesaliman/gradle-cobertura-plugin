@@ -12,6 +12,8 @@ anyone who overrode the default format in version 1.0.3 and earlier. To fix it,
 simply change ```coverageFormat``` to ```coverageFormats``` and change the 
 value to a String array.
 
+Version 1.1.1 adds support for Java 1.5, with thanks to trnl.
+
 Introduction
 ------------
 
