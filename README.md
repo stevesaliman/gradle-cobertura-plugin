@@ -81,6 +81,14 @@ file to create
 - cobertura.coverageReportDir = *dir*: the file object representing the
 directory where coverage reports should be built.
 
+- cobertura.coverageExcludes = *regexes*: an array of regular expressions 
+representing classes you want to exclude.  Cobertura will compare these against
+the fully qualified filenames of your classes as they will exist in your 
+instrumented classes directory, so you'll probably want to have ```.*``` at
+the start of the expression.  Slashes in filenames will be replaced with dots,
+so you can specify package names in the regex.  For example, ```.*logger.*```
+would exclude any classes in a 'logger' package.
+
 Extension properties are changed in the ```cobertura``` block in your 
 build.gradle file.
 

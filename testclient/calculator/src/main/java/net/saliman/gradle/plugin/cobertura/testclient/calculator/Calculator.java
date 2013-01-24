@@ -11,6 +11,7 @@ import java.lang.RuntimeException;
 import java.lang.System;
 import java.net.URL;
 import java.util.Properties;
+import net.saliman.gradle.plugin.cobertura.testclient.dao.CalculatorDao;
 
 /**
  * Just a simple little calculator that we can use to test some things.
@@ -36,6 +37,7 @@ public class Calculator {
 	}
 	public int add(int x, int y) {
 		Logger.log("Adding for " + properties.get("author"));
+		CalculatorDao.storeCalculation(x, y, "add");
 		return x+y;
 	}
 

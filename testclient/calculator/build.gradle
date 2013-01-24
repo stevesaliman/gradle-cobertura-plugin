@@ -15,6 +15,7 @@ dependencies {
 
 cobertura {
   coverageFormats = [ 'xml','html' ]
+  coverageExcludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
 }
 
 test {
