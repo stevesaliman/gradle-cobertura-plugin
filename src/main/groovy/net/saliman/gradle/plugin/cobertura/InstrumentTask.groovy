@@ -33,7 +33,7 @@ class InstrumentTask extends DefaultTask {
 		// Before we instrument, copy from the main source to the instrumented path.
 		// Doing this here means we only need to do it when we need to instrument.
 		def instrumentDirs = [] as Set
-		project.files(project.sourceSets.main.output.classesDir.path).each { File f ->
+		project.files(classesDirs).each { File f ->
 			if (f.isDirectory()) {
 				// Copy directories from main source to instrumented path
 				project.copy {
