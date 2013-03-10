@@ -14,6 +14,10 @@ value to a String array.
 
 Version 1.1.1 adds support for Java 1.5, with thanks to trnl.
 
+Version 1.1.2 Fixes some issues with multi project builds, with thanks to 
+detlef-brendle.
+
+
 Introduction
 ------------
 
@@ -65,7 +69,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.1.1"
+        classpath "net.saliman:gradle-cobertura-plugin:1.1.2"
     }
 }
 apply plugin: 'cobertura'
@@ -97,6 +101,21 @@ To get a Cobertura coverage report, simply execute the cobertura task.  The
 plugin will make the cobertura task dependent on any Test tasks your project
 has, and will run them before running the actual report.
 
+If you have a multi-project build, and you need to have classes from more than
+one of them, you'll need to add some code to the coverage block of your project
+similar to the following:
+
+```groovy
+cobertura {
+   rootProject.subprojects.each {
+   coverageDirs << file("${it.name}/build/classes/main")
+}
+```
+
+This assumes that each child project is in a directory underneath the main 
+project directory.  If this is not the case, the argument to ```file``` will
+need to be modified accordingly.
+
 Building
 --------
 To build from source:
@@ -111,7 +130,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.1.1'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.1.2'
         }
     }
 
