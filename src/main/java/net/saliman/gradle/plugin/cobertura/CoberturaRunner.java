@@ -11,7 +11,8 @@ import net.sourceforge.cobertura.instrument.Main;
 public class CoberturaRunner {
 
     public void instrument(String basedir, String datafile, String destination, List<String> ignore,
-            List<String> includeClasses, List<String> excludeClasses, List<String> instrument) {
+            List<String> includeClasses, List<String> excludeClasses,
+            boolean ignoreTrivial, List<String> ignoreMethodAnnotations, List<String> instrument) {
         List<String> args = new ArrayList<String>();
         /*
          * cobertura will ignore excludes if there are no includes specified, so
@@ -52,6 +53,17 @@ public class CoberturaRunner {
                 args.add(s);
             }
         }
+	    if ( ignoreTrivial ) {
+		    args.add("--ignoreTrivial");
+	    }
+
+	    if ( ignoreMethodAnnotations != null ) {
+		    for (String s : ignoreMethodAnnotations ) {
+			    args.add("--ignoreMethodAnnotation");
+			    args.add(s);
+		    }
+	    }
+
         args.addAll(instrument);
         Main.main(args.toArray(new String[args.size()]));
     }

@@ -20,6 +20,7 @@ import net.saliman.gradle.plugin.cobertura.testclient.dao.CalculatorDao;
  */
 public class Calculator {
 	private Properties properties;
+	private String someValue;
 
 	public Calculator() {
 		if ( properties != null ) {
@@ -35,6 +36,23 @@ public class Calculator {
 		}
 
 	}
+
+	/**
+	 * Used to test cobertura 2.0's exclusion of trivial getters.
+	 * @return who cares?
+	 */
+	public String getSomeValue() {
+	    return someValue;
+	}
+
+	/**
+	 * Used to test cobertura 2.0's exclusion of trivial setters.
+	 * @param someValue a new value for us to ignore
+	 */
+	public void setSomeValue(String someValue) {
+	    this.someValue = someValue;
+	}
+
 	public int add(int x, int y) {
 		Logger.log("Adding for " + properties.get("author"));
 		CalculatorDao.storeCalculation(x, y, "add");
@@ -52,5 +70,16 @@ public class Calculator {
 
 	public int multiply(int x, int y) {
 		return x*y;
+	}
+
+	/**
+	 * Method that appears to do stuff, but we never call it.  We want to see
+	 * if telling Cobertura about the annotation on this method causes it to
+	 * be ignored.
+	 */
+	@CoverageIgnore
+	public void doStuff() {
+		int i = 0;
+		int j = i+1;
 	}
 }

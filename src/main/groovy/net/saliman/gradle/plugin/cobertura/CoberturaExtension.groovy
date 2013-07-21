@@ -54,9 +54,20 @@ class CoberturaExtension {
 	List<String> coverageIgnores
 
 	/**
-	 * Version of cobertura to use for the plugin. Defaults to 1.9.4.1
+	 * Whether or not to ignore trivial methods like simple getters and setters.
 	 */
-	String coberturaVersion = '1.9.4.1'
+	boolean coverageIgnoreTrivial = false;
+
+	/**
+	 * List of fully qualified annotation names that, if present on a method,
+	 * will cause it to be ignored by Cobertura for coverage purposes.
+	 */
+	List<String> coverageIgnoreMethodAnnotations
+
+	/**
+	 * Version of cobertura to use for the plugin. Defaults to 2.0.0
+	 */
+	String coberturaVersion = '2.0.3-SNAPSHOT'
 
 	private Project project
 

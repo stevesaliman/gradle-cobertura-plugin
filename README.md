@@ -17,6 +17,11 @@ Version 1.1.1 adds support for Java 1.5, with thanks to trnl.
 Version 1.1.2 Fixes some issues with multi project builds, with thanks to 
 detlef-brendle.
 
+Version 1.2.0 Adds support for Cobertura 2.0, which introduced some new
+features.  Best among them are 2 new options, ```ignoreTrivial``` and
+```ignoreMethodAnnotation```, each of which are described in the usage section
+below
+
 
 Introduction
 ------------
@@ -31,7 +36,7 @@ cobertura reports after the last test task that ran.
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
 
-- Works with Gradle 1.0 and 1.1 without deprecation warnings.
+- Works with Gradle 1.0 and above.
 
 - I've worked a lot with build lifecycle to make sure that things only happen
 if they need to happen, and when they need to happen.  For example, we only
@@ -69,7 +74,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.1.2"
+        classpath "net.saliman:gradle-cobertura-plugin:1.2.0"
     }
 }
 apply plugin: 'cobertura'
@@ -78,6 +83,13 @@ apply plugin: 'cobertura'
 There are sensible defaults for most things, but if needed, you can change some
 of the properties to get different behavior.  The complete set is in the
 CoberturaExtensions.groovy file, but the two most common are:
+
+- cobertura.coverageIgnoreTrivial = *true|false*: New in version 2.0, this
+switch tells Cobertura to ignore simple getters and setters.
+
+- cobertura.coverageIgnoreMethodAnnotations = *annotations*: New in version
+2.0, this is an array of fully qualified annotation names.  Any method
+annotated with an annotation in this array will be ignored by Cobertura.
 
 - cobertura.coverageDataFile = *file*: the file object referring to the .ser
 file to create
@@ -130,7 +142,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.1.2'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.2.0'
         }
     }
 

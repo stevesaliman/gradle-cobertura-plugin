@@ -7,6 +7,7 @@ apply plugin: 'cobertura'
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
@@ -16,6 +17,8 @@ dependencies {
 cobertura {
   coverageFormats = [ 'xml','html' ]
   coverageExcludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
+  coverageIgnoreTrivial = true;
+  coverageIgnoreMethodAnnotations = [ 'net.saliman.gradle.plugin.cobertura.testclient.calculator.CoverageIgnore' ]
 }
 
 test {
@@ -42,5 +45,5 @@ task testSubtract(type: Test) {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.0'
+	gradleVersion = '1.6'
 }

@@ -51,6 +51,9 @@ class InstrumentTask extends DefaultTask {
 		runner.instrument null, getDatafile().path, getDestinationDir()?.path,
 						configuration.coverageIgnores as List,
 						configuration.coverageIncludes as List,
-						configuration.coverageExcludes as List, instrumentDirs as List
+						configuration.coverageExcludes as List,
+						configuration.coverageIgnoreTrivial as boolean,
+						configuration.coverageIgnoreMethodAnnotations as List,
+						instrumentDirs as List
 	}
 }
