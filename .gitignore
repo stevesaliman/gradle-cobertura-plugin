@@ -4,6 +4,7 @@ test-output
 .project
 .gradle
 .settings
+.idea
 bin
 gradle-app.setting
 *.iml

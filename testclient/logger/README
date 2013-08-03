@@ -1,0 +1,4 @@
+This sub-project is for a utility class for which we don't need a coverage 
+report, but we do have unit tests.
+
+This helps us test behavior in a multi-project environment

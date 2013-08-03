@@ -4,6 +4,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.tasks.testing.Test
 
 import org.gradle.api.invocation.Gradle
@@ -111,9 +113,15 @@ class CoberturaPlugin implements Plugin<Project> {
 					}
 					// Fix the classpath of any test task we are actually running.
 					graph.allTasks.findAll { it instanceof Test}.each { Test test ->
-						test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageDatafile)
-						test.classpath += test.project.configurations['cobertura']
-						fixTestClasspath(test)
+						try {
+							Configuration config = test.project.configurations['cobertura']
+							test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageDatafile)
+							test.classpath += config
+							fixTestClasspath(test)
+						} catch (UnknownConfigurationException e) {
+							// Eat this. It just means we have a test in a project that
+							// doesn't have cobertura applied.
+						}
 					}
 				} else {
 					// Disable all instrument tasks.

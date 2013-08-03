@@ -1,9 +1,9 @@
 package net.saliman.gradle.plugin.cobertura;
 
+import net.sourceforge.cobertura.instrument.Main;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.cobertura.instrument.Main;
 
 /**
  * Wrapper for Cobertura's main class.
@@ -12,7 +12,8 @@ public class CoberturaRunner {
 
     public void instrument(String basedir, String datafile, String destination, List<String> ignore,
             List<String> includeClasses, List<String> excludeClasses,
-            boolean ignoreTrivial, List<String> ignoreMethodAnnotations, List<String> instrument) {
+            boolean ignoreTrivial, List<String> ignoreMethodAnnotations, String auxiliaryClasspath,
+            List<String> instrument) {
         List<String> args = new ArrayList<String>();
         /*
          * cobertura will ignore excludes if there are no includes specified, so
@@ -63,6 +64,16 @@ public class CoberturaRunner {
 			    args.add(s);
 		    }
 	    }
+
+	    args.add("--auxClasspath");
+	    args.add(auxiliaryClasspath);
+//	    <path id="cobertura.auxpath">
+//	    <pathelement path="${classpath}"/>
+//	    <fileset dir="lib">
+//	    <include name="**/*.jar"/>
+//	    </fileset>
+//	    <pathelement location="classes"/>
+//	    </path>
 
         args.addAll(instrument);
         Main.main(args.toArray(new String[args.size()]));

@@ -1,0 +1,5 @@
+The calculator sub-project represents business logic where we want to examine
+coverage.  The build file for this project applies the cobertura plugin.  It
+uses code in a logger sub-project.
+
+This helps us test things out in a multi project build.

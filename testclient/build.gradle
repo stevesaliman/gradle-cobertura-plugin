@@ -8,9 +8,11 @@
 subprojects {
   apply plugin: 'java'
 }
+
 project(':calculator') {
   dependencies {
     compile project(':logger')
     runtime project(':logger')
   }
 }
+
