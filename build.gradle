@@ -13,7 +13,7 @@ targetCompatibility = '1.5'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "1.2.0-SNAPSHOT"
+version = "1.2.0"
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
@@ -36,7 +36,7 @@ repositories {
 dependencies {
 	compile 'org.codehaus.groovy:groovy-all:2.0.6'
 	compile gradleApi()
-	compile 'net.sourceforge.cobertura:cobertura:2.0.3-SNAPSHOT'
+	compile 'net.sourceforge.cobertura:cobertura:2.0.3'
 	testCompile 'junit:junit:4.10'
 	archives "org.apache.maven.wagon:wagon-ssh:2.2"
 	archives "org.apache.maven.wagon:wagon-ssh-external:2.2"

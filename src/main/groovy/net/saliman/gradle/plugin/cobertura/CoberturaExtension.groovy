@@ -65,9 +65,9 @@ class CoberturaExtension {
 	List<String> coverageIgnoreMethodAnnotations
 
 	/**
-	 * Version of cobertura to use for the plugin. Defaults to 2.0.0
+	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
 	 */
-	String coberturaVersion = '2.0.3-SNAPSHOT'
+	String coberturaVersion = '2.0.3'
 
 	private Project project
 

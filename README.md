@@ -4,23 +4,23 @@ If you are running a version prior to Release 1.0.3, you should update to a
 newer version, as version 1.0.3 fixes a classpath issue that prevented reports
 from generating correctly on the first run after a "clean"
 
-Version 1.1.0 adds support for multiple report formats (Thank you aartiPI).
+Version 1.2.0 Adds support for Cobertura 2.0, which introduced some new
+features.  Best among them are 2 new options, ```ignoreTrivial``` and
+```ignoreMethodAnnotation```, each of which are described in the usage section
+below. It also fixes some new issues found in multi-project builds.
+
+Version 1.1.2 Fixed some issues with multi project builds, with thanks to 
+detlef-brendle.
+
+Version 1.1.1 added support for Java 1.5, with thanks to trnl.
+
+Version 1.1.0 added support for multiple report formats (Thank you aartiPI).
 The default behavior is still to generate html reports, but you can change this
 behavior by assigning a value to ```coverageFormats``` in the cobertura 
 configuration block.  There is a slight backwards compatibility issue for 
 anyone who overrode the default format in version 1.0.3 and earlier. To fix it,
 simply change ```coverageFormat``` to ```coverageFormats``` and change the 
 value to a String array.
-
-Version 1.1.1 adds support for Java 1.5, with thanks to trnl.
-
-Version 1.1.2 Fixes some issues with multi project builds, with thanks to 
-detlef-brendle.
-
-Version 1.2.0 Adds support for Cobertura 2.0, which introduced some new
-features.  Best among them are 2 new options, ```ignoreTrivial``` and
-```ignoreMethodAnnotation```, each of which are described in the usage section
-below
 
 
 Introduction
@@ -29,9 +29,9 @@ Introduction
 This plugin was inspired by the Cobertura plugin by valkolovos and jvanderpol.
 This plugin is an improvement over the the original in a few important ways.
 
-- The biggest difference is that the plugin now runs a Cobertura coverage
-report even if tests fail.  If there are multiple test tasks, it will run the
-cobertura reports after the last test task that ran.
+- The biggest difference is that this fork of the plugin runs a Cobertura 
+coverage report even if tests fail.  If there are multiple test tasks, it will
+run the cobertura reports after the last test task that ran.
 
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
