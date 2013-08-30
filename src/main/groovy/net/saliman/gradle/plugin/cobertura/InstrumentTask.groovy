@@ -52,22 +52,14 @@ class InstrumentTask extends DefaultTask {
 		// set the auxiliary classpath to the current classpath plus jars in the lib dir plus classes in the output dir.
 		// AKA current classpath + compileClasspath + compileClassPath
 		//	    <path id="cobertura.auxpath">
-		Object m = project.sourceSets.main
-		FileCollection s = project.sourceSets.main.compileClasspath // FileCollection
-		String cpStr = s.getAsPath()
-		Set<File> files = s.getFiles()
-		Object o = project.sourceSets.main.output.classesDir.path
-		String pcpStr = project.configurations.compile.getAsPath()
-
-
-		String auxiliaryClasspath =	project.sourceSets.main.output.classesDir.path +
-			":" + project.sourceSets.main.compileClasspath.getAsPath()
 //	    <pathelement path="${classpath}"/>
 //	    <fileset dir="lib">
 //	    <include name="**/*.jar"/>
 //	    </fileset>
 //	    <pathelement location="classes"/>
 //	    </path>
+		String auxiliaryClasspath =	project.sourceSets.main.output.classesDir.path +
+						":" + project.sourceSets.main.compileClasspath.getAsPath()
 
 
 

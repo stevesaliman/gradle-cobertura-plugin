@@ -50,7 +50,7 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {
-			project.configurations.add('cobertura') {
+			project.configurations.create('cobertura') {
 				extendsFrom project.configurations['testCompile']
 			}
 			project.dependencies {
@@ -61,22 +61,34 @@ class CoberturaPlugin implements Plugin<Project> {
 		// Add an instrument task, but don't have it do anything yet because we
 		// don't know if we need to run cobertura yet. We need to process all new
 		// tasks as they are added, so we can't use withType.
-		project.tasks.add(name: 'instrument', type: InstrumentTask, {configuration = project.extensions.cobertura})
-		project.tasks.add(name: 'cobertura', type:  DefaultTask)
-		Task coberturaTask = project.tasks.getByName("cobertura")
-		coberturaTask.setDescription("Generate Cobertura coverage reports after running tests.")
+		project.tasks.create(name: 'instrument', type: InstrumentTask, {configuration = project.extensions.cobertura})
 		InstrumentTask instrumentTask = project.tasks.getByName("instrument")
 		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
 		instrumentTask.runner = project.extensions.coberturaRunner
 		// instrumentation needs to depend on compiling.
 		Task compileTask = project.tasks.getByName("compileJava")
 		instrumentTask.dependsOn compileTask
-		// test tasks need to depend on instrumentation.
+
+		// Create the report task that does the actual work of generating the
+		// reports.
+		project.tasks.create(name: 'coberturaReport', type: ReportTask, {configuration = project.extensions.cobertura})
+		ReportTask reportTask = project.tasks.getByName("coberturaReport")
+		reportTask.setDescription("Helper task that does the actual Cobertura report generation")
+		reportTask.runner = project.extensions.coberturaRunner
+
+		// Create the cobertura task itself.  This is the task users will call.
+		project.tasks.create(name: 'cobertura', type:  DefaultTask)
+		Task coberturaTask = project.tasks.getByName("cobertura")
+		coberturaTask.setDescription("Generate Cobertura coverage reports after running tests.")
+
+		// The cobertura task needs to depend on all of the test tasks, and test
+		// tasks need to be finalized by the report task.
 		project.tasks.all { task ->
 			if ( task instanceof  Test ) {
 				project.logger.info("Changing dependencies for task ${task.project}:${task.name}")
 				task.dependsOn 'instrument'
 				coberturaTask.dependsOn task
+				task.finalizedBy reportTask
 			}
 		}
 
@@ -86,6 +98,14 @@ class CoberturaPlugin implements Plugin<Project> {
 
 	}
 
+	/**
+	 * Register a listener with Gradle.  When gradle is ready to run tasks, it
+	 * will call our listener.  If the coberrura task is in our graph, the
+	 * listener will fix the classpaths of all the test tasks that we are actually
+	 * running.
+	 *
+	 * @param gradle the gradle instance running the plugin.
+	 */
 	private void registerTaskFixupListener(Gradle gradle) {
 		// If we need to run cobertura, fix test classpaths, and set them to
 		// generate reports on failure.  If not, disable instrumentation.
@@ -95,23 +115,8 @@ class CoberturaPlugin implements Plugin<Project> {
 			gradle.ext.coberturaPluginListenerRegistered = true
 			gradle.taskGraph.whenReady { graph ->
 				if (graph.allTasks.find { it.name == "cobertura" } != null) {
-					gradle.rootProject.logger.info("Enhancing test tasks for Cobertura")
-					// We want to generate a report if we're in the cobertura task, or if
-					// we're about to fail a test task.  We need to use afterSuite instead
-					// of doLast because doLast won't run if a test fails
-					graph.afterTask() { task, state ->
-						if ((task.name == "cobertura" || (task instanceof Test && state.failure != null))) {
-							// Generate a report for each provided format
-							for ( format in task.project.extensions.cobertura.coverageFormats ) {
-								task.project.coberturaRunner.generateCoverageReport(
-												task.project.extensions.cobertura.coverageDatafile.path,
-												task.project.extensions.cobertura.coverageReportDir.path,
-												format,
-												task.project.files(task.project.extensions.cobertura.coverageSourceDirs).files.collect { it.path })
-							}
-						}
-					}
-					// Fix the classpath of any test task we are actually running.
+					// We're running cobertura, so fix the classpath of any test task we
+					// are actually running.
 					graph.allTasks.findAll { it instanceof Test}.each { Test test ->
 						try {
 							Configuration config = test.project.configurations['cobertura']
@@ -119,13 +124,17 @@ class CoberturaPlugin implements Plugin<Project> {
 							test.classpath += config
 							fixTestClasspath(test)
 						} catch (UnknownConfigurationException e) {
-							// Eat this. It just means we have a test in a project that
-							// doesn't have cobertura applied.
+							// Eat this. It just means we have a multi-project build, and
+							// there is test in a project that doesn't have cobertura applied.
 						}
 					}
 				} else {
-					// Disable all instrument tasks.
+					// We're not running cobertura, so disable all instrument and report
+					// tasks.
 					graph.allTasks.findAll { it instanceof InstrumentTask}.each {
+						it.enabled = false
+					}
+					graph.allTasks.findAll { it instanceof ReportTask}.each {
 						it.enabled = false
 					}
 				}
@@ -138,7 +147,6 @@ class CoberturaPlugin implements Plugin<Project> {
 	 * @param test the test task to fix
 	 */
 	def fixTestClasspath(Task test) {
-		def instrumentDirs = [] as Set
 		def project = test.project
 		project.files(project.sourceSets.main.output.classesDir.path).each { File f ->
 			if (f.isDirectory()) {
