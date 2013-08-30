@@ -1,8 +1,11 @@
 News
 ----
-If you are running a version prior to Release 1.0.3, you should update to a 
-newer version, as version 1.0.3 fixes a classpath issue that prevented reports
-from generating correctly on the first run after a "clean"
+If you are running Gradle 1.7+, you should probably upgrade to version 2.0 of
+this plugin.
+
+If you are running a version of the plugin prior to Release 1.0.3, you should
+update to a newer version, as version 1.0.3 fixes a classpath issue that
+prevented reports from generating correctly on the first run after a "clean"
 
 Version 1.2.0 Adds support for Cobertura 2.0, which introduced some new
 features.  Best among them are 2 new options, ```ignoreTrivial``` and
