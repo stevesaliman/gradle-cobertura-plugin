@@ -1,10 +1,14 @@
 News
 ----
-If you are running a version prior to Release 1.0.3, you should update to a 
-newer version, as version 1.0.3 fixes a classpath issue that prevented reports
-from generating correctly on the first run after a "clean"
+Version 2.0.0 only works with Gradle 1.7 and newer.  If you are on an older
+version of gradle, you should use the latest 1.x release of this plugin.
 
-Version 1.2.0 Adds support for Cobertura 2.0, which introduced some new
+Version 2.0.0 uses new features of Gradle 1.7 and removes deprecation warnings.
+It also changes the dependencies slightly so that running ```gradle cobertura```
+executes all the tests in a multi-project build, similar to what 
+```gradle test``` does.
+
+Version 1.2.0 Added support for Cobertura 2.0, which introduced some new
 features.  Best among them are 2 new options, ```ignoreTrivial``` and
 ```ignoreMethodAnnotation```, each of which are described in the usage section
 below. It also fixes some new issues found in multi-project builds.
@@ -31,7 +35,10 @@ This plugin is an improvement over the the original in a few important ways.
 
 - The biggest difference is that this fork of the plugin runs a Cobertura 
 coverage report even if tests fail.  If there are multiple test tasks, it will
-run the cobertura reports after the last test task that ran.
+run the cobertura reports after the last test task that ran. Note that if
+there is a test failure in a project that is part of a multi-project build, 
+the tests in other projects won't necessarily run.  This is consistent with
+Gradle's behavior in the ```test``` task.
 
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
@@ -63,6 +70,10 @@ some proper unit tests.
 
 - I'd like to have the coverage reports only run if the source or the tests have
 changed, but I haven't started that yet. Instrumentation would only need to happen if coverage reports are requested, and are not up to date.
+
+- Did I mention testing? :-)  As issues are resolved, it would great if I could
+have unit tests that made sure that things fixed for prior issues are still
+fixed.
 
 Usage
 -----
@@ -109,9 +120,12 @@ exclude any classes in the 'net.saliman.someapp.logger' package.
 Extension properties are changed in the ```cobertura``` block in your 
 build.gradle file.
 
-To get a Cobertura coverage report, simply execute the cobertura task.  The
-plugin will make the cobertura task dependent on any Test tasks your project
-has, and will run them before running the actual report.
+To get a Cobertura coverage report, simply execute the ```cobertura``` task. 
+The plugin will make the cobertura task dependent on any Test tasks your 
+project has, any ```test``` tasks in related projects, and will run them all 
+before running the actual report. The only difference in the tests that run
+in the ```test``` and ```cobertura``` tasks is that the ```cobertura``` task
+runs *all* test tasks in the current project.  The ```test``` task doesn't.
 
 If you have a multi-project build, and you need to have classes from more than
 one of them, you'll need to add some code to the coverage block of your project
@@ -142,7 +156,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.2.0'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.0.0'
         }
     }
 

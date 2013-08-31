@@ -92,6 +92,9 @@ class CoberturaPlugin implements Plugin<Project> {
 			}
 		}
 
+		// The cobertura task also needs to depend on the test tasks of other
+		// projects in a multi project build so that we run the same tests when
+		// doing "gradle cobertura" as when doing "gradle test"
 		project.gradle.rootProject.rootProject.getTasksByName('test', true).each { t ->
 			if ( t != null ) {
 				coberturaTask.dependsOn t
