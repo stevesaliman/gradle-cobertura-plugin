@@ -7,6 +7,11 @@ If you are running a version of the plugin prior to Release 1.0.3, you should
 update to a newer version, as version 1.0.3 fixes a classpath issue that
 prevented reports from generating correctly on the first run after a "clean"
 
+Version 1.2.1 Fixes some task dependencies so that "gradle cobertura" runs the 
+tests in all projects in a multi-project build, just like "gradle test" would.
+The plugin still only produces reports for projects where the cobertura plugin
+is applied.
+
 Version 1.2.0 Adds support for Cobertura 2.0, which introduced some new
 features.  Best among them are 2 new options, ```ignoreTrivial``` and
 ```ignoreMethodAnnotation```, each of which are described in the usage section
@@ -34,12 +39,16 @@ This plugin is an improvement over the the original in a few important ways.
 
 - The biggest difference is that this fork of the plugin runs a Cobertura 
 coverage report even if tests fail.  If there are multiple test tasks, it will
-run the cobertura reports after the last test task that ran.
+run the cobertura reports after the last test task that ran. There is one 
+exception to this rule.  In a multi-project build, if tests fail in one project,
+the tests in other projects will not run.  This is consistent with Gradle's 
+normal behavior when running "gradle test" on a multi-project build.
 
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
 
-- Works with Gradle 1.0 and above.
+- Works with Gradle 1.0 and above, though if you are using gradle 1.7, you 
+should consider upgrading to a 2.x release of this plugin.
 
 - I've worked a lot with build lifecycle to make sure that things only happen
 if they need to happen, and when they need to happen.  For example, we only
@@ -67,6 +76,10 @@ some proper unit tests.
 - I'd like to have the coverage reports only run if the source or the tests have
 changed, but I haven't started that yet. Instrumentation would only need to happen if coverage reports are requested, and are not up to date.
 
+- Did I mention testing? :-)  As issues are resolved, it would great if I could
+have unit tests that made sure that things fixed for prior issues are still 
+fixed.
+
 Usage
 -----
 Add the following to your build.gradle file.
@@ -77,7 +90,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.2.0"
+        classpath "net.saliman:gradle-cobertura-plugin:1.2.1"
     }
 }
 apply plugin: 'cobertura'
@@ -145,7 +158,7 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:1.2.0'
+            classpath 'net.saliman:gradle-cobertura-plugin:1.2.1'
         }
     }
 

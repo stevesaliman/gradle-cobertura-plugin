@@ -71,12 +71,22 @@ class CoberturaPlugin implements Plugin<Project> {
 		// instrumentation needs to depend on compiling.
 		Task compileTask = project.tasks.getByName("compileJava")
 		instrumentTask.dependsOn compileTask
-		// test tasks need to depend on instrumentation.
+		// all test tasks in the current project need to depend on instrumentation,
+		// and be a dependency of the cobertura task.
 		project.tasks.all { task ->
 			if ( task instanceof  Test ) {
 				project.logger.info("Changing dependencies for task ${task.project}:${task.name}")
 				task.dependsOn 'instrument'
 				coberturaTask.dependsOn task
+			}
+		}
+
+		// If we are in a multi project build, we want the "test" task of all
+		// projects to be a dependency of the cobertura task so that "gradle test"
+		// and "gradle cobertura" do the same thing.
+		project.gradle.rootProject.rootProject.getTasksByName('test', true).each { t ->
+			if ( t != null ) {
+				coberturaTask.dependsOn t
 			}
 		}
 
