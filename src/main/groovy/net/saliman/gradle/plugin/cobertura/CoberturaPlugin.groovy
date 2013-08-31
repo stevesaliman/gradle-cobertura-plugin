@@ -92,6 +92,12 @@ class CoberturaPlugin implements Plugin<Project> {
 			}
 		}
 
+		project.gradle.rootProject.rootProject.getTasksByName('test', true).each { t ->
+			if ( t != null ) {
+				coberturaTask.dependsOn t
+			}
+		}
+
 		project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
 
 		registerTaskFixupListener(project.gradle)
