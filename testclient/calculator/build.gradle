@@ -1,5 +1,6 @@
 #!groovy
 apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
@@ -11,6 +12,7 @@ repositories {
 }
 
 dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.0.6'
 	testCompile "junit:junit:4.10"
 }
 

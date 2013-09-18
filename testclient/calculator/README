@@ -3,3 +3,6 @@ coverage.  The build file for this project applies the cobertura plugin.  It
 uses code in a logger sub-project.
 
 This helps us test things out in a multi project build.
+
+This also has Groovy source to make sure we get coverage for groovy tests.
+
