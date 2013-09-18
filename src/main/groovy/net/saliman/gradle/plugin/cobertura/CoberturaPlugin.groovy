@@ -66,8 +66,8 @@ class CoberturaPlugin implements Plugin<Project> {
 		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
 		instrumentTask.runner = project.extensions.coberturaRunner
 		// instrumentation needs to depend on compiling.
-		Task compileTask = project.tasks.getByName("compileJava")
-		instrumentTask.dependsOn compileTask
+		Task classesTask = project.tasks.getByName("classes")
+		instrumentTask.dependsOn classesTask
 
 		// Create the report task that does the actual work of generating the
 		// reports.
