@@ -116,6 +116,7 @@ Extension properties are changed in the ```cobertura``` block in your
 build.gradle file.
 
 There are 2 tasks you can use to get Cobertura coverage reports:
+
 1. The ```coberturaReport``` task will cause instrumentation to happen before
 tests are run, and a coverage report to be generated after tests are run, but
 it will not cause any tests to run.  Tests will need to be supplied to the
