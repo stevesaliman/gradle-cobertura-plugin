@@ -5,18 +5,19 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
 
 /**
- * Gradle task that creates the actual Cobertura coverage reports.
+ * Gradle task that does the actual work of generating the Cobertura coverage
+ * reports.
  * <p>
  * The plugin will add this task as finalizer of test tasks
  */
-class ReportTask extends DefaultTask {
+class GenerateReportTask extends DefaultTask {
 	File destinationDir
 	CoberturaExtension configuration
 	def runner
 
 	@TaskAction
-	def instrument() {
-		project.logger.info("Instrumenting code...")
+	def generateReports() {
+		project.logger.info("Generating reports...")
 		// Generate a report for each provided format
 		for ( format in configuration.coverageFormats ) {
 			runner.generateCoverageReport(

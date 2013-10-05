@@ -33,8 +33,11 @@ class CoberturaExtension {
 	Set<String> coverageFormats = ['html']
 
 	/**
-	 * Directories of source files to use. Defaults to
-	 * project.sourceSets.main.java.srcDirs
+	 * Directories of source files to use. The default is to look for and include
+	 * each of the following, if present:
+	 * project.sourceSets.main.java.srcDirs,
+	 * project.sourceSets.main.groovy.srcDirs,
+	 * and project.sourceSets.main.scala.srcDirs
 	 */
 	Set<File> coverageSourceDirs
 
@@ -82,6 +85,21 @@ class CoberturaExtension {
 		coverageDirs = [ project.sourceSets.main.output.classesDir.path ]
 		coverageDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
+		// The cobertura plugin causes the java plugin to be included.  Also, the
+		// groovy and scala plugins extend the java plugin.  This means that the
+		// java source directories will always be defined.
 		coverageSourceDirs = project.sourceSets.main.java.srcDirs
+		// Look for Groovy
+		try {
+			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
+		} catch (MissingPropertyException e) {
+			// This just means we don't have the groovy plugin.
+		}
+		// Look for Scala
+		try {
+  		coverageSourceDirs += project.sourceSets.main.scala.srcDirs
+		} catch (MissingPropertyException e) {
+			// This just means we don't have the Scala plugin.
+		}
 	}
 }

@@ -1,5 +1,8 @@
 News
 ----
+Version 2.1.0 (when it is released) changes the way the ```cobertura``` task works.  See the Usage
+section for more details.
+
 Version 2.0.0 only works with Gradle 1.7 and newer.  If you are on an older
 version of gradle, you should use the latest 1.x release of this plugin.
 
@@ -12,20 +15,6 @@ Version 1.2.0 Added support for Cobertura 2.0, which introduced some new
 features.  Best among them are 2 new options, ```ignoreTrivial``` and
 ```ignoreMethodAnnotation```, each of which are described in the usage section
 below. It also fixes some new issues found in multi-project builds.
-
-Version 1.1.2 Fixed some issues with multi project builds, with thanks to 
-detlef-brendle.
-
-Version 1.1.1 added support for Java 1.5, with thanks to trnl.
-
-Version 1.1.0 added support for multiple report formats (Thank you aartiPI).
-The default behavior is still to generate html reports, but you can change this
-behavior by assigning a value to ```coverageFormats``` in the cobertura 
-configuration block.  There is a slight backwards compatibility issue for 
-anyone who overrode the default format in version 1.0.3 and earlier. To fix it,
-simply change ```coverageFormat``` to ```coverageFormats``` and change the 
-value to a String array.
-
 
 Introduction
 ------------
@@ -43,7 +32,8 @@ Gradle's behavior in the ```test``` task.
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
 
-- Works with Gradle 1.0 and above.
+- Version 2.0 works with Gradle 1.7 and above.  Version 1.2 works with Gradle
+1.0 through 1.6.
 
 - I've worked a lot with build lifecycle to make sure that things only happen
 if they need to happen, and when they need to happen.  For example, we only
@@ -69,7 +59,8 @@ client needs a buildSrc link back to the plugin source), but we could really use
 some proper unit tests.
 
 - I'd like to have the coverage reports only run if the source or the tests have
-changed, but I haven't started that yet. Instrumentation would only need to happen if coverage reports are requested, and are not up to date.
+changed, but I haven't started that yet. Instrumentation would only need to
+happen if the Java, Groovy, or Scala source has changed.
 
 - Did I mention testing? :-)  As issues are resolved, it would great if I could
 have unit tests that made sure that things fixed for prior issues are still
@@ -85,11 +76,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.0.0"
+        classpath "net.saliman:gradle-cobertura-plugin:2.1.0"
     }
 }
 apply plugin: 'cobertura'
 ```
+
+For projects that use Groovy or Scala, those plugins should be applied before
+the Cobertura plugin, or the Groovy and Scala source code won't be available in
+the generated reports.
 
 There are sensible defaults for most things, but if needed, you can change some
 of the properties to get different behavior.  The complete set is in the
@@ -120,12 +115,20 @@ exclude any classes in the 'net.saliman.someapp.logger' package.
 Extension properties are changed in the ```cobertura``` block in your 
 build.gradle file.
 
-To get a Cobertura coverage report, simply execute the ```cobertura``` task. 
-The plugin will make the cobertura task dependent on any Test tasks your 
-project has, any ```test``` tasks in related projects, and will run them all 
-before running the actual report. The only difference in the tests that run
-in the ```test``` and ```cobertura``` tasks is that the ```cobertura``` task
-runs *all* test tasks in the current project.  The ```test``` task doesn't.
+There are 2 tasks you can use to get Cobertura coverage reports:
+1. The ```coberturaReport``` task will cause instrumentation to happen before
+tests are run, and a coverage report to be generated after tests are run, but
+it will not cause any tests to run.  Tests will need to be supplied to the
+Gradle command line separately.
+
+2. The ```cobertura``` task is meant to be a shortcut to
+```gradle test coverageReport```, with one exception.  By default, the
+```test``` task runs all tasks named "test" from the current directory, down.
+the ```cobertura``` task adds all tasks of type "Test" in the applying project.
+The idea is that if you want to see how well your code is covered, you'd want
+to know the overall coverage, after all tests are run.  If I'm wrong about that,
+you can always use ```-x someTask``` or the ```coberturaReport``` task to more
+precisely control what tests actually get run.
 
 If you have a multi-project build, and you need to have classes from more than
 one of them, you'll need to add some code to the coverage block of your project
@@ -134,7 +137,8 @@ similar to the following:
 ```groovy
 cobertura {
    rootProject.subprojects.each {
-   coverageDirs << file("${it.name}/build/classes/main")
+     coverageDirs << file("${it.name}/build/classes/main")
+   }
 }
 ```
 
@@ -156,7 +160,6 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:2.0.0'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.1.0'
         }
     }
-

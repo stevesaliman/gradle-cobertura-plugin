@@ -14,6 +14,7 @@ repositories {
 dependencies {
 	compile 'org.codehaus.groovy:groovy-all:2.0.6'
 	testCompile "junit:junit:4.10"
+	testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 }
 
 cobertura {
@@ -43,6 +44,14 @@ task testSubtract(type: Test) {
 	dependsOn testClasses
 	doFirst {
 		println "Testing Subtract"
+	}
+}
+
+task testDoubler(type: Test) {
+	include '**/*Doubler*'
+	dependsOn testClasses
+	doFirst {
+		println "Testing Doubler"
 	}
 }
 
