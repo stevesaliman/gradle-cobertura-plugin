@@ -11,6 +11,7 @@ import org.gradle.api.tasks.TaskAction
  * The plugin will add this task as finalizer of test tasks
  */
 class GenerateReportTask extends DefaultTask {
+	static final String NAME = 'generateCoberturaReport'
 	File destinationDir
 	CoberturaExtension configuration
 	def runner
@@ -21,7 +22,7 @@ class GenerateReportTask extends DefaultTask {
 		// Generate a report for each provided format
 		for ( format in configuration.coverageFormats ) {
 			runner.generateCoverageReport(
-							configuration.coverageDatafile.path,
+							configuration.coverageOutputDatafile.path,
 							configuration.coverageReportDir.path,
 							format,
 							project.files(configuration.coverageSourceDirs).files.collect { it.path })

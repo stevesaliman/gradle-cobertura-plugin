@@ -15,10 +15,20 @@ class CoberturaExtension {
 	List<String> coverageDirs
 
 	/**
-	 * Path to data file to use for Cobertura. Defaults to
+	 * Path to the data file to produce during instrumentation. This file is used
+	 * to determine if instrumentation is up to date, so it cannot be used during
+	 * the tests themselves. Defaults to
+	 * ${project.buildDir.path}/cobertura/coberturaInput.ser
+	 */
+	File coverageInputDatafile
+
+	/**
+	 * Path to the data file to use during tests.  The contents of this file are
+	 * changed by testing, so a new copy is made from the input datafile before
+	 * each test run. Defaults to
 	 * ${project.buildDir.path}/cobertura/cobertura.ser
 	 */
-	File coverageDatafile
+	File coverageOutputDatafile
 
 	/**
 	 * Path to report directory for coverage report. Defaults to
@@ -44,17 +54,17 @@ class CoberturaExtension {
 	/**
 	 * List of include patterns
 	 */
-	List<String> coverageIncludes
+	List<String> coverageIncludes = []
 
 	/**
 	 * List of exclude patterns
 	 */
-	List<String> coverageExcludes
+	List<String> coverageExcludes = []
 
 	/**
 	 * List of ignore patterns
 	 */
-	List<String> coverageIgnores
+	List<String> coverageIgnores = []
 
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
@@ -65,7 +75,7 @@ class CoberturaExtension {
 	 * List of fully qualified annotation names that, if present on a method,
 	 * will cause it to be ignored by Cobertura for coverage purposes.
 	 */
-	List<String> coverageIgnoreMethodAnnotations
+	List<String> coverageIgnoreMethodAnnotations = []
 
 	/**
 	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
@@ -83,7 +93,8 @@ class CoberturaExtension {
 		project.logger.info "creating extension"
 		this.project = project
 		coverageDirs = [ project.sourceSets.main.output.classesDir.path ]
-		coverageDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
+		coverageInputDatafile = new File("${project.buildDir.path}/cobertura", 'coberturaInput.ser')
+		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
 		// The cobertura plugin causes the java plugin to be included.  Also, the
 		// groovy and scala plugins extend the java plugin.  This means that the
