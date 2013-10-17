@@ -34,6 +34,8 @@ class CoberturaPluginTest {
 		assertNotNull("Project is missing cobertura task", task)
 		assertTrue("cobertura task is the wrong type", task instanceof DefaultTask)
 		assertNotNull("We're missing the configuration", project.configurations.asMap['cobertura'])
-	}
-
+        task = project.tasks.findByName("coberturaCheck")
+        assertNotNull("Project is missing coberturaCheck task", task)
+        assertTrue("Check task is the wrong type", task instanceof CheckTask)
+    }
 }

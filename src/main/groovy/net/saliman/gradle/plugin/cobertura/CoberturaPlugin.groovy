@@ -153,7 +153,18 @@ class CoberturaPlugin implements Plugin<Project> {
 		DefaultTask reportTask = project.tasks.getByName(COBERTURA_REPORT_TASK_NAME)
 		reportTask.setDescription("Generate Cobertura reports after tests finish.")
 
-		// Create the cobertura task.
+        // Create the check task, but don't have it do anything yet because we
+        // don't know if we need to run cobertura yet. We need to process all new
+        // tasks as they are added, so we can't use withType.
+        project.tasks.create(name: CheckTask.NAME,
+                type: CheckTask,
+                {configuration = project.extensions.cobertura})
+        CheckTask checkTask = project.tasks.getByName(CheckTask.NAME)
+        checkTask.setDescription("Check Whether Code Coverage Metrics are Met")
+        checkTask.runner = project.extensions.coberturaRunner
+        checkTask.dependsOn instrumentTask
+
+        // Create the cobertura task.
 		project.tasks.create(name: COBERTURA_TASK_NAME, type:  DefaultTask)
 		Task coberturaTask = project.tasks.getByName(COBERTURA_TASK_NAME)
 		coberturaTask.setDescription("Run tests and generate Cobertura coverage reports.")
@@ -310,6 +321,9 @@ class CoberturaPlugin implements Plugin<Project> {
 						it.enabled = false
 					}
 					graph.allTasks.findAll { it instanceof GenerateReportTask}.each {
+						it.enabled = false
+					}
+					graph.allTasks.findAll { it instanceof CheckTask }.each {
 						it.enabled = false
 					}
 				}
