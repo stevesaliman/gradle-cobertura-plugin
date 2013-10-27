@@ -1,6 +1,6 @@
 News
 ----
-##October 27, 2013:
+###October 27, 2013:
 
 *Note:* If you have been using the ```coverageDatafile``` property in your
 ```cobertura``` block, you'll need to change it to ```coverageOutputDatafile```,
@@ -24,7 +24,7 @@ build.gradle changes.
 4. The plugin now has better support for projects that use Groovy and Scala,
 but the groovy and scala plugins need to be applied before the cobertura plugin.
 
-##September 2013:
+###September 2013:
 Version 2.0.0 only works with Gradle 1.7 and newer.  If you are on an older
 version of gradle, you should use the latest 1.x release of this plugin.
 
