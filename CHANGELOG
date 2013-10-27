@@ -1,23 +1,23 @@
 Changes for 2.1.0
 =================
-- Added the coberturaReport task to generate coverage reports. (issue 20)
+- Added the coberturaReport task to generate coverage reports. (issue #20)
 
 - The cobertura task now depends on tasks of type test in the applying project,
   and tasks named test in child projects (but not all tasks of type test in the
   child project).  It no longer runs tests in parent projects, sibling projects
-  or tests in child projects that are not named "test". (issue 14)
+  or tests in child projects that are not named "test". (issue #14)
 
 - The coverageSourceDirs extension property now looks for scala and groovy code
-  by default. (issues 7 and 22)
+  by default. (issues #7 and #22)
 
 - Instrumentation now happens only when source code has changed or the cobertura
-  configuration has changed. (issue 23)
+  configuration has changed. (issue #23)
 
 - Instrumentation now depends on the classes task so that changes to Groovy
-  or Scala source code triggers re-instrumentation. (issue 15)
+  or Scala source code triggers re-instrumentation. (issue #15)
 
 - The plugin adjusts dependencies for test tasks added after the plugin is
-  applied (issue 21)
+  applied (issue #21)
 
 Changes for 2.0.0
 =================
@@ -29,4 +29,4 @@ Changes for 1.2.0
 - Added support for Cobertura 2.0 and its extra configuration options.
 
 - Fixed bug that caused the configuration of test tasks to fail on sub-projects
-  that don't have the coberura plugin applied. (issue 8)
+  that don't have the coberura plugin applied. (issue #8)
