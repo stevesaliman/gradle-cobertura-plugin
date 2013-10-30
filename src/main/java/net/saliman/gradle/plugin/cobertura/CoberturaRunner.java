@@ -1,8 +1,16 @@
 package net.saliman.gradle.plugin.cobertura;
 
 import net.sourceforge.cobertura.instrument.Main;
+import org.gradle.api.Project;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.internal.file.collections.SimpleFileCollection;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.tasks.JavaExec;
+import org.gradle.tooling.BuildException;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -77,6 +85,39 @@ public class CoberturaRunner {
 
         args.addAll(instrument);
         Main.main(args.toArray(new String[args.size()]));
+    }
+
+    public void check(Project project, final String classpath, final List<String> args) {
+        final Logger log = project.getLogger();
+        List<String> command = new ArrayList<String>() {{
+            add("java");
+            add("-cp");
+            add(classpath);
+            add("net.sourceforge.cobertura.check.Main");
+            addAll(args);
+        }};
+        ProcessBuilder pb = new ProcessBuilder(command);
+        try {
+            Process java = pb.start();
+            BufferedReader reader= new BufferedReader(new InputStreamReader(java.getErrorStream()));
+            int returnCode = java.waitFor();
+            if (returnCode == 0) {
+                System.out.println("*** All Coverage Checks Have Passed. ***");
+            } else {
+                String line;
+                while((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                System.out.println("Coverage check failed. See messages above. [Exit Code = " +  returnCode + "]");
+                throw new BuildException("Coverage check failed. See messages above.", null);
+            }
+        } catch (InterruptedException e) {
+            log.error("Coverage check failed. See messages above.");
+            throw new BuildException("Coverage check failed. See messages above.", e);
+        } catch (IOException e) {
+            log.error("Coverage check failed. See messages above.");
+            throw new BuildException("Coverage check failed. See messages above.", e);
+        }
     }
 
     public void generateCoverageReport(String datafile, String destination, String format,

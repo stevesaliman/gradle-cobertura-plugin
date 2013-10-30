@@ -77,7 +77,42 @@ class CoberturaExtension {
 	 */
 	List<String> coverageIgnoreMethodAnnotations = []
 
-	/**
+    /**
+     * branch coverage rate
+     */
+    String branchCoverage
+
+    /**
+     * line coverage rate
+     */
+    String lineCoverage
+
+    /**
+     * package branch coverage  rate
+     */
+    String packageBranchCoverage
+
+    /**
+     * package line coverage rate
+     */
+    String packageLineCoverage
+
+    /**
+     * total line coverage rate
+     */
+    String totalLineCoverage
+
+    /**
+     * total branch coverage rate
+     */
+    String totalBranchCoverage
+
+    /**
+     * regex for minimum coverage rate
+     */
+    String minCoverageRegex
+
+    /**
 	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
 	 */
 	String coberturaVersion = '2.0.3'
