@@ -102,10 +102,6 @@ buildscript {
 apply plugin: 'cobertura'
 ```
 
-For projects that use Groovy or Scala, those plugins should be applied before
-the Cobertura plugin, or the Groovy and Scala source code won't be available in
-the generated reports.
-
 There are sensible defaults for most things, but if needed, you can change some
 of the properties to get different behavior.  The complete set is in the
 CoberturaExtensions.groovy file, but the most common are:

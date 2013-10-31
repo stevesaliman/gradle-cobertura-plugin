@@ -1,7 +1,11 @@
 package net.saliman.gradle.plugin.cobertura
 
-
-import org.gradle.api.Project;
+import org.gradle.api.Project
+import org.gradle.api.plugins.GroovyBasePlugin
+import org.gradle.api.plugins.scala.ScalaBasePlugin
+import org.gradle.api.tasks.TaskCollection
+import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.testing.Test;
 
 /**
  * Extension class for configuring the Cobertura plugin.
@@ -66,6 +70,10 @@ class CoberturaExtension {
 	 */
 	List<String> coverageIgnores = []
 
+    Closure coverageTasksSpec
+
+    Closure instrumentedTasksSpec
+
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
 	 */
@@ -81,6 +89,8 @@ class CoberturaExtension {
 	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
 	 */
 	String coberturaVersion = '2.0.3'
+
+    CoberturaRunner runner = new CoberturaRunner()
 
 	private Project project
 
@@ -99,18 +109,41 @@ class CoberturaExtension {
 		// The cobertura plugin causes the java plugin to be included.  Also, the
 		// groovy and scala plugins extend the java plugin.  This means that the
 		// java source directories will always be defined.
-		coverageSourceDirs = project.sourceSets.main.java.srcDirs
+        coverageSourceDirs = project.sourceSets.main.java.srcDirs
+
+        //By default add all test tasks
+        coverageTasksSpec = {
+            project.tasks.withType(Test)
+        }
+
+        //By default add all compile tasks
+        instrumentedTasksSpec = {
+            project.tasks.withType(AbstractCompile)
+        }
+        //Using plugins.withType allows the container to be updated whenever the plugin is applied
 		// Look for Groovy
-		try {
+        project.plugins.withType(GroovyBasePlugin).whenPluginAdded {
 			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
-		} catch (MissingPropertyException e) {
-			// This just means we don't have the groovy plugin.
-		}
+        }
 		// Look for Scala
-		try {
-  		coverageSourceDirs += project.sourceSets.main.scala.srcDirs
-		} catch (MissingPropertyException e) {
-			// This just means we don't have the Scala plugin.
-		}
+        project.plugins.withType(ScalaBasePlugin).whenPluginAdded {
+      		coverageSourceDirs += project.sourceSets.main.scala.srcDirs
+        }
 	}
+
+    void coverageTasks(Closure c) {
+        coverageTasksSpec = c
+    }
+
+    void instrumentedTasks(Closure c) {
+        instrumentedTasksSpec = c
+    }
+
+    TaskCollection getCoverageTasks() {
+        coverageTasksSpec()
+    }
+
+    TaskCollection getInstrumentedTasks() {
+        instrumentedTasksSpec()
+    }
 }
