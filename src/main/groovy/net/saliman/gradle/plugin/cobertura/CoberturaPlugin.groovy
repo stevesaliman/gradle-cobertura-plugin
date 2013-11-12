@@ -7,7 +7,6 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.execution.TaskExecutionGraph
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.testing.Test
 
@@ -175,13 +174,13 @@ class CoberturaPlugin implements Plugin<Project> {
         CopyDatafileTask copyDatafileTask = project.tasks.getByName(CopyDatafileTask.NAME)
 
 		// Add a whenTaskAdded listener for all projects from the base down.
-        extension.coverageTasks.all { task ->
+        extension.coberturaCoverageTasksSpec.all { task ->
             project.logger.info("Making the cobertura task depend on :${task.project.name}:${task.name}")
             task.dependsOn copyDatafileTask
             task.finalizedBy generateReportTask
             coberturaTask.dependsOn task
         }
-        extension.instrumentedTasks.all { task ->
+        extension.coberturaInstrumentedTasks.all { task ->
             project.logger.info("Making the instrument task depend on :${task.project.name}:${task.name}")
             instrumentTask.dependsOn task
         }

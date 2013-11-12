@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.tasks.TaskCollection
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test;
 
 /**
@@ -70,9 +69,15 @@ class CoberturaExtension {
 	 */
 	List<String> coverageIgnores = []
 
-    Closure coverageTasksSpec
+    /**
+     * Use coberturaCoverateTasks(Closure c) to configure and getCoberturaCoverageTasks() to access
+     */
+    private Closure coberturaCoverageTasksSpec
 
-    Closure instrumentedTasksSpec
+    /**
+     * Use coberturaInstrumentedTasks(Closure c) to configure and getCoberturaInstrumentedTasks() to access
+     */
+    private Closure coberturaInstrumentedTasksSpec
 
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
@@ -112,13 +117,13 @@ class CoberturaExtension {
         coverageSourceDirs = project.sourceSets.main.java.srcDirs
 
         //By default add all test tasks
-        coverageTasksSpec = {
+        coberturaCoverageTasksSpec = {
             project.tasks.withType(Test)
         }
 
         //By default add all compile tasks
-        instrumentedTasksSpec = {
-            project.tasks.withType(AbstractCompile)
+        coberturaInstrumentedTasksSpec = {
+            project.tasks.matching { it.name == 'classes' }
         }
         //Using plugins.withType allows the container to be updated whenever the plugin is applied
 		// Look for Groovy
@@ -131,19 +136,19 @@ class CoberturaExtension {
         }
 	}
 
-    void coverageTasks(Closure c) {
-        coverageTasksSpec = c
+    void coberturaCoverageTasks(Closure c) {
+        coberturaCoverageTasksSpec = c
     }
 
-    void instrumentedTasks(Closure c) {
-        instrumentedTasksSpec = c
+    void coberturaInstrumentedTasks(Closure c) {
+        coberturaInstrumentedTasksSpec = c
     }
 
-    TaskCollection getCoverageTasks() {
-        coverageTasksSpec()
+    TaskCollection getCoberturaCoverageTasksSpec() {
+        coberturaCoverageTasksSpec()
     }
 
-    TaskCollection getInstrumentedTasks() {
-        instrumentedTasksSpec()
+    TaskCollection getCoberturaInstrumentedTasks() {
+        coberturaInstrumentedTasksSpec()
     }
 }
