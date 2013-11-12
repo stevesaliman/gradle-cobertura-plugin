@@ -97,9 +97,9 @@ public class CoberturaRunner {
     }
 
     private void executeMain(String className, List<String> args) {
-        ClassLoader cl = this.getClass().getClassLoader()
+        ClassLoader cl = this.class.classLoader
         if (classpath) {
-            cl = new URLClassLoader(classpath.collect { it.toURI().toURL() } as URL[])
+            cl = new URLClassLoader(classpath.collect { it.toURI().toURL() } as URL[], cl)
         }
         Class mainClass = cl.loadClass(className)
         Method mainMethod = mainClass.getMethod("main", String[])
