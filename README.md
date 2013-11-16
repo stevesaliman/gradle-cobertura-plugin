@@ -1,5 +1,15 @@
 News
 ----
+###November 16, 2013 (Still in development):
+A special thank you to John Engelman for his help with the 2.2.0 release.
+
+The biggest change in this release is the behavior of the cobertura task. See
+the [CHANGELOG]
+(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG)
+for the full details, but the main thing is that applying the cobertura plugin
+to a project no longer changes anything in the task graphs of other projects
+in a multi-project build.
+
 ###October 27, 2013:
 
 *Note:* If you have been using the ```coverageDatafile``` property in your
@@ -47,9 +57,8 @@ This plugin is an improvement over the the original in a few important ways.
 - The biggest difference is that this fork of the plugin runs a Cobertura 
 coverage report even if tests fail.  If there are multiple test tasks, it will
 run the cobertura reports after the last test task that ran. Note that if
-there is a test failure in a project that is part of a multi-project build, 
-the tests in other projects won't necessarily run.  This is consistent with
-Gradle's behavior in the ```test``` task.
+there is a test failure other test tasks won't necessarily run.  This is
+consistent with Gradle's behavior when running multiple testing tasks.
 
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
@@ -77,9 +86,8 @@ This is still a work in progress.  If anyone would like to help out, here are a
 few things I'm still trying to accomplish.
 
 - This plugin needs some robust unit tests.  The testclient directory has a
-little java project that I use to manually test different scenarios  (the test
-client needs a buildSrc link back to the plugin source), but we could really use
-some proper unit tests.
+little java project that I use to manually test different scenarios, but we
+could really use some proper unit tests.
 
 - Did I mention testing? :-)  As issues are resolved, it would great if I could
 have unit tests that made sure that things fixed for prior issues are still
@@ -147,14 +155,13 @@ tests are run, and a coverage report to be generated after tests are run, but
 it will not cause any tests to run.  Tests will need to be supplied to the
 Gradle command line separately.
 
-2. The ```cobertura``` task is meant to be a shortcut to
-```gradle test coverageReport```, with one exception.  By default, the
-```test``` task runs all tasks named "test" from the current directory, down.
-the ```cobertura``` task adds all tasks of type "Test" in the applying project.
-The idea is that if you want to see how well your code is covered, you'd want
-to know the overall coverage, after all tests are run.  If I'm wrong about that,
-you can always use ```-x someTask``` or the ```coberturaReport``` task to more
-precisely control what tests actually get run.
+2. The ```cobertura``` task does all the things ```coberturaReport``` does,
+but it causes all tasks of type "Test" in the applying project to be run before
+the coverage report is generated. The idea is that if you want to see how well
+your code is covered, you'd want to know the overall coverage, after all tests
+are run.  If I'm wrong about that, you can always use ```-x someTask``` or the
+```coberturaReport``` task to more precisely control what tests actually get
+run.
 
 If you have a multi-project build, and you need to have classes from more than
 one of them, you'll need to add some code to the coverage block of your project
@@ -186,6 +193,6 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:2.1.0'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.2.0-SNAPSHOT'
         }
     }

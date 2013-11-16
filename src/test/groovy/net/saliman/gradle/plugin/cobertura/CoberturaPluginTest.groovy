@@ -15,24 +15,26 @@ import org.gradle.api.DefaultTask;
  */
 class CoberturaPluginTest {
 	def project = ProjectBuilder.builder().build()
-	def plugin = new CoberturaPlugin()
 
 	@Test
 	void canApplyPlugin() {
 		project.apply plugin: 'cobertura'
 		assertTrue("Project is missing plugin", project.plugins.hasPlugin(CoberturaPlugin))
-		def task = project.tasks.findByName("instrument")
-		assertNotNull("Project is missing instrument task", task)
-		assertTrue("Instrument task is the wrong type", task instanceof InstrumentTask)
-		task = project.tasks.findByName("generateCoberturaReport")
-		assertNotNull("Project is missing generateCoberturaReport task", task)
-		assertTrue("GenerateCoberturaReport task is the wrong type", task instanceof GenerateReportTask)
-		task = project.tasks.findByName("coberturaReport")
-		assertNotNull("Project is missing coberturaReport task", task)
-		assertTrue("CoberturaReport task is the wrong type", task instanceof DefaultTask)
-		task = project.tasks.findByName("cobertura")
+		def task = project.tasks.findByName("cobertura")
 		assertNotNull("Project is missing cobertura task", task)
 		assertTrue("cobertura task is the wrong type", task instanceof DefaultTask)
+		task = project.tasks.findByName("coberturaReport")
+		assertNotNull("Project is missing coberturaReport task", task)
+		assertTrue("cobertura task is the wrong type", task instanceof DefaultTask)
+		task = project.tasks.findByName(InstrumentTask.NAME)
+		assertNotNull("Project is missing instrument task", task)
+		assertTrue("Instrument task is the wrong type", task instanceof InstrumentTask)
+		task = project.tasks.findByName(GenerateReportTask.NAME)
+		assertNotNull("Project is missing generateCoberturaReport task", task)
+		assertTrue("CoberturaReport task is the wrong type", task instanceof GenerateReportTask)
+		task = project.tasks.findByName(CopyDatafileTask.NAME)
+		assertNotNull("Project is missing copyCoberturaDatafile task", task)
+		assertTrue("cobertura task is the wrong type", task instanceof CopyDatafileTask)
 		assertNotNull("We're missing the configuration", project.configurations.asMap['cobertura'])
 	}
 

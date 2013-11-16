@@ -1,10 +1,10 @@
 #!groovy
+apply plugin: 'cobertura'
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
-apply plugin: 'cobertura'
 
 repositories {
 	mavenCentral()
@@ -23,6 +23,7 @@ cobertura {
   // coverageIncludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
   coverageIgnoreTrivial = true;
   coverageIgnoreMethodAnnotations = [ 'net.saliman.gradle.plugin.cobertura.testclient.calculator.CoverageIgnore' ]
+  // coverageTestTasks { project.tasks.withType(Test) }
 }
 
 test {
@@ -54,8 +55,4 @@ task testDoubler(type: Test) {
 	doFirst {
 		println "Testing Doubler"
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '1.6'
 }

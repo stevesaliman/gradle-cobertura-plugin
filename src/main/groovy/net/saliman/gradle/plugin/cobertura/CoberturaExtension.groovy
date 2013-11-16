@@ -7,9 +7,15 @@ import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.testing.Test;
 
 /**
- * Extension class for configuring the Cobertura plugin.
+ * Extension class for configuring the Cobertura plugin.  Most of the properties
+ * in this extension match options in Cobertura itself.
  */
 class CoberturaExtension {
+
+	/**
+	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
+	 */
+	String coberturaVersion = '2.0.3'
 
 	/**
 	 * Directories under the base directory containing classes to be
@@ -69,86 +75,150 @@ class CoberturaExtension {
 	 */
 	List<String> coverageIgnores = []
 
-    /**
-     * Use coberturaCoverateTasks(Closure c) to configure and getCoberturaCoverageTasks() to access
-     */
-    private Closure coberturaCoverageTasksSpec
-
-    /**
-     * Use coberturaInstrumentedTasks(Closure c) to configure and getCoberturaInstrumentedTasks() to access
-     */
-    private Closure coberturaInstrumentedTasksSpec
-
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
+	 * Available in in Cobertura 2.0.0 and later.  Private to force use of the
+	 * setter method.
 	 */
-	boolean coverageIgnoreTrivial = false;
+	private boolean coverageIgnoreTrivial = false;
 
 	/**
 	 * List of fully qualified annotation names that, if present on a method,
 	 * will cause it to be ignored by Cobertura for coverage purposes.
+	 * Available in Cobertura 2.0.0 and later. Private to force use of the
+	 * setter method
 	 */
-	List<String> coverageIgnoreMethodAnnotations = []
+	private List<String> coverageIgnoreMethodAnnotations = []
 
 	/**
-	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
+	 * Closure that returns the tasks that produce the classes that need to be
+	 * instrumented.  The default is the "classes" task.
 	 */
-	String coberturaVersion = '2.0.3'
-
-    CoberturaRunner runner = new CoberturaRunner()
-
-	private Project project
+	private Closure coverageClassesTasksSpec
 
 	/**
-	 * Constructor for the extension.  It needs a project handle to set the sets
-	 * sensible defaults.
+	 * Closure that returns all the tasks in the project that test the code of
+	 * interest.  The default is all tasks of type "Test".
+	 */
+	private Closure coverageTestTasksSpec
+
+	CoberturaRunner runner = new CoberturaRunner()
+
+	/**
+	 * Constructor for the extension.  It needs a project handle to set the
+	 * coverageDirs sensible defaults.
 	 * @param project the Gradle project that owns the extension.
 	 */
 	CoberturaExtension(Project project) {
 		project.logger.info "creating extension"
-		this.project = project
-		coverageDirs = [ project.sourceSets.main.output.classesDir.path ]
+		coverageDirs = [project.sourceSets.main.output.classesDir.path]
 		coverageInputDatafile = new File("${project.buildDir.path}/cobertura", 'coberturaInput.ser')
 		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
 		// The cobertura plugin causes the java plugin to be included.  Also, the
 		// groovy and scala plugins extend the java plugin.  This means that the
 		// java source directories will always be defined.
-        coverageSourceDirs = project.sourceSets.main.java.srcDirs
+		coverageSourceDirs = project.sourceSets.main.java.srcDirs
 
-        //By default add all test tasks
-        coberturaCoverageTasksSpec = {
-            project.tasks.withType(Test)
-        }
+		// By default instrumentation depends on the "classes" task
+		coverageClassesTasksSpec = {
+			project.tasks.matching { it.name == 'classes' }
+		}
 
-        //By default add all compile tasks
-        coberturaInstrumentedTasksSpec = {
-            project.tasks.matching { it.name == 'classes' }
-        }
-        //Using plugins.withType allows the container to be updated whenever the plugin is applied
+		// By default the "cobertura" task depends on all test tasks
+		coverageTestTasksSpec = {
+			project.tasks.withType(Test)
+		}
+
+		//Using plugins.withType allows the container to be updated whenever the plugin is applied
 		// Look for Groovy
-        project.plugins.withType(GroovyBasePlugin).whenPluginAdded {
+		project.plugins.withType(GroovyBasePlugin).whenPluginAdded {
 			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
-        }
+		}
 		// Look for Scala
-        project.plugins.withType(ScalaBasePlugin).whenPluginAdded {
-      		coverageSourceDirs += project.sourceSets.main.scala.srcDirs
-        }
+		project.plugins.withType(ScalaBasePlugin).whenPluginAdded {
+			coverageSourceDirs += project.sourceSets.main.scala.srcDirs
+		}
 	}
 
-    void coberturaCoverageTasks(Closure c) {
-        coberturaCoverageTasksSpec = c
-    }
+	// Accessors used to check things before they or set, or provide access to
+	// private attributes.
 
-    void coberturaInstrumentedTasks(Closure c) {
-        coberturaInstrumentedTasksSpec = c
-    }
+	/**
+	 * @return whether or not we should ignore trivial methods.
+	 */
+	boolean getCoverageIgnoreTrivial() {
+		return coverageIgnoreTrivial
+	}
 
-    TaskCollection getCoberturaCoverageTasksSpec() {
-        coberturaCoverageTasksSpec()
-    }
+	/**
+	 * Whether or not to ignore trivial methods like simple getters and setters.
+	 * Available in in Cobertura 2.0.0 and later.  Attempting to set this
+	 * property when using Cobertura 1.x will result in an error.
+	 * @param ignoreTrivial whether or not we should ignore trivial methods.
+	 */
+	void setCoverageIgnoreTrivial(boolean ignoreTrivial) {
+		if ( coberturaVersion == null || coberturaVersion.startsWith("1") ) {
+			throw new IllegalArgumentException("cobertura-plugin: Setting the coverageIgnoreTrivial property requires cobertura 2.0.0 or later")
+		}
+		coverageIgnoreTrivial = ignoreTrivial
+	}
 
-    TaskCollection getCoberturaInstrumentedTasks() {
-        coberturaInstrumentedTasksSpec()
-    }
+	/**
+	 * @return the names of annotations used to flag methods to be ignored.
+	 */
+	List<String> getCoverageIgnoreMethodAnnotations() {
+		return coverageIgnoreMethodAnnotations
+	}
+
+	/**
+	 * List of fully qualified annotation names that, if present on a method,
+	 * will cause it to be ignored by Cobertura for coverage purposes.
+	 * Available in Cobertura 2.0.0 and later.  Attempting to set this property
+	 * when using Cobertura 1.x will result in an error.
+	 * @param ignoreMethodAnnotations the names of annotations used to flag
+	 *        methods to be ignored
+	 */
+	void setCoverageIgnoreMethodAnnotations(List<String> ignoreMethodAnnotations) {
+		if ( coberturaVersion == null || coberturaVersion.startsWith("1") ) {
+			throw new IllegalArgumentException("cobertura-plugin: Setting the coverageIgnoreMethodAnnotations property requires cobertura 2.0.0 or later")
+		}
+		coverageIgnoreMethodAnnotations = ignoreMethodAnnotations
+	}
+
+	/**
+	 * @return the tasks that produce the classes that need to be instrumented
+	 * for coverage reports, as returned by the coverageClassTasks closure
+	 */
+	TaskCollection getCoverageClassesTasks() {
+		coverageClassesTasksSpec()
+	}
+
+	/**
+	 * Set the closure that will be used to determine what tasks need to be
+	 * complete before we can instrument classes for coverage. Used to override
+	 * the default closure, which returns the "classes" task.
+	 * @param c a no-argument closure that returns a {@code TaskCollection}.
+	 */
+	void coverageClassesTasks(Closure c) {
+		coverageClassesTasksSpec = c
+	}
+
+	/**
+	 * @return the test tasks that should run, as returned by the
+	 * coverageTestTask closure
+	 */
+	TaskCollection getCoverageTestTasks() {
+		coverageTestTasksSpec()
+	}
+
+	/**
+	 * Set the closure that will be used to determine what tests should be run
+	 * when the {@code cobertura} task is invoked.  Used to override the default
+	 * closure, which returns all tasks of type {@code Test}
+	 * @param c a no-argument closure that returns a {@code TaskCollection}.
+	 */
+	void coverageTestTasks(Closure c) {
+		coverageTestTasksSpec = c
+	}
 }

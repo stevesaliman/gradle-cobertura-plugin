@@ -26,13 +26,13 @@ class InstrumentTask extends DefaultTask {
 	File destinationDir
 	CoberturaExtension configuration
 	CoberturaRunner runner
-    Configuration classpath
+	Configuration classpath
 
 	/**
 	 * If the included classes change, we need to re-instrument
 	 */
 	@Input
-	 def getIncludes() {
+	def getIncludes() {
 		configuration.coverageIncludes
 	}
 
@@ -85,7 +85,7 @@ class InstrumentTask extends DefaultTask {
 	 * tests.
 	 */
 	@OutputFile
-	def getInputDatafile () {
+	def getInputDatafile() {
 		configuration.coverageInputDatafile
 	}
 
@@ -124,7 +124,6 @@ class InstrumentTask extends DefaultTask {
 		// add the instrumented dir to the list.
 		instrumentDirs << ("${project.buildDir}/instrumented_classes" as String)
 
-
 		// set the auxiliary classpath to the current classpath plus jars in the lib dir plus classes in the output dir.
 		// AKA current classpath + compileClasspath + compileClassPath
 		//	    <path id="cobertura.auxpath">
@@ -134,7 +133,7 @@ class InstrumentTask extends DefaultTask {
 //	    </fileset>
 //	    <pathelement location="classes"/>
 //	    </path>
-		String auxiliaryClasspath =	project.sourceSets.main.output.classesDir.path +
+		String auxiliaryClasspath = project.sourceSets.main.output.classesDir.path +
 						":" + project.sourceSets.main.compileClasspath.getAsPath()
 
 		runner.withClasspath(classpath.files).instrument null, configuration.coverageInputDatafile.path, getDestinationDir()?.path,

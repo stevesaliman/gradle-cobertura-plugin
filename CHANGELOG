@@ -1,3 +1,25 @@
+Changes for 2.2.0
+=================
+- One of the biggest changes in this release is the behavior of the "cobertura"
+  task.  In 2.1.0, it was made to run all the tests in the applying project, as
+  well as tests named "test" in other parts of a multi-project build.  This
+  produces undesirable coupling between projects, so this has been removed in
+  2.2.0.  The "cobertura" task now runs only the tests in project.
+
+- The exact tasks that get run by the "cobertura" task can be configured by
+  setting the coverageTestTasks closure.  Ths no-arg closure returns the
+  collection of tasks that should run before the coverage report is generated.
+
+- Users who need to use older versions of Cobertura can now do so without the
+  Cobertura libraries getting in the way. Some options, such as
+  coverageIgnoreTrivial only work in Cobertura 2.0, so attempting to set those
+  properties in the cobertura block of your build.gradle will result in an
+  error.
+
+- Groovy and Scala plugins may now be applied after the cobertura plugin.
+
+
+
 Changes for 2.1.0
 =================
 - Added the coberturaReport task to generate coverage reports. (issue #20)
