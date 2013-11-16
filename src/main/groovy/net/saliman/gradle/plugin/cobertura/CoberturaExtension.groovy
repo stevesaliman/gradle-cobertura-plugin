@@ -1,7 +1,10 @@
 package net.saliman.gradle.plugin.cobertura
 
-
-import org.gradle.api.Project;
+import org.gradle.api.Project
+import org.gradle.api.plugins.GroovyBasePlugin
+import org.gradle.api.plugins.scala.ScalaBasePlugin
+import org.gradle.api.tasks.TaskCollection
+import org.gradle.api.tasks.testing.Test;
 
 /**
  * Extension class for configuring the Cobertura plugin.
@@ -66,6 +69,16 @@ class CoberturaExtension {
 	 */
 	List<String> coverageIgnores = []
 
+    /**
+     * Use coberturaCoverateTasks(Closure c) to configure and getCoberturaCoverageTasks() to access
+     */
+    private Closure coberturaCoverageTasksSpec
+
+    /**
+     * Use coberturaInstrumentedTasks(Closure c) to configure and getCoberturaInstrumentedTasks() to access
+     */
+    private Closure coberturaInstrumentedTasksSpec
+
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
 	 */
@@ -81,6 +94,8 @@ class CoberturaExtension {
 	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
 	 */
 	String coberturaVersion = '2.0.3'
+
+    CoberturaRunner runner = new CoberturaRunner()
 
 	private Project project
 
@@ -99,18 +114,41 @@ class CoberturaExtension {
 		// The cobertura plugin causes the java plugin to be included.  Also, the
 		// groovy and scala plugins extend the java plugin.  This means that the
 		// java source directories will always be defined.
-		coverageSourceDirs = project.sourceSets.main.java.srcDirs
+        coverageSourceDirs = project.sourceSets.main.java.srcDirs
+
+        //By default add all test tasks
+        coberturaCoverageTasksSpec = {
+            project.tasks.withType(Test)
+        }
+
+        //By default add all compile tasks
+        coberturaInstrumentedTasksSpec = {
+            project.tasks.matching { it.name == 'classes' }
+        }
+        //Using plugins.withType allows the container to be updated whenever the plugin is applied
 		// Look for Groovy
-		try {
+        project.plugins.withType(GroovyBasePlugin).whenPluginAdded {
 			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
-		} catch (MissingPropertyException e) {
-			// This just means we don't have the groovy plugin.
-		}
+        }
 		// Look for Scala
-		try {
-  		coverageSourceDirs += project.sourceSets.main.scala.srcDirs
-		} catch (MissingPropertyException e) {
-			// This just means we don't have the Scala plugin.
-		}
+        project.plugins.withType(ScalaBasePlugin).whenPluginAdded {
+      		coverageSourceDirs += project.sourceSets.main.scala.srcDirs
+        }
 	}
+
+    void coberturaCoverageTasks(Closure c) {
+        coberturaCoverageTasksSpec = c
+    }
+
+    void coberturaInstrumentedTasks(Closure c) {
+        coberturaInstrumentedTasksSpec = c
+    }
+
+    TaskCollection getCoberturaCoverageTasksSpec() {
+        coberturaCoverageTasksSpec()
+    }
+
+    TaskCollection getCoberturaInstrumentedTasks() {
+        coberturaInstrumentedTasksSpec()
+    }
 }

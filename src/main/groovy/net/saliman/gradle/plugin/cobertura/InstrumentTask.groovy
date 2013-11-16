@@ -1,6 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -24,7 +25,8 @@ class InstrumentTask extends DefaultTask {
 	static final String NAME = 'instrument'
 	File destinationDir
 	CoberturaExtension configuration
-	def runner
+	CoberturaRunner runner
+    Configuration classpath
 
 	/**
 	 * If the included classes change, we need to re-instrument
@@ -135,7 +137,7 @@ class InstrumentTask extends DefaultTask {
 		String auxiliaryClasspath =	project.sourceSets.main.output.classesDir.path +
 						":" + project.sourceSets.main.compileClasspath.getAsPath()
 
-		runner.instrument null, configuration.coverageInputDatafile.path, getDestinationDir()?.path,
+		runner.withClasspath(classpath.files).instrument null, configuration.coverageInputDatafile.path, getDestinationDir()?.path,
 						configuration.coverageIgnores as List,
 						configuration.coverageIncludes as List,
 						configuration.coverageExcludes as List,

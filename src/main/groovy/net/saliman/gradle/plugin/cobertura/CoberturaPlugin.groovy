@@ -1,12 +1,13 @@
 package net.saliman.gradle.plugin.cobertura
 
-import org.gradle.StartParameter
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.UnknownConfigurationException
+import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.testing.Test
 
 import org.gradle.api.invocation.Gradle
@@ -67,7 +68,7 @@ class CoberturaPlugin implements Plugin<Project> {
 	// Constants for the tasks created by this plugin that don't have their own
 	// classes.
 	static final String COBERTURA_TASK_NAME = 'cobertura'
-	static final String COBERTURA_REPORT_TASK_NAME = 'coberturaReport'
+
 	def void apply(Project project) {
 		project.logger.info("Applying cobertura plugin to $project.name")
 		// It doesn't make sense to have the cobertura plugin without the java
@@ -75,27 +76,28 @@ class CoberturaPlugin implements Plugin<Project> {
 		// project is a Groovy or Scala project, we're still good because Groovy
 		// and Scala compiles to java classes under the hood, and the Groovy and
 		// Scala plugins will extend the Java plugin anyway.
-		project.apply plugin: 'java'
-		project.extensions.coberturaRunner = new CoberturaRunner()
+		project.plugins.apply(JavaPlugin)
 
-		project.extensions.create('cobertura', CoberturaExtension, project)
+		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {
 			project.configurations.create('cobertura') {
 				extendsFrom project.configurations['testCompile']
 			}
-			project.dependencies {
-				cobertura "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}"
-			}
+            project.afterEvaluate {
+                project.dependencies {
+                    cobertura "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}"
+                }
+            }
 		}
-		project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
+        project.afterEvaluate {
+		    project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
+        }
 
-		createTasks(project)
+		createTasks(project, extension)
 
-		Project baseProject = findBaseProject(project);
+		fixTaskDependencies(project, extension)
 
-		fixTaskDependencies(project, baseProject)
-
-		registerTaskFixupListener(project.gradle)
+		registerTaskFixupListener(project)
 
 	}
 
@@ -119,16 +121,17 @@ class CoberturaPlugin implements Plugin<Project> {
 	 *
 	 * @param project the project being configured
 	 */
-	private void createTasks(Project project) {
+	private void createTasks(Project project, CoberturaExtension extension) {
 		// Create the instrument task, but don't have it do anything yet because we
 		// don't know if we need to run cobertura yet. We need to process all new
 		// tasks as they are added, so we can't use withType.
 		project.tasks.create(name: InstrumentTask.NAME,
 						             type: InstrumentTask,
-						             {configuration = project.extensions.cobertura})
+						             {configuration = project.extensions.cobertura
+                                      classpath = project.configurations.cobertura})
 		InstrumentTask instrumentTask = project.tasks.getByName(InstrumentTask.NAME)
 		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
-		instrumentTask.runner = project.extensions.coberturaRunner
+		instrumentTask.runner = extension.runner
 
 		// Create the copyCoberturaDatafile task.  It doesn't do anything yet
 		// either, but it will need to run after instrumentation
@@ -143,46 +146,16 @@ class CoberturaPlugin implements Plugin<Project> {
 		// either.
 		project.tasks.create(name: GenerateReportTask.NAME,
 						             type: GenerateReportTask,
-						             {configuration = project.extensions.cobertura})
+						             {configuration = project.extensions.cobertura
+                                      classpath = project.configurations.cobertura})
 		GenerateReportTask generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
 		generateReportTask.setDescription("Helper task that does the actual Cobertura report generation")
-		generateReportTask.runner = project.extensions.coberturaRunner
-
-		// Create the coberturaReport task.
-		project.tasks.create(name: COBERTURA_REPORT_TASK_NAME, type:  DefaultTask)
-		DefaultTask reportTask = project.tasks.getByName(COBERTURA_REPORT_TASK_NAME)
-		reportTask.setDescription("Generate Cobertura reports after tests finish.")
+		generateReportTask.runner = extension.runner
 
 		// Create the cobertura task.
 		project.tasks.create(name: COBERTURA_TASK_NAME, type:  DefaultTask)
 		Task coberturaTask = project.tasks.getByName(COBERTURA_TASK_NAME)
 		coberturaTask.setDescription("Run tests and generate Cobertura coverage reports.")
-	}
-
-	/**
-	 * Find the base project for the build.  Basically, this means the project
-	 * at the directory where gradle was invoked.  This is not always the root
-	 * project, or the project applying the cobertura plugin.  For example,
-	 * If we have a project called parent, which has a child project named child,
-	 * which has a child named grandchild.  Assume the cobertura plugin is applied
-	 * to the grandchild project.  If you invoke gradle from the child directory,
-	 * the base directory would be the child project. The cobertura task will
-	 * need to depend on the test task of this base project in order to run the
-	 * same tasks as typing {@code gradle test} from the child directory.
-	 * @param project the project applying the cobertura plugin.
-	 * @return the project object representing the project in the directory where
-	 * gradle was invoked.
-	 */
-	private Project findBaseProject(Project project) {
-		StartParameter sp = project.gradle.startParameter
-		Project baseProject = null;
-		project.rootProject.allprojects.each { possibleBase ->
-			if ( possibleBase.projectDir.equals(sp.projectDir) ) {
-				project.logger.info("Found base project ${possibleBase.name}")
-				baseProject = possibleBase
-			}
-		}
-		return baseProject
 	}
 
 	/**
@@ -193,81 +166,24 @@ class CoberturaPlugin implements Plugin<Project> {
 	 * @param project the project applying the plugin. Used for logging.
 	 * @param baseProject the project in the directory from which gradle was
 	 * invoked.
-	 * @see #fixTaskDependency(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
-	private void fixTaskDependencies(Project project, Project baseProject) {
+	private void fixTaskDependencies(Project project, CoberturaExtension extension) {
 		InstrumentTask instrumentTask = project.tasks.getByName(InstrumentTask.NAME)
-		CopyDatafileTask copyDatafileTask = project.tasks.getByName(CopyDatafileTask.NAME)
 		GenerateReportTask generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
-		Task reportTask = project.tasks.getByName(COBERTURA_REPORT_TASK_NAME)
 		Task coberturaTask = project.tasks.getByName(COBERTURA_TASK_NAME)
-
-		// If the user put the cobertura task on the command line, we need reports.
-		coberturaTask.dependsOn reportTask
+        CopyDatafileTask copyDatafileTask = project.tasks.getByName(CopyDatafileTask.NAME)
 
 		// Add a whenTaskAdded listener for all projects from the base down.
-		baseProject.allprojects.each { p ->
-			p.tasks.each { task ->
-				project.logger.info("Fixing task :${task.project.name}:${task.name}")
-				fixTaskDependency(project, task, instrumentTask, generateReportTask, coberturaTask)
-			}
-			p.tasks.whenTaskAdded { Task task ->
-				project.logger.info("Adding task :${task.project.name}:${task.name}")
-				fixTaskDependency(project, task, instrumentTask, generateReportTask, coberturaTask)
-			}
-		}
-	}
-
-	/**
-	 * Helper to the helper that does the actual work of fixing the dependencies
-	 * of a single task.  It checks for several things, and makes needed changes:
-	 * <ol>
-	 * <li>Tasks in the applying project of type {@code Test}, it needs to depend
-	 * on the instrument task.</li>
-	 * <li>Tasks in the applying project of type {@code Test} need to be finalized
-	 * by the generateReportTask so that reports get generated when requested by
-	 * the user.</li>
-	 * <li>The cobertura task needs to depend on tasks in the applying project of
-	 * type {@code Test}
-	 * <li>If the task is named "test", the cobertura task needs to depend on it
-	 * </li>
-	 * <li>The cobertura task also needs to depend on the coberturaReport task so
-	 * that we get a report at the end.</li>
-	 * <li>The instrument task needs to depend on the task if it is named
-	 * "classes", and is in the applying project.</li>
-	 * </ol>
-	 * @param project the project applying the plugin..
-	 * @param task the task being checked.
-	 * @param instrumentTask the instrument task
-	 * @param generateReportTask the generateReportTask
-	 * @param coberturaTask the coberturaTask
-	 */
-	private void fixTaskDependency(project, task, instrumentTask, generateReportTask,
-	                               coberturaTask) {
-		// If the task is a test tasks in the applying project, it needs to depend
-		// on the copyDatafile task, and be finalized by the report task.
-		// This doesn't actually change what runs, it just establishes order.
-		if ( task instanceof  Test && task.project == project ) {
-			project.logger.info("Changing dependencies for task :${task.project.name}:${task.name}")
-			task.dependsOn CopyDatafileTask.NAME
-			task.finalizedBy generateReportTask
-			coberturaTask.dependsOn task
-		}
-
-		// If the task is named "test", then the cobertura task needs to depend
-		// on it so that "gradle cobertura" and "gradle test" runs the same
-		// tests.  This is independent of what project the task is in because we
-	  // only get called for the base project down.
-		if ( task.name == "test" ) {
-			project.logger.info("Making the cobertura task depend on :${task.project.name}:${task.name}")
-			coberturaTask.dependsOn task
-		}
-		// If the task is a "classes" task in the applying project, then
-		// instrumentation depends on it.
-		if ( task.name == "classes" && task.project == project ) {
-			project.logger.info("Making the instrument task depend on :${task.project.name}:${task.name}")
-			instrumentTask.dependsOn task
-		}
+        extension.coberturaCoverageTasksSpec.all { task ->
+            project.logger.info("Making the cobertura task depend on :${task.project.name}:${task.name}")
+            task.dependsOn copyDatafileTask
+            task.finalizedBy generateReportTask
+            coberturaTask.dependsOn task
+        }
+        extension.coberturaInstrumentedTasks.all { task ->
+            project.logger.info("Making the instrument task depend on :${task.project.name}:${task.name}")
+            instrumentTask.dependsOn task
+        }
 	}
 
 	/**
@@ -278,43 +194,41 @@ class CoberturaPlugin implements Plugin<Project> {
 	 *
 	 * @param gradle the gradle instance running the plugin.
 	 */
-	private void registerTaskFixupListener(Gradle gradle) {
+	private void registerTaskFixupListener(Project project) {
 		// If we need to run cobertura reports, fix test classpaths, and set them
 		// to generate reports on failure.  If not, disable instrumentation.
 		// "whenReady()" is a global event, so closure should be registered exactly
 		// once for single and multi-project builds.
-		if ( !gradle.ext.has('coberturaPluginListenerRegistered') ) {
-			gradle.ext.coberturaPluginListenerRegistered = true
-			gradle.taskGraph.whenReady { graph ->
-				if (graph.allTasks.find { it.name == COBERTURA_REPORT_TASK_NAME } != null) {
-					// We're running coberturaReport, so fix the classpath of any test
-					// task we are actually running.
-					graph.allTasks.findAll { it instanceof Test}.each { Test test ->
-						try {
-							Configuration config = test.project.configurations['cobertura']
-							test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
-							test.classpath += config
-							fixTestClasspath(test)
-						} catch (UnknownConfigurationException e) {
-							// Eat this. It just means we have a multi-project build, and
-							// there is test in a project that doesn't have cobertura applied.
-						}
-					}
-				} else {
-					// We're not running coberturaReport, so disable all instrument,
-					// copyDatafile and report tasks.
-					graph.allTasks.findAll { it instanceof InstrumentTask}.each {
-						it.enabled = false
-					}
-					graph.allTasks.findAll { it instanceof CopyDatafileTask}.each {
-						it.enabled = false
-					}
-					graph.allTasks.findAll { it instanceof GenerateReportTask}.each {
-						it.enabled = false
-					}
-				}
-			}
-		}
+        Gradle gradle = project.gradle
+        gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
+            if (graph.hasTask(project.tasks.findByName(COBERTURA_TASK_NAME))) {
+                // We're running coberturaReport, so fix the classpath of any test
+                // task we are actually running.
+                project.tasks.withType(Test).all { Test test ->
+                    try {
+                        Configuration config = test.project.configurations['cobertura']
+                        test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
+                        test.classpath += config
+                        fixTestClasspath(test)
+                    } catch (UnknownConfigurationException e) {
+                        // Eat this. It just means we have a multi-project build, and
+                        // there is test in a project that doesn't have cobertura applied.
+                    }
+                }
+            } else {
+                // We're not running coberturaReport, so disable all instrument,
+                // copyDatafile and report tasks.
+                project.tasks.withType(InstrumentTask).all {
+                    it.enabled = false
+                }
+                project.tasks.withType(CopyDatafileTask).each {
+                    it.enabled = false
+                }
+                project.tasks.withType(GenerateReportTask).each {
+                    it.enabled = false
+                }
+            }
+        }
 	}
 
 	/**

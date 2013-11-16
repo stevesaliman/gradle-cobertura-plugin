@@ -1,6 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
 
@@ -14,14 +15,15 @@ class GenerateReportTask extends DefaultTask {
 	static final String NAME = 'generateCoberturaReport'
 	File destinationDir
 	CoberturaExtension configuration
-	def runner
+	CoberturaRunner runner
+    Configuration classpath
 
 	@TaskAction
 	def generateReports() {
 		project.logger.info("Generating reports...")
 		// Generate a report for each provided format
 		for ( format in configuration.coverageFormats ) {
-			runner.generateCoverageReport(
+            runner.withClasspath(classpath.files).generateCoverageReport(
 							configuration.coverageOutputDatafile.path,
 							configuration.coverageReportDir.path,
 							format,
