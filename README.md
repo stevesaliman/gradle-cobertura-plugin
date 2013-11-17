@@ -3,8 +3,8 @@ News
 ###November 16, 2013 (Still in development):
 A special thank you to John Engelman for his help with the 2.2.0 release.
 
-The biggest change in this release is the behavior of the cobertura task. See
-the [CHANGELOG]
+The biggest changes in this release are the behavior of the cobertura task and
+the addition of the checkCoverage task. See the [CHANGELOG]
 (http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG)
 for the full details, but the main thing is that applying the cobertura plugin
 to a project no longer changes anything in the task graphs of other projects

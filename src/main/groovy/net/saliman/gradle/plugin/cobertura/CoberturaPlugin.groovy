@@ -127,36 +127,6 @@ class CoberturaPlugin implements Plugin<Project> {
 	 * @param project the project being configured
 	 */
 	private void createTasks(Project project, CoberturaExtension extension) {
-		// Create the instrument task that will instrument code.
-		project.tasks.create(name: InstrumentTask.NAME,
-						type: InstrumentTask,
-						{
-							configuration = project.extensions.cobertura
-							classpath = project.configurations.cobertura
-						})
-		Task instrumentTask = project.tasks.getByName(InstrumentTask.NAME)
-		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
-		instrumentTask.runner = extension.runner
-
-		// Create the copyCoberturaDatafile task that will copy the .ser file
-		project.tasks.create(name: CopyDatafileTask.NAME,
-						             type: CopyDatafileTask,
-						             { configuration = project.extensions.cobertura })
-		Task copyDatafileTask = project.tasks.getByName(CopyDatafileTask.NAME)
-		copyDatafileTask.setDescription("Helper task that makes a fresh copy of the Cobertura data file for tests")
-		copyDatafileTask.dependsOn instrumentTask
-
-		// Create the generateCoberturaReport task that will generate the reports.
-		project.tasks.create(name: GenerateReportTask.NAME,
-						             type: GenerateReportTask,
-						             {
-							             configuration = project.extensions.cobertura
-							             classpath = project.configurations.cobertura
-						             })
-		Task generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
-		generateReportTask.setDescription("Generate a Cobertura report after tests finish.")
-		generateReportTask.runner = extension.runner
-
 		// Create the coberturaReport task.  This task, when invoked, indicates
 		// that users want a coverage report.
 		project.tasks.create(name: COBERTURA_REPORT_TASK_NAME, type: DefaultTask)
@@ -171,6 +141,56 @@ class CoberturaPlugin implements Plugin<Project> {
 		// If we make cobertura depend on reportTask, it is easier later on to
 		// determine of we need reports or not.
 		coberturaTask.dependsOn reportTask
+
+		// Create the instrument task that will instrument code. At the moment, it
+		// is disabled.
+		project.tasks.create(name: InstrumentTask.NAME,
+						type: InstrumentTask,
+						{
+							configuration = project.extensions.cobertura
+							classpath = project.configurations.cobertura
+						})
+		Task instrumentTask = project.tasks.getByName(InstrumentTask.NAME)
+		instrumentTask.setDescription("Instrument code for Cobertura coverage reports")
+		instrumentTask.enabled = false
+		instrumentTask.runner = extension.runner
+
+		// Create the copyCoberturaDatafile task that will copy the .ser file.  It
+		// is also disabled to start.
+		project.tasks.create(name: CopyDatafileTask.NAME,
+						             type: CopyDatafileTask,
+						             { configuration = project.extensions.cobertura })
+		Task copyDatafileTask = project.tasks.getByName(CopyDatafileTask.NAME)
+		copyDatafileTask.setDescription("Helper task that makes a fresh copy of the Cobertura data file for tests")
+		copyDatafileTask.enabled = false
+		copyDatafileTask.dependsOn instrumentTask
+
+		// Create the generateCoberturaReport task that will generate the reports.
+		// Like the others, it starts out disabled.
+		project.tasks.create(name: GenerateReportTask.NAME,
+						             type: GenerateReportTask,
+						             {
+							             configuration = project.extensions.cobertura
+							             classpath = project.configurations.cobertura
+						             })
+		Task generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
+		generateReportTask.setDescription("Generate a Cobertura report after tests finish.")
+		generateReportTask.enabled = false
+		generateReportTask.runner = extension.runner
+
+		// Create the generateCoberturaReport task that will check the coverage
+		// levels, and you guessed it, it is disabled.
+		project.tasks.create(name: CheckCoverageTask.NAME,
+						type: CheckCoverageTask,
+						{
+							configuration = project.extensions.cobertura
+							classpath = project.configurations.cobertura
+						})
+		Task checkCoverageTask = project.tasks.getByName(CheckCoverageTask.NAME)
+		checkCoverageTask.setDescription("Check code coverage.")
+		checkCoverageTask.enabled = false
+		checkCoverageTask.runner = extension.runner
+		checkCoverageTask.dependsOn reportTask
 	}
 
 	/**
@@ -185,8 +205,9 @@ class CoberturaPlugin implements Plugin<Project> {
 	 */
 	private void fixTaskDependencies(Project project, CoberturaExtension extension) {
 		Task instrumentTask = project.tasks.getByName(InstrumentTask.NAME)
-		Task generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
 		Task coberturaTask = project.tasks.getByName(COBERTURA_TASK_NAME)
+		Task generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
+		Task checkCoverageTask = project.tasks.getByName(CheckCoverageTask.NAME)
 		Task copyDatafileTask = project.tasks.getByName(CopyDatafileTask.NAME)
 
 		// Add a whenTaskAdded listener for all projects from the base down.
@@ -194,10 +215,15 @@ class CoberturaPlugin implements Plugin<Project> {
 			project.logger.info("Making the instrument task depend on :${task.project.name}:${task.name}")
 			instrumentTask.dependsOn task
 		}
+
+		// Tests need to depend on coying the data file and be finalized by the
+		// check coverage task (which in turn depends on generate reports).  We'll
+		// figure out later what is enabled or not.
 		extension.coverageTestTasks.all { task ->
 			project.logger.info("Making the cobertura task depend on :${task.project.name}:${task.name}")
 			task.dependsOn copyDatafileTask
 			task.finalizedBy generateReportTask
+			task.finalizedBy checkCoverageTask
 			coberturaTask.dependsOn task
 		}
 	}
@@ -218,32 +244,40 @@ class CoberturaPlugin implements Plugin<Project> {
 		// once for single and multi-project builds.
 		Gradle gradle = project.gradle
 		gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
+			// See if the user wants a coberturaReport.  If so, fix the classpath of
+			// any test task we are actually running. (we don't need to look for the
+			// cobertura task because it depends on coberturaReport).
 			if (graph.hasTask(project.tasks.findByName(COBERTURA_REPORT_TASK_NAME))) {
-				// We're running coberturaReport, so fix the classpath of any test
-				// task we are actually running. (we don't need to look for the
-				// cobertura task because it depends on coberturaReport.
 				project.tasks.withType(Test).all { Test test ->
 					try {
 						Configuration config = test.project.configurations['cobertura']
 						test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
 						test.classpath += config
+						test.outputs.upToDateWhen { false }
 						fixTestClasspath(test)
 					} catch (UnknownConfigurationException e) {
 						// Eat this. It just means we have a multi-project build, and
 						// there is test in a project that doesn't have cobertura applied.
 					}
 				}
-			} else {
-				// We're not running coberturaReport, so disable all instrument,
-				// copyDatafile and report tasks.
+				// We also need to enable instrumentation, file copying and report
+				// generation, but not coverage checking
 				project.tasks.withType(InstrumentTask).all {
-					it.enabled = false
+					it.enabled = true
 				}
 				project.tasks.withType(CopyDatafileTask).each {
-					it.enabled = false
+					it.enabled = true
 				}
 				project.tasks.withType(GenerateReportTask).each {
-					it.enabled = false
+					it.enabled = true
+				}
+			}
+			// If the user wants to check coverage levels, we need to enable
+			// coverage checking.  We've already enabled the others because coverage
+			// depends on reports
+			if (graph.hasTask(project.tasks.findByName(CheckCoverageTask.NAME))) {
+				project.tasks.withType(CheckCoverageTask).each {
+					it.enabled = true
 				}
 			}
 		}

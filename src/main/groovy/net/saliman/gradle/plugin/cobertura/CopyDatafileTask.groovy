@@ -30,7 +30,7 @@ class CopyDatafileTask extends DefaultTask {
 	 */
 	@TaskAction
 	def copyFile() {
-		project.logger.info("Copying the datafile...")
+		project.logger.info("${path} - Copying the datafile...")
 
 		def input = configuration.coverageInputDatafile.newInputStream()
 		def output = configuration.coverageOutputDatafile.newOutputStream()

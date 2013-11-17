@@ -90,6 +90,72 @@ class CoberturaExtension {
 	 */
 	private List<String> coverageIgnoreMethodAnnotations = []
 
+  // -----------------------------------------------------------------------
+	// properties used for coverage checks.  Many of them are private to force
+	// using the "set" methods which check the value range.
+
+	/**
+	 * The minimum acceptable branch coverage rate needed by each class. This
+	 * should be an integer value between 0 and 100.
+	 */
+	private Integer coverageCheckBranchRate
+
+	/**
+	 * The minimum acceptable line coverage rate needed by each class. This should
+	 * be an integer value between 0 and 100.
+	 */
+	private Integer coverageCheckLineRate
+
+	/**
+	 * The minimum acceptable average branch coverage rate needed by each package.
+	 * This should be an integer value between 0 and 100.
+	 */
+	private Integer coverageCheckPackageBranchRate
+
+	/**
+	 * The minimum acceptable average line coverage rate needed by each package.
+	 * This should be an integer value between 0 and 100.
+	 */
+	private Integer coverageCheckPackageLineRate
+
+	/**
+	 * The minimum acceptable average branch coverage rate needed by the project
+	 * as a whole. This should be an integer value between 0 and 100.
+	 */
+	private Integer coverageCheckTotalBranchRate
+
+	/**
+	 * The minimum acceptable average line coverage rate needed by the project as
+	 * a whole. This should be an integer value between 0 and 100.
+	 */
+	private Integer coverageCheckTotalLineRate
+
+	/**
+	 * For finer grained control, you can optionally specify minimum branch and
+	 * line coverage rates for individual classes using any number of regular
+	 * expressions. Each expression is a map with 3 keys:
+	 * <ul>
+	 * <li><b>regex</b> - a regular expression identifying classes classes that
+	 * need special rates</li>
+	 * <li><b>branchRate</b> - the branch rate for the selected classes</li>
+	 * <li><b>lineRate</b> - the line rate for the selected classes</b>
+	 * </ul>
+	 * The branch and line rates need to be numbers from 0 to 100.
+	 * Example:
+	 * <pre>
+      coverageCheckRegexes = [
+	      [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
+	      [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+	    ]
+   * </pre><p>
+	 */
+	private List<Map> coverageCheckRegexes = []
+
+	/**
+	 * Should the build fail if the minimum coverage rates are not met?
+	 */
+	boolean coverageCheckHaltOnFailure = false
+
 	/**
 	 * Closure that returns the tasks that produce the classes that need to be
 	 * instrumented.  The default is the "classes" task.
@@ -220,5 +286,187 @@ class CoberturaExtension {
 	 */
 	void coverageTestTasks(Closure c) {
 		coverageTestTasksSpec = c
+	}
+	/**
+	 * @return The minimum acceptable branch coverage rate needed by each class.
+	 */
+	Integer getCoverageCheckBranchRate() {
+		return coverageCheckBranchRate
+	}
+
+	/**
+	 * Set the minimum acceptable branch coverage rate needed by each class. This
+	 * needs to be an integer value between 0 and 100.
+	 * @param coverageCheckBranchRate the rate to set
+	 * @throws IllegalArgumentException if the rate is not between 0 and 100.
+	 */
+	void setCoverageCheckBranchRate(Integer coverageCheckBranchRate) {
+		if ( coverageCheckBranchRate != null ) {
+			if ( coverageCheckBranchRate < 0 || coverageCheckBranchRate > 100 ) {
+				throw new IllegalArgumentException("coverageCheckBranchRate must be between 0 and 100")
+			}
+		}
+		this.coverageCheckBranchRate = coverageCheckBranchRate
+	}
+
+	/**
+	 * @return The minimum acceptable line coverage rate needed by each class.
+	 */
+	Integer getCoverageCheckLineRate() {
+		return coverageCheckLineRate
+	}
+
+	/**
+	 * Set the minimum acceptable line coverage rate needed by each class. This
+	 * needs to be an integer value between 0 and 100.
+	 * @param coverageCheckLineRate the rate to set
+	 * @throws IllegalArgumentException if the rate is not between 0 and 100.
+	 */
+	void setCoverageCheckLineRate(Integer coverageCheckLineRate) {
+		if ( coverageCheckLineRate != null ) {
+			if ( coverageCheckLineRate < 0 || coverageCheckLineRate > 100 ) {
+				throw new IllegalArgumentException("coverageCheckLineRate must be between 0 and 100")
+			}
+		}
+		this.coverageCheckLineRate = coverageCheckLineRate
+	}
+
+	/**
+	 * @return The minimum acceptable package branch coverage rate needed by each
+	 * class.
+	 */
+	Integer getCoverageCheckPackageBranchRate() {
+		return coverageCheckPackageBranchRate
+	}
+
+	/**
+	 * Set the minimum acceptable package branch coverage rate needed by each
+	 * class. This needs to be an integer value between 0 and 100.
+	 * @param coverageCheckPackageBranchRate the rate to set
+	 * @throws IllegalArgumentException if the rate is not between 0 and 100.
+	 */
+	void setCoverageCheckPackageBranchRate(Integer coverageCheckPackageBranchRate) {
+		if ( coverageCheckPackageBranchRate != null ) {
+			if ( coverageCheckPackageBranchRate < 0 || coverageCheckPackageBranchRate > 100 ) {
+				throw new IllegalArgumentException("coverageCheckPackageBranchRate must be between 0 and 100")
+			}
+		}
+		this.coverageCheckPackageBranchRate = coverageCheckPackageBranchRate
+	}
+
+	/**
+	 * @return The minimum acceptable package line coverage rate needed by each
+	 * class.
+	 */
+	Integer getCoverageCheckPackageLineRate() {
+		return coverageCheckPackageLineRate
+	}
+
+	/**
+	 * Set the minimum acceptable package line coverage rate needed by each class.
+	 * This needs to be an integer value between 0 and 100.
+	 * @param coverageCheckPackageLineRate the rate to set
+	 * @throws IllegalArgumentException if the rate is not between 0 and 100.
+	 */
+	void setCoverageCheckPackageLineRate(Integer coverageCheckPackageLineRate) {
+		if ( coverageCheckPackageLineRate != null ) {
+			if ( coverageCheckPackageLineRate < 0 || coverageCheckPackageLineRate > 100 ) {
+				throw new IllegalArgumentException("coverageCheckPackageLineRate must be between 0 and 100")
+			}
+		}
+		this.coverageCheckPackageLineRate = coverageCheckPackageLineRate
+	}
+
+	/**
+	 * @return The minimum acceptable total branch coverage rate needed by each class.
+	 */
+	Integer getCoverageCheckTotalBranchRate() {
+		return coverageCheckTotalBranchRate
+	}
+
+	/**
+	 * Set the minimum acceptable total branch coverage rate needed by each class.
+	 * This needs to be an integer value between 0 and 100.
+	 * @param coverageCheckTotalBranchRate the rate to set
+	 * @throws IllegalArgumentException if the rate is not between 0 and 100.
+	 */
+	void setCoverageCheckTotalBranchRate(Integer coverageCheckTotalBranchRate) {
+		if ( coverageCheckTotalBranchRate != null ) {
+			if ( coverageCheckTotalBranchRate < 0 || coverageCheckTotalBranchRate > 100 ) {
+				throw new IllegalArgumentException("coverageCheckTotalBranchRate must be between 0 and 100")
+			}
+		}
+		this.coverageCheckTotalBranchRate = coverageCheckTotalBranchRate
+	}
+
+	/**
+	 * @return The minimum acceptable total line coverage rate needed by each class.
+	 */
+	Integer getCoverageCheckTotalLineRate() {
+		return coverageCheckTotalLineRate
+	}
+
+	/**
+	 * Set the minimum acceptable total line coverage rate needed by each class.
+	 * This needs to be an integer value between 0 and 100.
+	 * @param coverageCheckTotalLineRate the rate to set
+	 * @throws IllegalArgumentException if the rate is not between 0 and 100.
+	 */
+	void setCoverageCheckTotalLineRate(Integer coverageCheckTotalLineRate) {
+		if ( coverageCheckTotalLineRate != null ) {
+			if ( coverageCheckTotalLineRate < 0 || coverageCheckTotalLineRate > 100 ) {
+				throw new IllegalArgumentException("coverageCheckTotalLineRate must be between 0 and 100")
+			}
+		}
+		this.coverageCheckTotalLineRate = coverageCheckTotalLineRate
+	}
+
+	List<Map> getCoverageCheckRegexes() {
+		return coverageCheckRegexes
+	}
+
+	/**
+	 * For finer grained control, you can optionally specify minimum branch and
+	 * line coverage rates for individual classes using any number of regular
+	 * expressions. Each expression is a map with 3 keys:
+	 * <ul>
+	 * <li><b>regex</b> - a regular expression identifying classes classes that
+	 * need special rates</li>
+	 * <li><b>branchRate</b> - the branch rate for the selected classes</li>
+	 * <li><b>lineRate</b> - the line rate for the selected classes</b>
+	 * </ul>
+	 * The branch and line rates need to be numbers from 0 to 100.
+	 * Example:
+	 * <pre>
+	   coverageCheckRegexes = [
+	     [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
+	     [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+	   ]
+	 * </pre>
+	 * @param coverageCheckRegexes the expressions to use.
+	 * @throws IllegalArgumentException if any of the regular expressions or
+	 * coverage rates are missing, or if the rates are outside the valid range.
+	 */
+	void setCoverageCheckRegexes(List<Map> coverageCheckRegexes) {
+		if ( coverageCheckRegexes != null && coverageCheckRegexes.size() > 0 ) {
+			for ( Map map : coverageCheckRegexes ) {
+				if ( map.regex == null || map.regex.length() < 1 ) {
+					throw new IllegalArgumentException("One of the coverageCheckRexexes is missing a regex")
+				}
+				if ( map.branchRate == null ) {
+					throw new IllegalArgumentException("One of the coverageCheckRexexes is missing a branchRate")
+				}
+				if ( map.lineRate == null ) {
+					throw new IllegalArgumentException("One of the coverageCheckRexexes is missing a lineRate")
+				}
+				if ( map.branchRate < 0 || map.branchRate > 100 ) {
+					throw new IllegalArgumentException("${map.branchRate} is an invalid branch rate.  It must be between 0 and 100")
+				}
+				if ( map.lineRate < 0 || map.lineRate > 100 ) {
+					throw new IllegalArgumentException("${map.lineRate} is an invalid line rate.  It must be between 0 and 100")
+				}
+			}
+		}
+		this.coverageCheckRegexes = coverageCheckRegexes
 	}
 }

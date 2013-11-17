@@ -4,7 +4,7 @@ Changes for 2.2.0
   task.  In 2.1.0, it was made to run all the tests in the applying project, as
   well as tests named "test" in other parts of a multi-project build.  This
   produces undesirable coupling between projects, so this has been removed in
-  2.2.0.  The "cobertura" task now runs only the tests in project.
+  2.2.0.  The "cobertura" task now runs only the tests in project. (issue #31)
 
 - The exact tasks that get run by the "cobertura" task can be configured by
   setting the coverageTestTasks closure.  Ths no-arg closure returns the
@@ -18,7 +18,12 @@ Changes for 2.2.0
 
 - Groovy and Scala plugins may now be applied after the cobertura plugin.
 
+- If the coberturaReport is in the task graph, the up-to-date status of all
+  tests is set to false (issue #33)
 
+- Check task implemented. (issue #29)  It definitely has some quirks.  If the
+failure property is set, and tests fail, the build will fail, but the check
+task will set the failure message, possibly hiding the fact that tests failed.
 
 Changes for 2.1.0
 =================

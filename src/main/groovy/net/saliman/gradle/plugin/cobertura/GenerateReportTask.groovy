@@ -22,7 +22,7 @@ class GenerateReportTask extends DefaultTask {
 
 	@TaskAction
 	def generateReports() {
-		project.logger.info("Generating reports...")
+		project.logger.info("${path} - Generating reports...")
 		// Generate a report for each provided format
 		for (format in configuration.coverageFormats) {
 			runner.withClasspath(classpath.files).generateCoverageReport(
