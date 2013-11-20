@@ -24,6 +24,10 @@ cobertura {
   coverageIgnoreTrivial = true;
   coverageIgnoreMethodAnnotations = [ 'net.saliman.gradle.plugin.cobertura.testclient.calculator.CoverageIgnore' ]
   // coverageTestTasks { project.tasks.withType(Test) }
+  coverageCheckRegexes = [
+    [ regex: '.*Doubler', branchRate: 99, lineRate: 98 ],
+	[ regex: '.*Calculator', branchRate: 96, lineRate:95 ]
+  ]
 }
 
 test {

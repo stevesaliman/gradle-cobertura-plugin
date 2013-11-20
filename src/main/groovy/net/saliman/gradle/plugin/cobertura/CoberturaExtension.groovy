@@ -196,8 +196,8 @@ class CoberturaExtension {
 			project.tasks.withType(Test)
 		}
 
-		//Using plugins.withType allows the container to be updated whenever the plugin is applied
-		// Look for Groovy
+		//Using plugins.withType allows the container to be updated whenever the
+		// plugin is applied. Look for Groovy
 		project.plugins.withType(GroovyBasePlugin).whenPluginAdded {
 			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
 		}
