@@ -38,15 +38,16 @@ class CoberturaPluginApplyTest {
 	void applyPluginCoberturaTask() {
 		project.apply plugin: 'cobertura'
 		assertTrue("Project is missing plugin", project.plugins.hasPlugin(CoberturaPlugin))
-		def task = project.tasks.findByName("cobertura")
+		def task = project.tasks.findByName(CoberturaPlugin.COBERTURA_TASK_NAME)
 		assertNotNull("Project is missing cobertura task", task)
 		assertTrue("cobertura task is the wrong type", task instanceof DefaultTask)
 		assertTrue("cobertura task should be enabled", task.enabled)
-		assertTaskDependsOn(task, "coberturaReport")
+		assertTaskDependsOn(task, CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
 		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
 		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
-		assertTaskDoesNotDependOn(task, CheckCoverageTask.NAME)
+		assertTaskDoesNotDependOn(task, PerformCoverageCheckTask.NAME)
 	}
 
 	/**
@@ -56,15 +57,35 @@ class CoberturaPluginApplyTest {
 	@Test
 	void applyPluginCoberturaReportTask() {
 		project.apply plugin: 'cobertura'
-		def task = project.tasks.findByName("coberturaReport")
-		assertNotNull("Project is missing instrument task", task)
+		def task = project.tasks.findByName(CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
+		assertNotNull("Project is missing coberturaReport task", task)
 		assertTrue("coberturaReport task is the wrong type", task instanceof DefaultTask)
 		assertTrue("coberturaReport task should be enabled", task.enabled)
-		assertTaskDoesNotDependOn(task, "cobertura")
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
 		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
 		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
-		assertTaskDoesNotDependOn(task, CheckCoverageTask.NAME)
+		assertTaskDoesNotDependOn(task, PerformCoverageCheckTask.NAME)
+	}
+
+	/**
+	 * Apply the plugin and make sure the coberturaReport task is created with no
+	 * dependencies and enabled.
+	 */
+	@Test
+	void applyPluginCheckCoverageTask() {
+		project.apply plugin: 'cobertura'
+		def task = project.tasks.findByName(CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
+		assertNotNull("Project is missing checkCoverage task", task)
+		assertTrue("checkCoverage task is the wrong type", task instanceof DefaultTask)
+		assertTrue("checkCoverage task should be enabled", task.enabled)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
+		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
+		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
+		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
+		assertTaskDoesNotDependOn(task, PerformCoverageCheckTask.NAME)
 	}
 
 	/**
@@ -78,11 +99,12 @@ class CoberturaPluginApplyTest {
 		assertNotNull("Project is missing instrument task", task)
 		assertTrue("instrument task is the wrong type", task instanceof InstrumentTask)
 		assertFalse("instrument task should not be enabled", task.enabled)
-		assertTaskDoesNotDependOn(task, "cobertura")
-		assertTaskDoesNotDependOn(task, "coberturaReport")
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
 		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
-		assertTaskDoesNotDependOn(task, CheckCoverageTask.NAME)
+		assertTaskDoesNotDependOn(task, PerformCoverageCheckTask.NAME)
 	}
 
 	/**
@@ -94,14 +116,15 @@ class CoberturaPluginApplyTest {
 		project.apply plugin: 'cobertura'
 		def task = project.tasks.findByName(CopyDatafileTask.NAME)
 		assertNotNull("Project is missing copyCoberturaDatafile task", task)
-		assertTrue("cobertura task is the wrong type", task instanceof CopyDatafileTask)
-		assertFalse("instrument task should not be enabled", task.enabled)
-		assertTaskDoesNotDependOn(task, "cobertura")
-		assertTaskDoesNotDependOn(task, "coberturaReport")
+		assertTrue("copyCoberturaDatafile task is the wrong type", task instanceof CopyDatafileTask)
+		assertFalse("copyCoberturaDatafile task should not be enabled", task.enabled)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
 		assertTaskDependsOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
 		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
-		assertTaskDoesNotDependOn(task, CheckCoverageTask.NAME)
+		assertTaskDoesNotDependOn(task, PerformCoverageCheckTask.NAME)
 	}
 
 	/**
@@ -116,11 +139,12 @@ class CoberturaPluginApplyTest {
 		assertNotNull("Project is missing generateCoberturaReport task", task)
 		assertTrue("generateCoberturaReport task is the wrong type", task instanceof GenerateReportTask)
 		assertFalse("generateCoberturaReport task should not be enabled", task.enabled)
-		assertTaskDoesNotDependOn(task, "cobertura")
-		assertTaskDoesNotDependOn(task, "coberturaReport")
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
 		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
-		assertTaskDoesNotDependOn(task, CheckCoverageTask.NAME)
+		assertTaskDoesNotDependOn(task, PerformCoverageCheckTask.NAME)
 	}
 
 	/**
@@ -128,17 +152,18 @@ class CoberturaPluginApplyTest {
 	 * dependency on the coberturaReport task.  This task should be disabled.
 	 */
 	@Test
-	void applyPluginCheckCoverageTask() {
+	void applyPluginPerformCoverageCheckTask() {
 		project.apply plugin: 'cobertura'
-		def task = project.tasks.findByName(CheckCoverageTask.NAME)
-		assertNotNull("Project is missing checkCoverage task", task)
-		assertTrue("checkCoverage task is the wrong type", task instanceof CheckCoverageTask)
-		assertFalse("checkCoverage task should not be enabled", task.enabled)
-		assertTaskDoesNotDependOn(task, "cobertura")
-		assertTaskDependsOn(task, "coberturaReport")
+		def task = project.tasks.findByName(PerformCoverageCheckTask.NAME)
+		assertNotNull("Project is missing performCoverageCheck task", task)
+		assertTrue("performCoverageCheck task is the wrong type", task instanceof PerformCoverageCheckTask)
+		assertFalse("performCoverageCheck task should not be enabled", task.enabled)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
+		assertTaskDoesNotDependOn(task, CoberturaPlugin.CHECK_COVERAGE_TASK_NAME)
 		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
-		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
+		assertTaskDependsOn(task, GenerateReportTask.NAME)
 	}
 
 	@Test
@@ -150,19 +175,6 @@ class CoberturaPluginApplyTest {
 		assertNotNull("We're missing the srcDirs", srcDirs)
 		assertEquals("Wrong number of srcDirs", 1, srcDirs.size())
 		assertTrue(configuration.coverageSourceDirs.asList().get(0).path.endsWith("src/main/java"))
-	}
-
-	@Test
-	void applyPluginConfigurationWithGroovy() {
-		project.apply plugin: 'groovy'
-		project.apply plugin: 'cobertura'
-		CoberturaExtension configuration = project.extensions.getByName('cobertura')
-		assertNotNull("We're missing the configuration", configuration)
-		Set srcDirs = configuration.coverageSourceDirs
-		assertNotNull("We're missing the srcDirs", srcDirs)
-		assertEquals("Wrong number of srcDirs", 2, srcDirs.size())
-		assertTrue(configuration.coverageSourceDirs.asList().get(0).path.endsWith("src/main/java"))
-		assertTrue(configuration.coverageSourceDirs.asList().get(1).path.endsWith("src/main/groovy"))
 	}
 
 	/**

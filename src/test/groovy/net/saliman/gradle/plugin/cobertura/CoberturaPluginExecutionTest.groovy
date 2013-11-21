@@ -1,9 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.tooling.GradleConnector
-import org.gradle.tooling.ModelBuilder
 import org.gradle.tooling.ProjectConnection
-import org.gradle.tooling.model.GradleProject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -37,11 +35,13 @@ class CoberturaPluginExecutionTest {
 
 	@Test
 	void execute() {
+//		connection.model(CustomModel)
 		def result = connection.newBuild()
 						.withArguments("-m", "-b", "build.gradle")
 						.forTasks("clean").run()
 //		ModelBuilder gradleBuilder = connection.model(GradleProject.class);
-
+//	def model = connection.model(CustomModel.class)
+//		def project = model.getName()
 		System.out.println("here")
 	}
 }

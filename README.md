@@ -3,12 +3,15 @@ News
 ###November 16, 2013 (Still in development):
 A special thank you to John Engelman for his help with the 2.2.0 release.
 
-The biggest changes in this release are the behavior of the cobertura task and
-the addition of the checkCoverage task. See the [CHANGELOG]
+The biggest changes in this release are the behavior of the ```cobertura``` task
+and the addition of the ```checkCoverage``` task. See the [CHANGELOG]
 (http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG)
 for the full details, but the main thing is that applying the cobertura plugin
 to a project no longer changes anything in the task graphs of other projects
 in a multi-project build.
+
+There were also a lot of options added to the ```cobertura``` extension, so
+you may want to have a look there as well.
 
 ###October 27, 2013:
 
@@ -62,6 +65,8 @@ consistent with Gradle's behavior when running multiple testing tasks.
 
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
+
+- This plugin supports Cobertura's coverage check functionality.
 
 - Version 2.0 works with Gradle 1.7 and above.  Version 1.2 works with Gradle
 1.0 through 1.6.  They both take advantage of features introduced in Cobertura
@@ -148,7 +153,8 @@ exclude any classes in the 'net.saliman.someapp.logger' package.
 Extension properties are changed in the ```cobertura``` block in your 
 build.gradle file.
 
-There are 2 tasks you can use to get Cobertura coverage reports:
+There are 3 tasks you can use to have Cobertura check coverage and generate
+reports:
 
 1. The ```coberturaReport``` task will cause instrumentation to happen before
 tests are run, and a coverage report to be generated after tests are run, but
@@ -162,6 +168,11 @@ your code is covered, you'd want to know the overall coverage, after all tests
 are run.  If I'm wrong about that, you can always use ```-x someTask``` or the
 ```coberturaReport``` task to more precisely control what tests actually get
 run.
+
+3. The ```checkCoverage``` task does all the things ```coberturaReport``` does,
+but adds a test coverage check to the build.  It optionally fails the build if
+the coverage levels are not sufficient.  See the documentation in the
+```CoberturaExtension``` class for more details.
 
 If you have a multi-project build, and you need to have classes from more than
 one of them, you'll need to add some code to the coverage block of your project

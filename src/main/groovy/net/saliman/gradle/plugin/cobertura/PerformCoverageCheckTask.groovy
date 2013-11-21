@@ -13,8 +13,8 @@ import org.gradle.tooling.BuildException
  * be enabled if the user intends to generate a report via the
  * {@code cobertura} or {@code coberturaReport) tasks.
  */
-class CheckCoverageTask extends DefaultTask {
-	static final String NAME = 'checkCoverage'
+class PerformCoverageCheckTask extends DefaultTask {
+	static final String NAME = 'performCoverageCheck'
 	File destinationDir
 	CoberturaExtension configuration
 	CoberturaRunner runner
@@ -28,7 +28,7 @@ class CheckCoverageTask extends DefaultTask {
 
 		if (exitStatus != null && exitStatus != 0) {
 			if (configuration.coverageCheckHaltOnFailure) {
-				throw new BuildException("checkCoverage: Tests failed to meet minimum coverage levels.", null)
+				throw new BuildException("performCoverageCheck: Tests failed to meet minimum coverage levels.", null)
 			}
 			coverageCheckFailed = true;
 		} else {

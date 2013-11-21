@@ -99,7 +99,7 @@ public class CoberturaRunner {
 		executeMain("net.sourceforge.cobertura.reporting.Main", args)
 	}
 
-	public void checkCoverage(CoberturaExtension configuration) throws Exception {
+	public int checkCoverage(CoberturaExtension configuration) throws Exception {
 		List<String> args = new ArrayList<String>()
 		args.add("--datafile")
 		args.add(configuration.coverageOutputDatafile.path)
