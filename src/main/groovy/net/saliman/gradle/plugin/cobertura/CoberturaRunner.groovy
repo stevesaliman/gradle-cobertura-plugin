@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 /**
- * Wrapper for Cobertura's main class.
+ * Wrapper for Cobertura's main classes.
  */
 public class CoberturaRunner {
 
@@ -80,7 +80,8 @@ public class CoberturaRunner {
 //	    </path>
 
 		args.addAll(instrument)
-		executeMain("net.sourceforge.cobertura.instrument.Main", args)
+		// TODO: if 2.0.4, call InstrumentMain.main
+		executeCobertura("net.sourceforge.cobertura.instrument.Main", "main", false, args)
 	}
 
 	public void generateCoverageReport(String datafile, String destination, String format,
@@ -93,7 +94,8 @@ public class CoberturaRunner {
 		args.add("--destination")
 		args.add(destination)
 		args.addAll(sourceDirectories)
-		executeMain("net.sourceforge.cobertura.reporting.Main", args)
+		// TODO if 2.0.4, call ReportMain.main
+		executeCobertura("net.sourceforge.cobertura.reporting.Main", "main", false, args)
 	}
 
 	public int checkCoverage(CoberturaExtension configuration) throws Exception {
@@ -138,10 +140,38 @@ public class CoberturaRunner {
 			}
 		}
 
-		executeMain("net.sourceforge.cobertura.check.Main", args)
+		// TODO: branch on version and call CheckCoverageMain.checkCoverage
+		executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
 	}
 
-	private int executeMain(String className, List<String> args) {
+	def mergeCoverageReports(CoberturaExtension configuration) {
+		List<String> args = new ArrayList<String>()
+		if ( configuration.coverageOutputDatafile != null ) {
+			args.add("--datafile")
+			args.add(configuration.coverageOutputDatafile.path)
+		}
+		if ( configuration.coverageMergeDatafiles != null ) {
+			for ( File f : configuration.coverageMergeDatafiles ) {
+				args.add(f.path)
+			}
+		}
+
+		// TODO: branch on version and call MergeMain.main
+		executeCobertura("net.sourceforge.cobertura.merge.Main", "main", false, args)
+
+	}
+	/**
+	 * Execute the Cobertura method that does the required work. This will
+	 * optionally use a SecurityManager to trap SecurityExceptions thrown by
+	 * the Cobertura checkCoverage code.
+	 * @param className the name of the class with the method we are executing.
+	 * @param methodName the name of the method to execute.
+	 * @param useSecurityManager whether or not we need to use a security manager
+	 * @param args the arguments to pass to the method.
+	 * @return the exit code of the invoked method or 0 if everything ran well.
+	 */
+	private executeCobertura(String className, String methodName,
+	                                             boolean useSecurityManager, List<String> args) {
 		ClassLoader cl = this.class.classLoader
 		if ( classpath ) {
 			cl = new URLClassLoader(classpath.collect { it.toURI().toURL() } as URL[], cl)
@@ -149,21 +179,29 @@ public class CoberturaRunner {
 
 		def SecurityManager oldSm = System.getSecurityManager()
 		CoberturaSecurityManager sm = new CoberturaSecurityManager(oldSm)
+		def exitStatus = 0
 
-		Class mainClass = cl.loadClass(className)
-		Method mainMethod = mainClass.getMethod("main", String[])
 		try {
-			System.setSecurityManager(sm)
-			mainMethod.invoke(null, [args as String[]] as Object[])
+			Class mainClass = cl.loadClass(className)
+			Method mainMethod = mainClass.getMethod(methodName, String[])
+			if ( useSecurityManager ) {
+				System.setSecurityManager(sm)
+			}
+			exitStatus = mainMethod.invoke(null, [args as String[]] as Object[])
 		} catch (Exception e) {
 			if ( !isSecurityException(e) ) {
 				e.printStackTrace()
 				throw e
 			}
 		} finally {
-			System.setSecurityManager(oldSm)
+			if ( useSecurityManager ) {
+				System.setSecurityManager(oldSm)
+				exitStatus = sm.exitStatus
+			} else {
+				exitStatus = -1
+			}
 		}
-		return sm.exitStatus
+		return exitStatus
 	}
 
 	/**

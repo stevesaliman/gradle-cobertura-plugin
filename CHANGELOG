@@ -24,6 +24,11 @@ Changes for 2.2.0
 - A Cobertura Check task has been implemented (issue #29) to check test coverage
   levels.
 
+- Support for merging datafiles before generating reports (Issue #10).  This has
+  the most value in the parent project of a multi project build.  When this
+  happens, the parent project will need to declare a test task dependency on
+  all the child project testing tasks to make sure the reports are accurate.
+
 - I've added more tests, and hope to add even more soon.
 
 Changes for 2.1.0

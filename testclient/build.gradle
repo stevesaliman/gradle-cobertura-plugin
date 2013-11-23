@@ -5,14 +5,31 @@
 //project(':calculator') {
   //task hello << c1
 //}
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
 subprojects {
   apply plugin: 'java'
 }
 
+apply plugin: 'cobertura'
+cobertura {
+
+  coverageMergeDatafiles = [
+    new File("util/build/cobertura/cobertura.ser"),
+    new File("calculator/build/cobertura/cobertura.ser")
+  ]
+}
+
+test.dependsOn([":calculator:test", ":util:test"])
 project(':calculator') {
   dependencies {
     compile project(':logger')
+    compile project(':util')
     runtime project(':logger')
+    runtime project(':util')
   }
 }
 

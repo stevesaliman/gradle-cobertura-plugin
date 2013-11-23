@@ -90,6 +90,18 @@ class CoberturaExtension {
 	 */
 	private List<String> coverageIgnoreMethodAnnotations = []
 
+	/**
+	 * Closure that returns the tasks that produce the classes that need to be
+	 * instrumented.  The default is the "classes" task.
+	 */
+	private Closure coverageClassesTasksSpec
+
+	/**
+	 * Closure that returns all the tasks in the project that test the code of
+	 * interest.  The default is all tasks of type "Test".
+	 */
+	private Closure coverageTestTasksSpec
+
   // -----------------------------------------------------------------------
 	// properties used for coverage checks.  Many of them are private to force
 	// using the "set" methods which check the value range.
@@ -156,19 +168,24 @@ class CoberturaExtension {
 	 */
 	boolean coverageCheckHaltOnFailure = false
 
+	// ------------------------------------------------------------------------
+	// Properties used for merging reports
 	/**
-	 * Closure that returns the tasks that produce the classes that need to be
-	 * instrumented.  The default is the "classes" task.
+	 * A list of data files to merge into a single data file to produce a merged
+	 * report.  If set, each of the datafiles in this list will be merged into
+	 * a the single datafile, specified by {@link #coverageReportDatafile},
+	 * before generating a coverage report.
 	 */
-	private Closure coverageClassesTasksSpec
+	List<File> coverageMergeDatafiles
 
 	/**
-	 * Closure that returns all the tasks in the project that test the code of
-	 * interest.  The default is all tasks of type "Test".
+	 * Path to the data file to use when generating reports tests. Most users
+	 * won't need to change this property.  Defaults to
+	 * ${project.buildDir.path}/cobertura/cobertura.ser. The only time this should
+	 * be changed is when users are merging datafiles and
+	 * {@link #coverageMergeDatafiles} contains the default datafile.
 	 */
-	private Closure coverageTestTasksSpec
-
-	CoberturaRunner runner = new CoberturaRunner()
+	File coverageReportDatafile
 
 	/**
 	 * Constructor for the extension.  It needs a project handle to set the
@@ -180,6 +197,7 @@ class CoberturaExtension {
 		coverageDirs = [project.sourceSets.main.output.classesDir.path]
 		coverageInputDatafile = new File("${project.buildDir.path}/cobertura", 'coberturaInput.ser')
 		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
+		coverageReportDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
 		// The cobertura plugin causes the java plugin to be included.  Also, the
 		// groovy and scala plugins extend the java plugin.  This means that the

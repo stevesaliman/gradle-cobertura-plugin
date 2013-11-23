@@ -12,6 +12,10 @@ import org.gradle.tooling.BuildException
  * The plugin will add this task as finalizer of test tasks, but it will only
  * be enabled if the user intends to generate a report via the
  * {@code cobertura} or {@code coberturaReport) tasks.
+ * <p>
+ * This task does not declare inputs or outputs because we want it to run every
+ * time (when it is enabled).  This is because while the code and tests may not
+ * have changed, the actual tests run from build to build may have.
  */
 class PerformCoverageCheckTask extends DefaultTask {
 	static final String NAME = 'performCoverageCheck'

@@ -1,0 +1,18 @@
+#!groovy
+apply plugin: 'cobertura'
+apply plugin: 'java'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.0.6'
+	testCompile "junit:junit:4.10"
+}
+
+cobertura {
+  coverageFormats = [ 'xml', 'html' ]
+  coverageIgnoreTrivial = true;
+}

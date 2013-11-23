@@ -1,10 +1,16 @@
 News
 ----
-###November 16, 2013 (Still in development):
+###November 22, 2013 (Still in development):
+*Note:* This plugin will not work with Cobertura 2.0.4 snapshots at this time.
+All of the Cobertura classes that are called by this plugin have been renamed
+by the Cobertura team.  I'm currently working with the Cobertura team on this
+issue.
+
 A special thank you to John Engelman for his help with the 2.2.0 release.
 
-The biggest changes in this release are the behavior of the ```cobertura``` task
-and the addition of the ```checkCoverage``` task. See the [CHANGELOG]
+The biggest changes in this release are the behavior of the ```cobertura```
+task, the addition of the ```checkCoverage``` task, and support for merging
+datafiles before generating coverage reports. See the [CHANGELOG]
 (http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG)
 for the full details, but the main thing is that applying the cobertura plugin
 to a project no longer changes anything in the task graphs of other projects
@@ -66,7 +72,7 @@ consistent with Gradle's behavior when running multiple testing tasks.
 - Per http://forums.gradle.org/gradle/topics/is_the_new_plugin_extension_approach_the_way_to_go,
 I've replaced conventions with extensions.
 
-- This plugin supports Cobertura's coverage check functionality.
+- This plugin supports Cobertura's coverage check and merge functions.
 
 - Version 2.0 works with Gradle 1.7 and above.  Version 1.2 works with Gradle
 1.0 through 1.6.  They both take advantage of features introduced in Cobertura
@@ -159,7 +165,15 @@ reports:
 1. The ```coberturaReport``` task will cause instrumentation to happen before
 tests are run, and a coverage report to be generated after tests are run, but
 it will not cause any tests to run.  Tests will need to be supplied to the
-Gradle command line separately.
+Gradle command line separately.  This task can be used in a parent project of
+a multi-project build to create a merged report of all child project code and
+coverage.  To create a merged report, just set the ```coverageMergeDatafiles```
+extension property to the locations of the child project output ser files, and
+make the test task of the parent project dependent on the child project testing
+tasks.  The change in task dependencies is important because Gradle doesn't
+guarantee that tasks in child projects will run before tasks in the parent
+project.  We need to make sure we don't merge datafiles until all datafiles in
+child projects have been generated.
 
 2. The ```cobertura``` task does all the things ```coberturaReport``` does,
 but it causes all tasks of type "Test" in the applying project to be run before

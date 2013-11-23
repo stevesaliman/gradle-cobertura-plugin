@@ -1,0 +1,2 @@
+This project is used to test report merging.  It needs the cobertura plugin
+applied, and there needs to be a test class.
