@@ -198,11 +198,11 @@ class CoberturaExtension {
 
 		//Using plugins.withType allows the container to be updated whenever the
 		// plugin is applied. Look for Groovy
-		project.plugins.withType(GroovyBasePlugin).whenPluginAdded {
+		project.plugins.withType(GroovyBasePlugin) {
 			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
 		}
 		// Look for Scala
-		project.plugins.withType(ScalaBasePlugin).whenPluginAdded {
+		project.plugins.withType(ScalaBasePlugin) {
 			coverageSourceDirs += project.sourceSets.main.scala.srcDirs
 		}
 	}
