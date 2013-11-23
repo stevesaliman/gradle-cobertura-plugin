@@ -1,10 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
-import org.gradle.tooling.BuildException
-
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
-
 
 /**
  * Wrapper for Cobertura's main class.
@@ -151,7 +148,7 @@ public class CoberturaRunner {
 		}
 
 		def SecurityManager oldSm = System.getSecurityManager()
-		CoberturaSecurityManager sm = new CoberturaSecurityManager(oldSm);
+		CoberturaSecurityManager sm = new CoberturaSecurityManager(oldSm)
 
 		Class mainClass = cl.loadClass(className)
 		Method mainMethod = mainClass.getMethod("main", String[])

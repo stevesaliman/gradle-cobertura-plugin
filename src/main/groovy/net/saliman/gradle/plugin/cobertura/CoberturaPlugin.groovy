@@ -82,17 +82,14 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {
-			project.configurations.create('cobertura') {
-				extendsFrom project.configurations['testCompile']
-			}
+			project.configurations.create('cobertura')
 			project.afterEvaluate {
 				project.dependencies {
-					cobertura "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}"
+					cobertura("net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}") {
+                        exclude group: 'log4j', module: 'log4j'
+                    }
 				}
 			}
-		}
-		project.afterEvaluate {
-			project.dependencies.add('testRuntime', "net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}")
 		}
 
 		createTasks(project, extension)
