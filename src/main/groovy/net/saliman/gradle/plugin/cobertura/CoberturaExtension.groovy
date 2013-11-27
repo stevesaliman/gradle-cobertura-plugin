@@ -1,10 +1,8 @@
 package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.GroovyBasePlugin
-import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.tasks.TaskCollection
-import org.gradle.api.tasks.testing.Test;
+import org.gradle.api.tasks.testing.Test
 
 /**
  * Extension class for configuring the Cobertura plugin.  Most of the properties
@@ -212,16 +210,6 @@ class CoberturaExtension {
 		// By default the "cobertura" task depends on all test tasks
 		coverageTestTasksSpec = {
 			project.tasks.withType(Test)
-		}
-
-		//Using plugins.withType allows the container to be updated whenever the
-		// plugin is applied. Look for Groovy
-		project.plugins.withType(GroovyBasePlugin) {
-			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
-		}
-		// Look for Scala
-		project.plugins.withType(ScalaBasePlugin) {
-			coverageSourceDirs += project.sourceSets.main.scala.srcDirs
 		}
 	}
 

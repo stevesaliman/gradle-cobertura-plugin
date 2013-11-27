@@ -8,7 +8,9 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.tasks.testing.Test
 
 /**
@@ -98,6 +100,7 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		registerTaskFixupListener(project)
 
+		registerPluginListeners(project, extension)
 	}
 
 	/**
@@ -308,6 +311,29 @@ class CoberturaPlugin implements Plugin<Project> {
 			}
 		}
 		test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
+	}
+
+	/**
+	 * Register listeners that add source directories to the extension if and when
+	 * the Groovy or Scala plugins are applied to the project.
+	 * <p>
+	 * This used to be in the constructor for the extension, but version 1.8 of
+	 * Gradle started throwing exceptions when I tried to modify the extension's
+	 * properties inside a closure that was inside the constructor.
+	 * @param project the project applying the plugin
+	 * @param extension the CoberturaExtension we need to modify.
+	 */
+	private void registerPluginListeners(Project project, CoberturaExtension extension) {
+		// Look for Groovy - "withType" returns a live collection, so the closure
+		// will get applied to all current and future plugins of the right type.
+		project.plugins.withType(GroovyBasePlugin) {
+			extension.coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
+		}
+		// Look for Scala
+		project.plugins.withType(ScalaBasePlugin) {
+			extension.coverageSourceDirs += project.sourceSets.main.scala.srcDirs
+		}
+
 	}
 
 
