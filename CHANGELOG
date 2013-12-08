@@ -3,7 +3,7 @@ Changes for 2.2.0
 - One of the biggest changes in this release is the behavior of the "cobertura"
   task.  In 2.1.0, it was made to run all the tests in the applying project, as
   well as tests named "test" in other parts of a multi-project build.  This
-  produces undesirable coupling between projects, so this has been removed in
+  produced undesirable coupling between projects, so this has been removed in
   2.2.0.  The "cobertura" task now runs only the tests in project. (issue #31)
 
 - The exact tasks that get run by the "cobertura" task can be configured by
@@ -16,7 +16,8 @@ Changes for 2.2.0
   properties in the cobertura block of your build.gradle will result in an
   error.
 
-- Groovy and Scala plugins may now be applied after the cobertura plugin.
+- Groovy and Scala plugins may now be applied before or after the cobertura
+  plugin. (issue #35 and issue #37)
 
 - If the coberturaReport is in the task graph, the up-to-date status of all
   tests is set to false (issue #33)

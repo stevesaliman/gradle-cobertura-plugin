@@ -1,6 +1,6 @@
 News
 ----
-###November 22, 2013 (Still in development):
+###December 08, 2013:
 *Note:* This plugin will not work with Cobertura 2.0.4 snapshots at this time.
 All of the Cobertura classes that are called by this plugin have been renamed
 by the Cobertura team.  I'm currently working with the Cobertura team on this
@@ -115,7 +115,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.1.0"
+        classpath "net.saliman:gradle-cobertura-plugin:2.2.0"
     }
 }
 apply plugin: 'cobertura'
@@ -218,6 +218,6 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:2.2.0-SNAPSHOT'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.2.0'
         }
     }
