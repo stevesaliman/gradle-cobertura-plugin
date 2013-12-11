@@ -1,5 +1,10 @@
 Changes for 2.2.0
 =================
+- Fixed the operation of the coverageClassesTask and coverageTestTask closures.
+  (Issue #38)
+
+Changes for 2.2.0
+=================
 - One of the biggest changes in this release is the behavior of the "cobertura"
   task.  In 2.1.0, it was made to run all the tests in the applying project, as
   well as tests named "test" in other parts of a multi-project build.  This

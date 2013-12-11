@@ -96,7 +96,11 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		createTasks(project, extension)
 
-		fixTaskDependencies(project, extension)
+		// We need to wait until after the extension is fully configured to fix
+		// task dependencies.
+		project.afterEvaluate {
+			fixTaskDependencies(project, extension)
+		}
 
 		registerTaskFixupListener(project)
 
@@ -221,15 +225,16 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		// Add a whenTaskAdded listener for all projects from the base down.
 		extension.coverageClassesTasks.all { task ->
-			project.logger.info("Making the instrument task depend on :${task.project.name}:${task.name}")
+			project.logger.info("Making :${project.name}:instrument depend on :${task.project.name}:${task.name}")
 			instrumentTask.dependsOn task
 		}
 
 		// Tests need to depend on copying the data file and be finalized by the
 		// perform coverage check task (which in turn depends on generate reports).
 		// We'll figure out later what is enabled or not.
+		System.out.println(":${project.name} is getting tests from ${extension.coverageTestTasks.toString()}")
 		extension.coverageTestTasks.all { task ->
-			project.logger.info("Making the cobertura task depend on :${task.project.name}:${task.name}")
+			project.logger.info("Making :${project.name}:cobertura depend on :${task.project.name}:${task.name}")
 			task.dependsOn copyDatafileTask
 			task.finalizedBy performCoverageCheckTask
 			coberturaTask.dependsOn task

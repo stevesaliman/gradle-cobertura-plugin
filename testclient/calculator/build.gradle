@@ -23,7 +23,11 @@ cobertura {
   // coverageIncludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
   coverageIgnoreTrivial = true;
   coverageIgnoreMethodAnnotations = [ 'net.saliman.gradle.plugin.cobertura.testclient.calculator.CoverageIgnore' ]
-  // coverageTestTasks { project.tasks.withType(Test) }
+	// coverageTestTasks {
+	   // project.tasks.withType(Test).matching {
+			 // it.name.contains("verify")
+		 // }
+	// }
   // coverageCheckHaltOnFailure = true
   coverageCheckRegexes = [
     [ regex: '.*Doubler', branchRate: 99, lineRate: 98 ],
@@ -55,6 +59,14 @@ task testSubtract(type: Test) {
 }
 
 task testDoubler(type: Test) {
+	include '**/*Doubler*'
+	dependsOn testClasses
+	doFirst {
+		println "Testing Doubler"
+	}
+}
+
+task verifyGroovy(type: Test) {
 	include '**/*Doubler*'
 	dependsOn testClasses
 	doFirst {

@@ -13,7 +13,7 @@ targetCompatibility = '1.5'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "2.2.0"
+version = "2.2.1"
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
