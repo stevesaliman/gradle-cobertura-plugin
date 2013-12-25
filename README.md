@@ -1,11 +1,16 @@
 News
 ----
-###December 08, 2013:
+###December 24, 2013 (Still in development):
 *Note:* This plugin will not work with Cobertura 2.0.4 snapshots at this time.
 All of the Cobertura classes that are called by this plugin have been renamed
 by the Cobertura team.  I'm currently working with the Cobertura team on this
 issue.
 
+Fixed classpath issues that were causing instrumentation errors for applications
+that directly or indirectly use ASM (Hibernate uses it, so a project that uses
+Hibernate would be affected by its indirect ASM usage).
+
+###December 08, 2013:
 A special thank you to John Engelman for his help with the 2.2.0 release.
 
 The biggest changes in this release are the behavior of the ```cobertura```
@@ -218,6 +223,6 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:2.2.1'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.2.2-SNAPSHOT'
         }
     }

@@ -1,4 +1,12 @@
-Changes for 2.2.0
+Changes for 2.2.2
+=================
+- Fixed the Auxiliary classpath on Windows boxes. (Issue #39)
+
+- Fixed (again) the classpath issue that was leading to ASM conflicts.  The
+  plugin now uses its own child-first classloader to make sure we get the
+  versions Cobertura needs ahead of the classes used by the application.
+
+Changes for 2.2.1
 =================
 - Fixed the operation of the coverageClassesTask and coverageTestTask closures.
   (Issue #38)

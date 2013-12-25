@@ -2,7 +2,6 @@ package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
@@ -124,7 +123,8 @@ class InstrumentTask extends DefaultTask {
 		// add the instrumented dir to the list.
 		instrumentDirs << ("${project.buildDir}/instrumented_classes" as String)
 
-		// set the auxiliary classpath to the current classpath plus jars in the lib dir plus classes in the output dir.
+		// set the auxiliary classpath to the current classpath plus jars in the
+		// lib dir plus classes in the output dir.
 		// AKA current classpath + compileClasspath + compileClassPath
 		//	    <path id="cobertura.auxpath">
 //	    <pathelement path="${classpath}"/>
@@ -134,7 +134,7 @@ class InstrumentTask extends DefaultTask {
 //	    <pathelement location="classes"/>
 //	    </path>
 		String auxiliaryClasspath = project.sourceSets.main.output.classesDir.path +
-						":" + project.sourceSets.main.compileClasspath.getAsPath()
+						File.pathSeparator + project.sourceSets.main.compileClasspath.getAsPath()
 
 		runner.withClasspath(classpath.files).instrument null, configuration.coverageInputDatafile.path, getDestinationDir()?.path,
 						configuration.coverageIgnores as List,

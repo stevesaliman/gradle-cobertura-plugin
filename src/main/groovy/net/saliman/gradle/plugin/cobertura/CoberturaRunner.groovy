@@ -1,5 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
+import net.saliman.gradle.plugin.cobertura.util.ChildFirstUrlClassLoader
+
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -161,9 +163,11 @@ public class CoberturaRunner {
 
 	}
 	/**
-	 * Execute the Cobertura method that does the required work. This will
-	 * optionally use a SecurityManager to trap SecurityExceptions thrown by
-	 * the Cobertura checkCoverage code.
+	 * Execute the Cobertura method that does the required work. This will replace
+	 * the class loader with a child-first class loader to make sure that we get
+	 * versions of classes that Cobertura expects over the ones that the
+	 * application uses.  It also optionally use a SecurityManager to trap
+	 * SecurityExceptions thrown by the Cobertura checkCoverage code.
 	 * @param className the name of the class with the method we are executing.
 	 * @param methodName the name of the method to execute.
 	 * @param useSecurityManager whether or not we need to use a security manager
@@ -171,10 +175,15 @@ public class CoberturaRunner {
 	 * @return the exit code of the invoked method or 0 if everything ran well.
 	 */
 	private executeCobertura(String className, String methodName,
-	                                             boolean useSecurityManager, List<String> args) {
-		ClassLoader cl = this.class.classLoader
+	                        boolean useSecurityManager, List<String> args) {
+		// We need to replace the classloader for the thread with one that finds
+		// Cobertura's dependencies first.
+		ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
+
 		if ( classpath ) {
-			cl = new URLClassLoader(classpath.collect { it.toURI().toURL() } as URL[], cl)
+			def urls = classpath.collect { it.toURI().toURL() }
+			ClassLoader cl = new ChildFirstUrlClassLoader(urls as URL[], prevCl)
+			Thread.currentThread().setContextClassLoader(cl);
 		}
 
 		def SecurityManager oldSm = System.getSecurityManager()
@@ -182,7 +191,7 @@ public class CoberturaRunner {
 		def exitStatus = 0
 
 		try {
-			Class mainClass = cl.loadClass(className)
+			Class mainClass = Thread.currentThread().getContextClassLoader().loadClass(className)
 			Method mainMethod = mainClass.getMethod(methodName, String[])
 			if ( useSecurityManager ) {
 				System.setSecurityManager(sm)
@@ -194,6 +203,8 @@ public class CoberturaRunner {
 				throw e
 			}
 		} finally {
+			// Restore the classLoader
+			Thread.currentThread().setContextClassLoader(prevCl);
 			if ( useSecurityManager ) {
 				System.setSecurityManager(oldSm)
 				exitStatus = sm.exitStatus
