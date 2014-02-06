@@ -1,14 +1,12 @@
 News
 ----
-###December 26, 2013:
+###February 4, 2014:
 *Note:* This plugin will not work with Cobertura 2.0.4 snapshots at this time.
 All of the Cobertura classes that are called by this plugin have been renamed
 by the Cobertura team.  I'm currently working with the Cobertura team on this
 issue.
 
-Fixed classpath issues that were causing instrumentation errors for applications
-that directly or indirectly use ASM (Hibernate uses it, so a project that uses
-Hibernate would be affected by its indirect ASM usage).
+Added support for the Gradle dashboard, with thanks to vyazelenko.
 
 ###December 08, 2013:
 A special thank you to John Engelman for his help with the 2.2.0 release.
