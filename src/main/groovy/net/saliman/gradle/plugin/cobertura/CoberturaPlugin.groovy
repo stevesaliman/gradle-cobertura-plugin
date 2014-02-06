@@ -10,6 +10,7 @@ import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.tasks.testing.Test
 
@@ -81,6 +82,7 @@ class CoberturaPlugin implements Plugin<Project> {
 		// and Scala compiles to java classes under the hood, and the Groovy and
 		// Scala plugins will extend the Java plugin anyway.
 		project.plugins.apply(JavaPlugin)
+        project.plugins.apply(ReportingBasePlugin)
 
 		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {
@@ -190,6 +192,14 @@ class CoberturaPlugin implements Plugin<Project> {
 		generateReportTask.setDescription("Generate a Cobertura report after tests finish.")
 		generateReportTask.enabled = false
 		generateReportTask.runner = runner
+        generateReportTask.reports.all { report ->
+            report.conventionMapping.with {
+                enabled = true
+                destination = {
+                    new File(extension.coverageReportDir, "index.html")
+                }
+            }
+        }
 
 		// Create the performCoverageCheck task that will do the work of checking
 		// the coverage levels, and you guessed it, it is disabled.
