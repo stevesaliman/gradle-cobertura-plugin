@@ -50,8 +50,7 @@ project.tasks.uploadArchives.dependsOn 'test'
 task sourceJar(type: Jar) {
 	description = "An archive of the source code for Maven Central"
 	classifier = 'sources'
-	from sourceSets.main.java.srcDirs
-	from sourceSets.main.groovy.srcDirs
+	from sourceSets.main.allSource
 }
 
 task groovydocJar(type: Jar) {
