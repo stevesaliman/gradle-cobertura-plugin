@@ -404,4 +404,15 @@ class CoberturaExtensionTest {
 		]
 	}
 
+	/**
+	 * Try setting the to a file collection.
+	 * This should be fine.
+	 */
+	@Test
+	void setAuxiliaryClasspathValid() {
+		extension.auxiliaryClasspath = project.files('tmp')
+		assertEquals("Failed to set the auxiliaryClasspath", project.files('tmp'), extension.auxiliaryClasspath)
+	}
+
+
 }
