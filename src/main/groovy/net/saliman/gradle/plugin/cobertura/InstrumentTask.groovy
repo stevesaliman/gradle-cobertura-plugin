@@ -79,6 +79,15 @@ class InstrumentTask extends DefaultTask {
 	}
 
 	/**
+	 * If the auxiliary classpath changes, we'll need to
+	 * re-instrument.
+	 */
+	@InputFiles
+	def getAuxiliaryClasspath() {
+		configuration.auxiliaryClasspath
+	}
+
+	/**
 	 * The output file from this task is named inputDatafile because it is the
 	 * input input for the task that copies the ser file, and is input for the
 	 * tests.
@@ -123,26 +132,13 @@ class InstrumentTask extends DefaultTask {
 		// add the instrumented dir to the list.
 		instrumentDirs << ("${project.buildDir}/instrumented_classes" as String)
 
-		// set the auxiliary classpath to the current classpath plus jars in the
-		// lib dir plus classes in the output dir.
-		// AKA current classpath + compileClasspath + compileClassPath
-		//	    <path id="cobertura.auxpath">
-//	    <pathelement path="${classpath}"/>
-//	    <fileset dir="lib">
-//	    <include name="**/*.jar"/>
-//	    </fileset>
-//	    <pathelement location="classes"/>
-//	    </path>
-		String auxiliaryClasspath = project.sourceSets.main.output.classesDir.path +
-						File.pathSeparator + project.sourceSets.main.compileClasspath.getAsPath()
-
 		runner.withClasspath(classpath.files).instrument null, configuration.coverageInputDatafile.path, getDestinationDir()?.path,
 						configuration.coverageIgnores as List,
 						configuration.coverageIncludes as List,
 						configuration.coverageExcludes as List,
 						configuration.coverageIgnoreTrivial as boolean,
 						configuration.coverageIgnoreMethodAnnotations as List,
-						auxiliaryClasspath as String,
+						configuration.auxiliaryClasspath.getAsPath(),
 						instrumentDirs as List
 	}
 }

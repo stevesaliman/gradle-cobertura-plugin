@@ -1,6 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.testing.Test
 
@@ -72,6 +73,14 @@ class CoberturaExtension {
 	 * List of ignore patterns
 	 */
 	List<String> coverageIgnores = []
+
+	/**
+	 * The classpath when instrumenting.
+	 * Defaults to 
+	 * project.sourceSets.main.output.classesDir,
+	 * project.sourceSets.main.compileClasspath,
+	 */
+	FileCollection auxiliaryClasspath
 
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
@@ -201,6 +210,11 @@ class CoberturaExtension {
 		// groovy and scala plugins extend the java plugin.  This means that the
 		// java source directories will always be defined.
 		coverageSourceDirs = project.sourceSets.main.java.srcDirs
+
+		// Set the ausxiliaryClasspath to defaults. This is the classpath cobertura uses for
+		// resolving classes while instrumenting
+		auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
+		auxiliaryClasspath = auxiliaryClasspath.plus(project.sourceSets.main.compileClasspath)
 
 		// By default instrumentation depends on the "classes" task
 		coverageClassesTasksSpec = {

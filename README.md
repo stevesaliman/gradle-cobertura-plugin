@@ -178,6 +178,12 @@ build.gradle file.  The cobertura block recognizes the following options:
 - ```coberturaVersion = <version>```: The version of Cobertura that will be
   used to run the coverage reports.  The default is 2.0.3.
 
+- ```auxiliaryClasspath = <FileCollection>```: You can set the classpath that 
+  Cobertura uses while instrumenting your classes. It defaults to 
+  project.sourceSets.main.output.classesDir +
+  project.sourceSets.main.compileClasspath
+  You can add to that easily
+  ```auxiliaryClasspath += files(configurations.examplesCompile.files)```
 
 - ```coverageDirs = [ <dirnames> ]```: An array of directories under the base directory
   containing classes to be instrumented.  The default is
