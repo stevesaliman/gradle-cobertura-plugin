@@ -5,7 +5,6 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 sourceCompatibility = '1.5'
@@ -102,52 +101,46 @@ gradle.taskGraph.whenReady { taskGraph ->
 		}
 	}
 }
+
 uploadArchives {
-	repositories {
-		mavenDeployer {
-			if (signing.signatory) {
-				beforeDeployment { signing.signPom(it) }
+	// We can't use taskGraph.whenReady because it doesn't resolve until after
+	// configuration.  The startParameter is not as good, but it probably
+	// good enough for our purposes.
+	if ( gradle.startParameter.taskNames.contains("uploadArchives") ) {
+		// Use Java 6's console to read from the console (no good for a CI
+		// environment)
+		Console console = System.console()
+		console.printf "\n\nWe have to upload some things in this build...\n\n"
+
+		if ( !project.hasProperty('mavenCentralUsername') ) {
+			def mavenCentralUsername = console.readLine("Maven Central Username: ")
+			allprojects { ext."mavenCentralUsername" = mavenCentralUsername }
+		}
+
+		if ( !project.hasProperty('mavenCentralPassword') ) {
+			def mavenCentralPassword = console.readLine("Maven Central Password: ")
+			allprojects { ext."mavenCentralPassword" = mavenCentralPassword }
+		}
+
+		repositories {
+			mavenDeployer {
+				if ( signing.signatory ) {
+					beforeDeployment { signPom(it) }
+				}
+				configuration = configurations.archives
+				//repository(url: "file://$buildDir/m2repo")
+				repository(url: mavenCentralUploadUrl) {
+					authentication(userName: mavenCentralUsername,
+									password: mavenCentralPassword)
+					releases(updatePolicy: "always")
+					snapshots(updatePolicy: "always")
+				}
+				pom.project(pomConfiguration)
 			}
-			configuration = configurations.archives
-			//repository(url: "file://$buildDir/m2repo")
-			repository(url: mavenCentralUploadUrl) {
-      if (project.hasProperty('mavenCentralUsername') && project.hasProperty('mavenCentralPassword')) {
-				authentication(userName: project.property('mavenCentralUsername'),
-								password: project.property('mavenCentralPassword'))
-        }
-				releases(updatePolicy: "always")
-				snapshots(updatePolicy: "always")
-			}
-			pom.project(pomConfiguration)
 		}
 	}
 }
 
-idea {
-	module {
-
-		//if you prefer different output folders
-		inheritOutputDirs = false
-		outputDir = file('build/idea/out')
-		testOutputDir = file('build/idea/testOut')
-		//if you love browsing Javadoc
-		downloadJavadoc = true
-		//and hate reading sources :)
-		downloadSources = false
-	}
-}
-
-// Configure Idea plugin so that it generates project files that use git for 
-// source control.  Thank you to Eric Wendelin for showing me this trick.
-idea.project.ipr.withXml { provider ->
-	def node = provider.asNode()
-	def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
-	vcsConfig.mapping[0].'@vcs' = 'Git'
-
-	// set gradle home
-	def gradleSettings = node.appendNode('component',[name: 'GradleSettings'])
-	gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir.absolutePath])
-}
 
 def getPomConfiguration() {
 	return {
