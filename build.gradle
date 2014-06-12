@@ -12,7 +12,7 @@ targetCompatibility = '1.5'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "2.2.4"
+version = "2.2.5-SNAPSHOT"
 ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
@@ -125,7 +125,7 @@ uploadArchives {
 		repositories {
 			mavenDeployer {
 				if ( signing.signatory ) {
-					beforeDeployment { signPom(it) }
+					beforeDeployment { signing.signPom(it) }
 				}
 				configuration = configurations.archives
 				//repository(url: "file://$buildDir/m2repo")

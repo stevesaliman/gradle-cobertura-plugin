@@ -77,12 +77,13 @@ class CoberturaPlugin implements Plugin<Project> {
 		project.logger.info("Applying cobertura plugin to $project.name")
 
 		// It doesn't make sense to have the cobertura plugin without the java
-		// plugin because it works with java classes, so apply it here.  If the
-		// project is a Groovy or Scala project, we're still good because Groovy
-		// and Scala compiles to java classes under the hood, and the Groovy and
-		// Scala plugins will extend the Java plugin anyway.
+		// plugin because it works with java classes, interacts with Java
+		// source sets, etc., so apply the Java plugin.  If the project is a Groovy
+		// or Scala project, we're still good because Groovy and Scala compiles to
+		// java classes under the hood, and the Groovy and Scala plugins will extend
+		// the Java plugin anyway.
 		project.plugins.apply(JavaPlugin)
-        project.plugins.apply(ReportingBasePlugin)
+    project.plugins.apply(ReportingBasePlugin)
 
 		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {

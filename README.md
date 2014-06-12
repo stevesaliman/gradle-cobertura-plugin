@@ -1,5 +1,8 @@
 News
 ====
+###June 11, 2014
+Gradle has made the first 2.0 release candidate available, and it looks like
+the cobertura plugin works fine with Gradle 2.0.
 ###February 25, 2014:
 *Note:* This plugin will not work with Cobertura 2.0.4 snapshots at this time.
 All of the Cobertura classes that are called by this plugin have been renamed
