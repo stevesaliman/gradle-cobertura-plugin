@@ -1,3 +1,10 @@
+Changes for 2.2.5
+- Added support for Cobertura's ```encoding``` option when generating reports
+  (Issue #43)
+
+- Added the cobertura version to the up-to-date checks so that we re-instrument
+  if the version changes (Issue #52)
+
 Changes for 2.2.4
 =================
 - Added support for customizing the auxiliary classpath, with thanks to Harald

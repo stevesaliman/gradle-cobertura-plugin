@@ -87,6 +87,7 @@ public class CoberturaRunner {
 	}
 
 	public void generateCoverageReport(String datafile, String destination, String format,
+	                                   String encoding,
 	                                   List<String> sourceDirectories) throws Exception {
 		List<String> args = new ArrayList<String>()
 		args.add("--datafile")
@@ -95,6 +96,12 @@ public class CoberturaRunner {
 		args.add(format)
 		args.add("--destination")
 		args.add(destination)
+		// encoding is optional...
+		if ( encoding != CoberturaExtension.ENCODING_UNDEFINED ) {
+			args.add("--encoding")
+			args.add(encoding)
+		}
+
 		args.addAll(sourceDirectories)
 		// TODO if 2.0.4, call ReportMain.main
 		executeCobertura("net.sourceforge.cobertura.reporting.Main", "main", false, args)

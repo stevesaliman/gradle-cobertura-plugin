@@ -3,6 +3,7 @@ package net.saliman.gradle.plugin.cobertura
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.reporting.Reporting
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
@@ -26,13 +27,32 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 	CoberturaExtension configuration
 	CoberturaRunner runner
 	Configuration classpath
-    @Nested
-    private final CoberturaReportsImpl reports
+  @Nested
+  private final CoberturaReportsImpl reports
 
-    @Inject
-    GenerateReportTask(Instantiator instantiator) {
-        reports = instantiator.newInstance(CoberturaReportsImpl, this)
-    }
+  @Inject
+  GenerateReportTask(Instantiator instantiator) {
+    reports = instantiator.newInstance(CoberturaReportsImpl, this)
+  }
+
+	@Override
+	CoberturaReports getReports() {
+		reports
+	}
+
+	@Override
+	CoberturaReports reports(Closure closure) {
+		reports.configure(closure)
+	}
+
+	/**
+	 * If the user changes the file encoding, we need to re-generate the
+	 * report.
+	 */
+	@Input
+	def getCoverageEncoding() {
+		configuration.coverageEncoding
+	}
 
 	@TaskAction
 	def generateReports() {
@@ -51,17 +71,8 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 							configuration.coverageReportDatafile.path,
 							configuration.coverageReportDir.path,
 							format,
+							configuration.coverageEncoding,
 							project.files(configuration.coverageSourceDirs).files.collect { it.path })
 		}
 	}
-
-    @Override
-    CoberturaReports getReports() {
-        reports
-    }
-
-    @Override
-    CoberturaReports reports(Closure closure) {
-        reports.configure(closure)
-    }
 }

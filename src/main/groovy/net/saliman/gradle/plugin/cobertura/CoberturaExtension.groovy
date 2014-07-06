@@ -10,6 +10,7 @@ import org.gradle.api.tasks.testing.Test
  * in this extension match options in Cobertura itself.
  */
 class CoberturaExtension {
+	static ENCODING_UNDEFINED = 'undefined'
 
 	/**
 	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
@@ -49,6 +50,13 @@ class CoberturaExtension {
 	 * format.
 	 */
 	Set<String> coverageFormats = ['html']
+
+	/**
+	 * The character encoding to use when generating coverage reports.  If no
+	 * encoding is specified, the plugin uses the system default.
+	 */
+	// For some reason, Gradle doesn't seem to like nulls in @Input properties.
+	String coverageEncoding = ENCODING_UNDEFINED
 
 	/**
 	 * Directories of source files to use. The default is to look for and include

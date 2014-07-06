@@ -9,8 +9,8 @@ All of the Cobertura classes that are called by this plugin have been renamed
 by the Cobertura team.  I'm currently working with the Cobertura team on this
 issue.
 
-Added suAdded support for customizing the auxiliary classpath, with thanks to Harald
-Schmitt
+Added suAdded support for customizing the auxiliary classpath, with thanks to
+Harald Schmitt
 
 ###December 08, 2013:
 A special thank you to John Engelman for his help with the 2.2.0 release.
@@ -122,7 +122,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.2.2"
+        classpath "net.saliman:gradle-cobertura-plugin:2.2.5-SNAPSHOT"
     }
 }
 apply plugin: 'cobertura'
@@ -215,7 +215,12 @@ build.gradle file.  The cobertura block recognizes the following options:
 - ```coverageFormats = [ <formats> ]```: Tells the plugin what report formats
   should be used.  Cobertura supports 'html' and 'xml'.  The default is html.
 
-
+- ```coverageEncoding```: The file encoding Cobertura should use when it 
+  generates coverage reports, such as 'UTF-8'.  There is no default for this
+  optional setting.  If no encoding is specified, Cobertura will use the 
+  default encoding of the OS.
+  
+  
 - ```coverageSourceDirs = <set of directories>```: Tells the plugin where to
   look for source files to instrument and include in reports.  By default,
   the plugin will include project.sourceSets.main.java.srcDirs,
@@ -346,6 +351,6 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:2.2.2'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.2.5-SNAPSHOT'
         }
     }

@@ -28,6 +28,14 @@ class InstrumentTask extends DefaultTask {
 	Configuration classpath
 
 	/**
+	 * If the user changes the Cobertura version, we need to re-instrument.
+	 */
+	@Input
+	def getCoberturaVersion() {
+		configuration.coberturaVersion
+	}
+
+	/**
 	 * If the included classes change, we need to re-instrument
 	 */
 	@Input
