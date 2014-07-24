@@ -125,7 +125,7 @@ buildscript {
         classpath "net.saliman:gradle-cobertura-plugin:2.2.5-SNAPSHOT"
     }
 }
-apply plugin: 'cobertura'
+apply plugin: 'net.saliman.cobertura'
 ```
 
 There are 3 tasks you can use to have Cobertura check coverage and generate

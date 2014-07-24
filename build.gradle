@@ -1,19 +1,29 @@
 #!groovy
 // The above triggers groovy syntax highlighting in vim
 
+buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+	}
+}
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'eclipse'
+apply plugin: 'com.jfrog.bintray'
 
 sourceCompatibility = '1.5'
 targetCompatibility = '1.5'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "2.2.5-SNAPSHOT"
-ext.isSnapshot = version.endsWith("SNAPSHOT")
+versionString = "2.2.5-SNAPSHOT"
+ext.isSnapshot = versionString.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
 	println "using snapshot"
@@ -169,4 +179,32 @@ def getPomConfiguration() {
 		}
 	}
 }
+
+bintray {
+	user = project.hasProperty('bintrayUsername') ? project.getProperty('bintrayUsername') : ''
+	key = project.hasProperty('bintrayApiKey') ? project.getProperty('bintrayApiKey') : ''
+
+	configurations = [ 'archives' ]
+
+	pkg {
+		repo = 'gradle-plugins'
+		name = 'gradle-cobertura-plugin'
+		licenses = [ 'Apache-2.0' ]
+		desc = 'A Gradle plugin for programmatically managing Jenkins instances.'
+		websiteUrl = 'https://github.com/stevesaliman/gradle-cobertura-plugin'
+		issueTrackerUrl = 'https://github.com/stevesaliman/gradle-cobertura-plugin/issues'
+		vcsUrl = 'https://github.com/stevesaliman/gradle-cobertura-plugin.git'
+		labels = [ 'cobertura', 'coverage' ]
+		publicDownloadNumbers = true
+		version {
+			name = versionString
+			vcsTag = versionString
+			attributes = [
+							'gradle-plugin': 'net.saliman.cobertura:net.saliman:gradle-cobertura-plugin'
+			]
+		}
+	}
+}
+
+
 
