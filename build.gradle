@@ -8,6 +8,7 @@ buildscript {
 	}
 	dependencies {
 		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+		classpath 'org.codehaus.groovy:groovy-all:2.3.4'
 	}
 }
 apply plugin: 'java'
@@ -22,8 +23,8 @@ targetCompatibility = '1.5'
 
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-versionString = "2.2.5-SNAPSHOT"
-ext.isSnapshot = versionString.endsWith("SNAPSHOT")
+version = "2.2.5-SNAPSHOT"
+ext.isSnapshot = version.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
 	println "using snapshot"
@@ -197,8 +198,8 @@ bintray {
 		labels = [ 'cobertura', 'coverage' ]
 		publicDownloadNumbers = true
 		version {
-			name = versionString
-			vcsTag = versionString
+			name = version
+			vcsTag = version
 			attributes = [
 							'gradle-plugin': 'net.saliman.cobertura:net.saliman:gradle-cobertura-plugin'
 			]

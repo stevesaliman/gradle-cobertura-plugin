@@ -140,13 +140,9 @@ class InstrumentTask extends DefaultTask {
 		// add the instrumented dir to the list.
 		instrumentDirs << ("${project.buildDir}/instrumented_classes" as String)
 
-		runner.withClasspath(classpath.files).instrument null, configuration.coverageInputDatafile.path, getDestinationDir()?.path,
-						configuration.coverageIgnores as List,
-						configuration.coverageIncludes as List,
-						configuration.coverageExcludes as List,
-						configuration.coverageIgnoreTrivial as boolean,
-						configuration.coverageIgnoreMethodAnnotations as List,
-						configuration.auxiliaryClasspath.getAsPath(),
-						instrumentDirs as List
+		runner.withClasspath(classpath.files).instrument(configuration,
+						null,
+						getDestinationDir()?.path,
+						instrumentDirs as List)
 	}
 }

@@ -16,6 +16,7 @@ subprojects {
 
 apply plugin: 'cobertura'
 cobertura {
+  // coberturaVersion = '2.0.4-SNAPSHOT'
 
   coverageMergeDatafiles = [
     new File("util/build/cobertura/cobertura.ser"),

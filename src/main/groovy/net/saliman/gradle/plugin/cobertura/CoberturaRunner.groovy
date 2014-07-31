@@ -16,34 +16,37 @@ public class CoberturaRunner {
 		return new CoberturaRunner(classpath: classpath)
 	}
 
-	public void instrument(String basedir, String datafile, String destination, List<String> ignore,
-	                       List<String> includeClasses, List<String> excludeClasses,
-	                       boolean ignoreTrivial, List<String> ignoreMethodAnnotations, String auxiliaryClasspath,
-	                       List<String> instrument) {
+	public void instrument(CoberturaExtension configuration,
+	                       String baseDir,
+	                       String destinationDir,
+	                       List<String> instrumentDirs) {
 		List<String> args = new ArrayList<String>()
 		/*
 		 * cobertura will ignore excludes if there are no includes specified, so
 		 * if excludes have been specified but includes haven't, put a default
 		 * include in the list
 		 */
+		def includeClasses = configuration.coverageIncludes as List
+		def excludeClasses = configuration.coverageExcludes as List
 		if ( excludeClasses != null && excludeClasses.size() > 0 && (includeClasses == null || includeClasses.size() == 0) ) {
 			includeClasses = new ArrayList<String>(1)
 			includeClasses.add(".*")
 		}
-		if ( hasLength(basedir) ) {
+		if ( hasLength(baseDir) ) {
 			args.add("--basedir")
-			args.add(basedir)
+			args.add(baseDir)
 		}
-		if ( hasLength(datafile) ) {
+		if ( hasLength(configuration.coverageInputDatafile.path) ) {
 			args.add("--datafile")
-			args.add(datafile)
+			args.add(configuration.coverageInputDatafile.path)
 		}
-		if ( hasLength(destination) ) {
+		if ( hasLength(destinationDir) ) {
 			args.add("--destination")
-			args.add(destination)
+			args.add(destinationDir)
 		}
-		if ( ignore != null ) {
-			for ( String s : ignore ) {
+		def ignoreList = configuration.coverageIgnores as List
+		if ( ignoreList != null ) {
+			for ( String s : ignoreList ) {
 				args.add("--ignore")
 				args.add(s)
 			}
@@ -60,10 +63,10 @@ public class CoberturaRunner {
 				args.add(s)
 			}
 		}
-		if ( ignoreTrivial ) {
+		if ( configuration.coverageIgnoreTrivial ) {
 			args.add("--ignoreTrivial")
 		}
-
+		def ignoreMethodAnnotations = configuration.coverageIgnoreMethodAnnotations as List
 		if ( ignoreMethodAnnotations != null ) {
 			for ( String s : ignoreMethodAnnotations ) {
 				args.add("--ignoreMethodAnnotation")
@@ -72,7 +75,7 @@ public class CoberturaRunner {
 		}
 
 		args.add("--auxClasspath")
-		args.add(auxiliaryClasspath)
+		args.add(configuration.auxiliaryClasspath.getAsPath())
 //	    <path id="cobertura.auxpath">
 //	    <pathelement path="${classpath}"/>
 //	    <fileset dir="lib">
@@ -81,22 +84,27 @@ public class CoberturaRunner {
 //	    <pathelement location="classes"/>
 //	    </path>
 
-		args.addAll(instrument)
+		args.addAll(instrumentDirs)
 		// TODO: if 2.0.4, call InstrumentMain.main
-		executeCobertura("net.sourceforge.cobertura.instrument.Main", "main", false, args)
+		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
+			executeCobertura("net.sourceforge.cobertura.instrument.InstrumentMain", "main", false, args)
+		} else {
+			executeCobertura("net.sourceforge.cobertura.instrument.Main", "main", false, args)
+		}
 	}
 
-	public void generateCoverageReport(String datafile, String destination, String format,
-	                                   String encoding,
-	                                   List<String> sourceDirectories) throws Exception {
+	public void generateCoverageReport(CoberturaExtension configuration,
+					                           String format,
+                                     List<String> sourceDirectories) throws Exception {
 		List<String> args = new ArrayList<String>()
 		args.add("--datafile")
-		args.add(datafile)
+		args.add(configuration.coverageReportDatafile.path)
 		args.add("--format")
 		args.add(format)
 		args.add("--destination")
-		args.add(destination)
+		args.add(configuration.coverageReportDir.path)
 		// encoding is optional...
+		def encoding = configuration.coverageEncoding
 		if ( encoding != CoberturaExtension.ENCODING_UNDEFINED ) {
 			args.add("--encoding")
 			args.add(encoding)
@@ -104,7 +112,11 @@ public class CoberturaRunner {
 
 		args.addAll(sourceDirectories)
 		// TODO if 2.0.4, call ReportMain.main
-		executeCobertura("net.sourceforge.cobertura.reporting.Main", "main", false, args)
+		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
+			executeCobertura("net.sourceforge.cobertura.reporting.ReportMain", "main", false, args)
+		} else {
+			executeCobertura("net.sourceforge.cobertura.reporting.Main", "main", false, args)
+		}
 	}
 
 	public int checkCoverage(CoberturaExtension configuration) throws Exception {
@@ -150,7 +162,11 @@ public class CoberturaRunner {
 		}
 
 		// TODO: branch on version and call CheckCoverageMain.checkCoverage
-		executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
+		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
+			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "main", true, args)
+		} else {
+		  executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
+		}
 	}
 
 	def mergeCoverageReports(CoberturaExtension configuration) {
@@ -166,7 +182,11 @@ public class CoberturaRunner {
 		}
 
 		// TODO: branch on version and call MergeMain.main
-		executeCobertura("net.sourceforge.cobertura.merge.Main", "main", false, args)
+		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
+			executeCobertura("net.sourceforge.cobertura.merge.MergeMain", "main", false, args)
+		} else {
+			executeCobertura("net.sourceforge.cobertura.merge.Main", "main", false, args)
+		}
 
 	}
 	/**

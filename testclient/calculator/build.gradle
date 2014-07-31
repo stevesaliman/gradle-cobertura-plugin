@@ -18,6 +18,7 @@ dependencies {
 }
 
 cobertura {
+  // coberturaVersion = '2.0.4-SNAPSHOT'
   coverageFormats = [ 'xml', 'html' ]
   coverageExcludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
   // coverageIncludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]

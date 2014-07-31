@@ -68,10 +68,8 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		// Generate a report for each provided format
 		for (format in configuration.coverageFormats) {
 			runner.withClasspath(classpath.files).generateCoverageReport(
-							configuration.coverageReportDatafile.path,
-							configuration.coverageReportDir.path,
+							configuration,
 							format,
-							configuration.coverageEncoding,
 							project.files(configuration.coverageSourceDirs).files.collect { it.path })
 		}
 	}
