@@ -12,7 +12,4 @@ gradle-app.setting
 *.ipr
 testclient/buildSrc/build
 testclient/buildSrc/.gradle
-testclient/gradlew
-testclient/gradlew.bat
-testclient/gradle/wrapper/*
 *.bak
