@@ -44,9 +44,10 @@ repositories {
 }
 
 dependencies {
-	compile 'org.codehaus.groovy:groovy-all:2.0.6'
+	compile localGroovy()
 	compile gradleApi()
 	testCompile 'junit:junit:4.10'
+	testRuntime 'net.sourceforge.cobertura:cobertura:2.1.0-SNAPSHOT'
 	archives "org.apache.maven.wagon:wagon-ssh:2.2"
 	archives "org.apache.maven.wagon:wagon-ssh-external:2.2"
 }

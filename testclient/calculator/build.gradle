@@ -18,7 +18,7 @@ dependencies {
 }
 
 cobertura {
-  // coberturaVersion = '2.0.4-SNAPSHOT'
+  coberturaVersion = '2.1.0-SNAPSHOT'
   coverageFormats = [ 'xml', 'html' ]
   coverageExcludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
   // coverageIncludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
@@ -30,9 +30,10 @@ cobertura {
 		 // }
 	// }
   // coverageCheckHaltOnFailure = true
+	// coverageCheckLineRate = 54
   coverageCheckRegexes = [
     [ regex: '.*Doubler', branchRate: 99, lineRate: 98 ],
-	[ regex: '.*Calculator', branchRate: 96, lineRate:95 ]
+	  [ regex: '.*Calculator', branchRate: 97, lineRate:96 ]
   ]
 }
 

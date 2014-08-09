@@ -85,17 +85,16 @@ public class CoberturaRunner {
 //	    </path>
 
 		args.addAll(instrumentDirs)
-		// TODO: if 2.0.4, call InstrumentMain.main
-		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
-			executeCobertura("net.sourceforge.cobertura.instrument.InstrumentMain", "main", false, args)
+		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
+			executeCobertura("net.sourceforge.cobertura.instrument.InstrumentMain", "instrument", false, args)
 		} else {
 			executeCobertura("net.sourceforge.cobertura.instrument.Main", "main", false, args)
 		}
 	}
 
 	public void generateCoverageReport(CoberturaExtension configuration,
-					                           String format,
-                                     List<String> sourceDirectories) throws Exception {
+	                                   String format,
+	                                   List<String> sourceDirectories) throws Exception {
 		List<String> args = new ArrayList<String>()
 		args.add("--datafile")
 		args.add(configuration.coverageReportDatafile.path)
@@ -111,9 +110,8 @@ public class CoberturaRunner {
 		}
 
 		args.addAll(sourceDirectories)
-		// TODO if 2.0.4, call ReportMain.main
-		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
-			executeCobertura("net.sourceforge.cobertura.reporting.ReportMain", "main", false, args)
+		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
+			executeCobertura("net.sourceforge.cobertura.reporting.ReportMain", "generateReport", false, args)
 		} else {
 			executeCobertura("net.sourceforge.cobertura.reporting.Main", "main", false, args)
 		}
@@ -161,11 +159,10 @@ public class CoberturaRunner {
 			}
 		}
 
-		// TODO: branch on version and call CheckCoverageMain.checkCoverage
-		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
-			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "main", true, args)
+		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
+			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "checkCoverage", false, args)
 		} else {
-		  executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
+			executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
 		}
 	}
 
@@ -181,9 +178,8 @@ public class CoberturaRunner {
 			}
 		}
 
-		// TODO: branch on version and call MergeMain.main
-		if ( configuration.coberturaVersion.startsWith("2.0.4") ) {
-			executeCobertura("net.sourceforge.cobertura.merge.MergeMain", "main", false, args)
+		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
+			executeCobertura("net.sourceforge.cobertura.merge.MergeMain", "merge", false, args)
 		} else {
 			executeCobertura("net.sourceforge.cobertura.merge.Main", "main", false, args)
 		}
@@ -202,7 +198,7 @@ public class CoberturaRunner {
 	 * @return the exit code of the invoked method or 0 if everything ran well.
 	 */
 	private executeCobertura(String className, String methodName,
-	                        boolean useSecurityManager, List<String> args) {
+	                         boolean useSecurityManager, List<String> args) {
 		// We need to replace the classloader for the thread with one that finds
 		// Cobertura's dependencies first.
 		ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
@@ -267,5 +263,32 @@ public class CoberturaRunner {
 
 	boolean hasLength(String s) {
 		return (s != null && s.length() > 0)
+	}
+
+	/**
+	 * Rough hack that compares 2 version numbers. It assumes that all version
+	 * numbers follow the normal numbering conventions of strictly numbers,
+	 * separated by dots, with a possible snapshot version at the end.  We also
+	 * treat a snapshot version the same as its non snapshot equivalent, which
+	 * is good enough for our purposes.
+	 */
+	def compareVersions(a, b) {
+		List verA = a.tokenize('.')
+		List verB = b.tokenize('.')
+
+		def commonIndices = Math.min(verA.size(), verB.size())
+
+		for ( int i = 0; i < commonIndices; ++i ) {
+			def numA = (verA[i] =~/[0-9]*/)[0].toInteger()
+			def numB = (verB[i] =~/[0-9]*/)[0].toInteger()
+
+			if ( numA != numB ) {
+				return numA <=> numB
+			}
+		}
+
+		// If we got this far then all the common indices are identical, so
+		// whichever version is longer must be later
+		verA.size() <=> verB.size()
 	}
 }

@@ -152,7 +152,7 @@ are run.  If I'm wrong about that, you can always use ```-x someTask``` or the
 ```coberturaReport``` task to more precisely control what tests actually get
 run.
 
-3. The ```checkCoverage``` task does all the things ```coberturaReport``` does,
+3. The ```coberturaCheck``` task does all the things ```coberturaReport``` does,
 but adds a test coverage check to the build.  It optionally fails the build if
 the coverage levels are not sufficient.  See the documentation in the
 ```CoberturaExtension``` class for more details.
