@@ -1,5 +1,5 @@
 #!groovy
-apply plugin: 'cobertura'
+apply plugin: 'net.saliman.cobertura'
 apply plugin: 'java'
 
 repositories {

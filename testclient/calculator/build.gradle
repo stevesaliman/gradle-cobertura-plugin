@@ -1,7 +1,7 @@
 #!groovy
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'cobertura'
+apply plugin: 'net.saliman.cobertura'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
@@ -18,7 +18,7 @@ dependencies {
 }
 
 cobertura {
-  coberturaVersion = '2.1.0-SNAPSHOT'
+  // coberturaVersion = '2.1.0-SNAPSHOT'
   coverageFormats = [ 'xml', 'html' ]
   coverageExcludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
   // coverageIncludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
