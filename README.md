@@ -1,5 +1,8 @@
 News
 ====
+###October 12, 2014
+The Cobertura plugin now supports Cobertura 2.1, and is a part of Gradle 2.1's
+plugin repository.  See the Usage section for more details.
 ###June 11, 2014
 Gradle has made the first 2.0 release candidate available, and it looks like
 the cobertura plugin works fine with Gradle 2.0.
@@ -114,7 +117,15 @@ builds and multi language projects.
 
 Usage
 =====
-Add the following to your build.gradle file.
+To use the plugin with Gradle 2.1 or later, add the following to your 
+build.gradle file.
+
+```
+plugins {
+  id 'net.saliman.cobertura' version '2.2.5'
+}
+
+To use the plugin with Gradle 2.0 or older, add the following to build.gradle:
 
 ```groovy
 buildscript {
@@ -122,7 +133,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.2.5-SNAPSHOT"
+        classpath "net.saliman:gradle-cobertura-plugin:2.2.5"
     }
 }
 apply plugin: 'net.saliman.cobertura'
@@ -351,6 +362,6 @@ reference it in your builds like this:
             mavenLocal()
         }
         dependencies {
-            classpath 'net.saliman:gradle-cobertura-plugin:2.2.5-SNAPSHOT'
+            classpath 'net.saliman:gradle-cobertura-plugin:2.2.5'
         }
     }

@@ -5,10 +5,22 @@ Changes for 2.2.5
 - Added the cobertura version to the up-to-date checks so that we re-instrument
   if the version changes (Issue #52)
 
+- Fixed the way the plugin tells Cobertura where source directories are.  The
+  coverageSourceDirs argument always allowed users to configure this setting, 
+  but the default (srcSets.main.java.srcDirs) was set at apply time, so any
+  changes made to source sets in build.gradle was being ignored.  The default
+  is now handled at execution time (Issue #53)
+
+- The plugin is now available on the Gradle Plugin Portal (Issue #54)
+
+- The plugin can now be applied by 2 names, 'cobertura', and
+  'net.saliman.cobertura' (Issue #59)
+
+
 Changes for 2.2.4
 =================
 - Added support for customizing the auxiliary classpath, with thanks to Harald
-  Schmitt (Issue #48)
+  Schmitt (Issue #24)
 
 Changes for 2.2.3
 =================
