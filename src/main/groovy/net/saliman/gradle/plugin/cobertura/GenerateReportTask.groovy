@@ -57,6 +57,17 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		configuration.coverageEncoding
 	}
 
+	/**
+	 * Call Cobertura to generate the coverage reports.  The last argument to
+	 * Cobertura is a list of source directories.  Users can manually configure
+	 * this list via the coverageSourceDirs extension property, but if they don't,
+	 * the default is applied here.  The default is the value of
+	 * sourceSets.main.java.srcDirs, plus sourceSets.main.groovy.srcDirs and
+	 * sourceSets.main.scala.srcDirs, if the groovy or scala plugins have been
+	 * applied.  Normally, we'd set this default at apply time, but in this case
+	 * we can't because we won't know where the user wants source code until
+	 * configuration time.
+	 */
 	@TaskAction
 	def generateReports() {
 		// If the user specified merge files, than do a merge before generating
@@ -67,13 +78,24 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 			runner.withClasspath(classpath.files).mergeCoverageReports(configuration)
 		}
 
+		Set<File> sourceDirs = configuration.coverageSourceDirs
+		if ( sourceDirs == null ) {
+			// The Java plugin is always applied.
+			sourceDirs = project.sourceSets.main.java.srcDirs
+			if ( project.sourceSets.main.hasProperty('groovy') ) {
+				sourceDirs += project.sourceSets.main.groovy.srcDirs
+			}
+			if ( project.sourceSets.main.hasProperty('scala') ) {
+				sourceDirs += project.sourceSets.main.scala.srcDirs
+			}
+		}
 		project.logger.info("${path} - Generating reports...")
 		// Generate a report for each provided format
 		for (format in configuration.coverageFormats) {
 			runner.withClasspath(classpath.files).generateCoverageReport(
 							configuration,
 							format,
-							project.files(configuration.coverageSourceDirs).files.collect { it.path })
+							project.files(sourceDirs).files.collect { it.path })
 		}
 	}
 }

@@ -199,6 +199,8 @@ public class CoberturaRunner {
 	 */
 	private executeCobertura(String className, String methodName,
 	                         boolean useSecurityManager, List<String> args) {
+//		System.out.println("---------------- args:")
+//		System.out.println("${args}")
 		// We need to replace the classloader for the thread with one that finds
 		// Cobertura's dependencies first.
 		ClassLoader prevCl = Thread.currentThread().getContextClassLoader();

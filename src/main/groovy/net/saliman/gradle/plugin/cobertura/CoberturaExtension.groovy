@@ -214,10 +214,6 @@ class CoberturaExtension {
 		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
-		// The cobertura plugin causes the java plugin to be included.  Also, the
-		// groovy and scala plugins extend the java plugin.  This means that the
-		// java source directories will always be defined.
-		coverageSourceDirs = project.sourceSets.main.java.srcDirs
 
 		// Set the ausxiliaryClasspath to defaults. This is the classpath cobertura uses for
 		// resolving classes while instrumenting
