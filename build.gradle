@@ -7,7 +7,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
 		classpath 'org.codehaus.groovy:groovy-all:2.3.4'
 	}
 }
@@ -21,10 +21,13 @@ apply plugin: 'com.jfrog.bintray'
 sourceCompatibility = '1.5'
 targetCompatibility = '1.5'
 
+// Release version that won't conflict with the bintray plugin
+def releaseVersion = "2.2.5"
+// variables that configure the Maven upload
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
-version = "2.2.5"
-ext.isSnapshot = version.endsWith("SNAPSHOT")
+version = releaseVersion
+ext.isSnapshot = releaseVersion.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
 	println "using snapshot"
@@ -192,17 +195,17 @@ bintray {
 		// repo = 'gradle-plugins'
 		repo = 'maven'
 		name = 'gradle-cobertura-plugin'
-		licenses = [ 'Apache-2.0' ]
 		desc = 'A Gradle plugin for working with the Cobertura code coverage tool.'
+		licenses = [ 'Apache-2.0' ]
 		websiteUrl = 'https://github.com/stevesaliman/gradle-cobertura-plugin'
 		issueTrackerUrl = 'https://github.com/stevesaliman/gradle-cobertura-plugin/issues'
 		vcsUrl = 'https://github.com/stevesaliman/gradle-cobertura-plugin.git'
-		labels = [ 'cobertura', 'coverage' ]
+		labels = [ 'gradle', 'cobertura', 'coverage' ]
 		publicDownloadNumbers = true
 		version {
 			// name = version
 			// vcsTag = version
-			vcsTag = "Release_${version}"
+			vcsTag = "Release_${releaseVersion}"
 			attributes = [
 							'gradle-plugin': 'net.saliman.cobertura:net.saliman:gradle-cobertura-plugin'
 			]
