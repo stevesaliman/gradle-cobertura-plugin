@@ -21,7 +21,7 @@ A special thank you to John Engelman for his help with the 2.2.0 release.
 The biggest changes in this release are the behavior of the ```cobertura```
 task, the addition of the ```checkCoverage``` task, and support for merging
 datafiles before generating coverage reports. See the [CHANGELOG]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG)
+(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG.md)
 for the full details, but the main thing is that applying the cobertura plugin
 to a project no longer changes anything in the task graphs of other projects
 in a multi-project build.
@@ -37,7 +37,7 @@ and you will probably want to add a ```coverageInputDatafile``` as well.
 
 Version 2.1.0 Has several important changes.
 See the [CHANGELOG]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG)
+(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG.md)
 for the full details, but there 4 main changes that are important:
 
 1. The ```cobertura``` task works a little differently than it did before. See
