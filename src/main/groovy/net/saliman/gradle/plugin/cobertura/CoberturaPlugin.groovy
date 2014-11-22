@@ -159,6 +159,9 @@ class CoberturaPlugin implements Plugin<Project> {
 		project.tasks.create(name: COBERTURA_CHECK_TASK_NAME, type: DefaultTask)
 		Task checkCoverageTask = project.tasks.getByName(COBERTURA_CHECK_TASK_NAME)
 		checkCoverageTask.setDescription("Check test coverage.")
+		// It doesn't make much sense to check coverage without generating a
+		// report
+		checkCoverageTask.dependsOn reportTask
 
 		// Create the instrument task that will instrument code. At the moment, it
 		// is disabled.

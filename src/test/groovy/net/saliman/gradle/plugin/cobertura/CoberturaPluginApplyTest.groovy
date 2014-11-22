@@ -70,8 +70,8 @@ class CoberturaPluginApplyTest {
 	}
 
 	/**
-	 * Apply the plugin and make sure the coberturaReport task is created with no
-	 * dependencies and enabled.
+	 * Apply the plugin and make sure the coberturaCoverage task is created with
+	 * a dependency on the reportTask.
 	 */
 	@Test
 	void applyPluginCheckCoverageTask() {
@@ -81,7 +81,7 @@ class CoberturaPluginApplyTest {
 		assertTrue("checkCoverage task is the wrong type", task instanceof DefaultTask)
 		assertTrue("checkCoverage task should be enabled", task.enabled)
 		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_TASK_NAME)
-		assertTaskDoesNotDependOn(task, CoberturaPlugin.COBERTURA_CHECK_TASK_NAME)
+		assertTaskDependsOn(task, CoberturaPlugin.COBERTURA_REPORT_TASK_NAME)
 		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
 		assertTaskDoesNotDependOn(task, GenerateReportTask.NAME)
