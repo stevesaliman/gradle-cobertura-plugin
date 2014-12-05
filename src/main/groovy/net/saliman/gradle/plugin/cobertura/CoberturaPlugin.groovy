@@ -83,7 +83,7 @@ class CoberturaPlugin implements Plugin<Project> {
 		// java classes under the hood, and the Groovy and Scala plugins will extend
 		// the Java plugin anyway.
 		project.plugins.apply(JavaPlugin)
-    project.plugins.apply(ReportingBasePlugin)
+		project.plugins.apply(ReportingBasePlugin)
 
 		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {
@@ -282,7 +282,7 @@ class CoberturaPlugin implements Plugin<Project> {
 						test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
 						test.classpath += config
 						test.outputs.upToDateWhen { false }
-						fixTestClasspath(test)
+						test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
 					} catch (UnknownConfigurationException e) {
 						// Eat this. It just means we have a multi-project build, and
 						// there is test in a project that doesn't have cobertura applied.
@@ -317,19 +317,5 @@ class CoberturaPlugin implements Plugin<Project> {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Configure a test task.  remove source dirs and add the instrumented dir
-	 * @param test the test task to fix
-	 */
-	def fixTestClasspath(Task test) {
-		def project = test.project
-		project.files(project.sourceSets.main.output.classesDir.path).each { File f ->
-			if (f.isDirectory()) {
-				test.classpath = test.classpath - project.files(f)
-			}
-		}
-		test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
 	}
 }
