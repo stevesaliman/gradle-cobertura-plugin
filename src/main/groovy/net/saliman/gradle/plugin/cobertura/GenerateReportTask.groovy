@@ -70,6 +70,10 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 	 */
 	@TaskAction
 	def generateReports() {
+		if (project.gradle.startParameter.dryRun) {
+			return
+		}
+
 		// If the user specified merge files, than do a merge before generating
 		// reports.
 		if ( configuration.coverageMergeDatafiles != null &&
