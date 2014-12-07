@@ -32,6 +32,9 @@ class CopyDatafileTask extends DefaultTask {
 	def copyFile() {
 		project.logger.info("${path} - Copying the datafile...")
 
+		if (project.gradle.startParameter.dryRun) {
+			return
+		}
 		def input = configuration.coverageInputDatafile.newInputStream()
 		def output = configuration.coverageOutputDatafile.newOutputStream()
 		output << input
