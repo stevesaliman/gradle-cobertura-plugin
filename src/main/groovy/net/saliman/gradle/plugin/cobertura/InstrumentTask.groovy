@@ -117,9 +117,6 @@ class InstrumentTask extends DefaultTask {
 	@TaskAction
 	def instrument() {
 		project.logger.info("${path} - Instrumenting code...")
-		if (project.gradle.startParameter.dryRun) {
-			return
-		}
 		// When Cobertura instruments code, it appears to use some of what is
 		// already in the .ser file, if it exists, so the first thing we need to
 		// do is get rid of the old .ser file.  Otherwise, changing ignoreTrivial

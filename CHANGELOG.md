@@ -1,3 +1,10 @@
+Changes for 2.2.6
+=================
+- Fixed the issue with the ```coberturaCheck``` task that was causing it to 
+  skip instrumentation (Issue #63)
+  
+- Fixed dry-run behavior (Issue #64)
+
 Changes for 2.2.5
 =================
 - Added support for Cobertura's ```encoding``` option when generating reports

@@ -198,14 +198,14 @@ class CoberturaPlugin implements Plugin<Project> {
 		generateReportTask.setDescription("Generate a Cobertura report after tests finish.")
 		generateReportTask.enabled = false
 		generateReportTask.runner = runner
-        generateReportTask.reports.all { report ->
-            report.conventionMapping.with {
-                enabled = true
-                destination = {
-                    new File(extension.coverageReportDir, "index.html")
-                }
-            }
+    generateReportTask.reports.all { report ->
+      report.conventionMapping.with {
+        enabled = true
+        destination = {
+          new File(extension.coverageReportDir, "index.html")
         }
+      }
+    }
 
 		// Create the performCoverageCheck task that will do the work of checking
 		// the coverage levels, and you guessed it, it is disabled.
@@ -288,32 +288,38 @@ class CoberturaPlugin implements Plugin<Project> {
 						// there is test in a project that doesn't have cobertura applied.
 					}
 				}
-				// We also need to enable instrumentation, file copying and report
-				// generation, but not coverage checking
-				project.tasks.withType(InstrumentTask).all {
-					it.enabled = true
-				}
-				project.tasks.withType(CopyDatafileTask).each {
-					it.enabled = true
-				}
-				project.tasks.withType(GenerateReportTask).each {
-					it.enabled = true
+				// If we are not doing a dry-run We also need to enable
+				// instrumentation, file copying and report generation, but not
+				// coverage checking
+				if ( !project.gradle.startParameter.dryRun ) {
+					project.tasks.withType(InstrumentTask).all {
+						it.enabled = true
+					}
+					project.tasks.withType(CopyDatafileTask).each {
+						it.enabled = true
+					}
+					project.tasks.withType(GenerateReportTask).each {
+						it.enabled = true
+					}
 				}
 			}
-			// If the user wants to check coverage levels, we need to enable all 4
-			// of the tasks that do actual work.
+
+			// If the user wants to check coverage levels, and we're not doing a
+			// dry-run we need to enable all 4 of the tasks that do actual work.
 			if (graph.hasTask(project.tasks.findByName(COBERTURA_CHECK_TASK_NAME))) {
-				project.tasks.withType(InstrumentTask).all {
-					it.enabled = true
-				}
-				project.tasks.withType(CopyDatafileTask).each {
-					it.enabled = true
-				}
-				project.tasks.withType(GenerateReportTask).each {
-					it.enabled = true
-				}
-				project.tasks.withType(PerformCoverageCheckTask).each {
-					it.enabled = true
+				if ( !project.gradle.startParameter.dryRun ) {
+					project.tasks.withType(InstrumentTask).all {
+						it.enabled = true
+					}
+					project.tasks.withType(CopyDatafileTask).each {
+						it.enabled = true
+					}
+					project.tasks.withType(GenerateReportTask).each {
+						it.enabled = true
+					}
+					project.tasks.withType(PerformCoverageCheckTask).each {
+						it.enabled = true
+					}
 				}
 			}
 		}
