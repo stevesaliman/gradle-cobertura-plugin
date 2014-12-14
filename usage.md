@@ -23,6 +23,21 @@ buildscript {
 apply plugin: 'net.saliman.cobertura'
 ```
 
+In addition, if you are using Java 8, you may also need to swap out the version
+of ASM that gets used when the build runs, as earlier versions don't support
+Java 8.  This can be done with the following block:
+
+```groovy
+configurations.all {
+    resolutionStrategy {
+        // Cobertura includes an ASM version that can't handle Java 8, ASM 5.0.3
+        //handles Java8
+        force 'org.ow2.asm:asm:5.0.3'
+        forcedModules = [ 'org.ow2.asm:asm:5.0.3' ]
+    }
+}
+```
+
 Tasks
 =====
 The Cobertura plugin will create 3 tasks you can use to have Cobertura check
