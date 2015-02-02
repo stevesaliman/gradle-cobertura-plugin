@@ -10,7 +10,7 @@ News
 The Cobertura plugin now supports Cobertura 2.1, and is a part of Gradle 2.1's
 plugin repository.  See the [Usage] 
 (http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/usage.md)
-pagee for more details.
+page for more details.
 ###June 11, 2014
 Gradle has made the first 2.0 release candidate available, and it looks like
 the cobertura plugin works fine with Gradle 2.0.
