@@ -22,7 +22,7 @@ sourceCompatibility = '1.5'
 targetCompatibility = '1.5'
 
 // Release version that won't conflict with the bintray plugin
-def releaseVersion = "2.2.6"
+def releaseVersion = "2.2.7-INFINIT"
 // variables that configure the Maven upload
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
@@ -43,6 +43,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 	mavenLocal()
 }
 

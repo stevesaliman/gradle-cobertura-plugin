@@ -160,7 +160,7 @@ public class CoberturaRunner {
 		}
 
 		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
-			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "checkCoverage", false, args)
+			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "checkCoverage", true, args)
 		} else {
 			executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
 		}
