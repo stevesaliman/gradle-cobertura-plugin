@@ -13,9 +13,9 @@ class CoberturaExtension {
 	static ENCODING_UNDEFINED = 'undefined'
 
 	/**
-	 * Version of cobertura to use for the plugin. Defaults to 2.0.3
+	 * Version of cobertura to use for the plugin. Defaults to 2.1.1
 	 */
-	String coberturaVersion = '2.0.3'
+	String coberturaVersion = '2.1.1'
 
 	/**
 	 * Directories under the base directory containing classes to be

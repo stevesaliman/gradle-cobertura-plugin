@@ -1,3 +1,13 @@
+Changes for 2.2.7
+=================
+- Fixed a bug that was preventing the ```coberturaCheck``` task from running
+  (Issue #70)
+
+- Updated the default version of Cobertura to 2.1.1, which should resolve
+  resolve several issues relating to Java 8 and ASM.
+
+- Bumped the Gradle wrapper to version 2.3.
+
 Changes for 2.2.6
 =================
 - Fixed the issue with the ```coberturaCheck``` task that was causing it to 

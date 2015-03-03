@@ -5,7 +5,7 @@ build.gradle file.
 
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '2.2.5'
+  id 'net.saliman.cobertura' version '2.2.7'
 }
 ```
 
@@ -17,25 +17,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.2.5"
+        classpath "net.saliman:gradle-cobertura-plugin:2.2.7"
     }
 }
 apply plugin: 'net.saliman.cobertura'
-```
-
-In addition, if you are using Java 8, you may also need to swap out the version
-of ASM that gets used when the build runs, as earlier versions don't support
-Java 8.  This can be done with the following block:
-
-```groovy
-configurations.all {
-    resolutionStrategy {
-        // Cobertura includes an ASM version that can't handle Java 8, ASM 5.0.3
-        //handles Java8
-        force 'org.ow2.asm:asm:5.0.3'
-        forcedModules = [ 'org.ow2.asm:asm:5.0.3' ]
-    }
-}
 ```
 
 Tasks
@@ -95,7 +80,7 @@ most options, but you can fine tune the behavior of this plugin with the
 following options:
 
 - ```coberturaVersion = <version>```: The version of Cobertura that will be
-  used to run the coverage reports.  The default is 2.0.3.
+  used to run the coverage reports.  The default is 2.1.1.
 
 - ```auxiliaryClasspath = <FileCollection>```: You can set the classpath that 
   Cobertura uses while instrumenting your classes. It defaults to 

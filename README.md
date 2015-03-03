@@ -6,6 +6,11 @@ page for complete details on how to use this plugin.
 
 News
 ====
+###March 2, 2015
+At long last, Cobertura has released version 2.1, with thanks to Dennis
+Lundberg.  As a result, the Gradle Cobertura plugin now uses version 2.1.1 of
+Cobertura by default.  This version should play better with Java 8 and fix
+several of the issues users were having.
 ###October 12, 2014
 The Cobertura plugin now supports Cobertura 2.1, and is a part of Gradle 2.1's
 plugin repository.  See the [Usage] 
