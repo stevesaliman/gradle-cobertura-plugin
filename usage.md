@@ -23,6 +23,10 @@ buildscript {
 apply plugin: 'net.saliman.cobertura'
 ```
 
+If you are using Gradle 1.x, you will also need 
+```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` in your
+build dependencies.
+
 Tasks
 =====
 The Cobertura plugin will create 3 tasks you can use to have Cobertura check

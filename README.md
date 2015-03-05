@@ -10,7 +10,11 @@ News
 At long last, Cobertura has released version 2.1, with thanks to Dennis
 Lundberg.  As a result, the Gradle Cobertura plugin now uses version 2.1.1 of
 Cobertura by default.  This version should play better with Java 8 and fix
-several of the issues users were having.
+several of the issues users were having.  As part of this release, I've bumped
+the version of Groovy that the plugin uses.  This can cause issues in Gradle
+1.x.  The workaround is to add 
+```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` to the
+buildscript dependencies.
 ###October 12, 2014
 The Cobertura plugin now supports Cobertura 2.1, and is a part of Gradle 2.1's
 plugin repository.  See the [Usage] 
