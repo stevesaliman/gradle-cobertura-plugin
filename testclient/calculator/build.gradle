@@ -12,13 +12,13 @@ repositories {
 }
 
 dependencies {
-	compile 'org.codehaus.groovy:groovy-all:2.0.6'
+	compile 'org.codehaus.groovy:groovy-all:2.4.1'
 	testCompile "junit:junit:4.10"
 	testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 }
 
 cobertura {
-  // coberturaVersion = '2.1.1'
+  // coberturaVersion = '2.0.3'
   coverageFormats = [ 'xml', 'html' ]
   coverageExcludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]
   // coverageIncludes = [ '.*net.saliman.gradle.plugin.cobertura.testclient.dao.*' ]

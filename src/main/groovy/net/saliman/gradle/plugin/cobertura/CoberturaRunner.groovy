@@ -160,7 +160,7 @@ public class CoberturaRunner {
 		}
 
 		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
-			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "checkCoverage", true, args)
+			executeCobertura("net.sourceforge.cobertura.check.CheckCoverageMain", "checkCoverage", false, args)
 		} else {
 			executeCobertura("net.sourceforge.cobertura.check.Main", "main", true, args)
 		}
@@ -223,18 +223,21 @@ public class CoberturaRunner {
 			}
 			exitStatus = mainMethod.invoke(null, [args as String[]] as Object[])
 		} catch (Exception e) {
+			// when we get an exception, assume something is wrong unless an
+			// underlying securityManager says otherwise.
+			exitStatus = -1
 			if ( !isSecurityException(e) ) {
 				e.printStackTrace()
 				throw e
 			}
 		} finally {
-			// Restore the classLoader
+			// Restore the classLoader.  Then, if we're dealing with a Security
+			// Exception (checkCoverage did a System.exit), set the exit status
+			// to whatever code the security manager says should be returned.
 			Thread.currentThread().setContextClassLoader(prevCl);
 			if ( useSecurityManager ) {
 				System.setSecurityManager(oldSm)
 				exitStatus = sm.exitStatus
-			} else {
-				exitStatus = -1
 			}
 		}
 		return exitStatus

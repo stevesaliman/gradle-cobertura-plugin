@@ -8,7 +8,7 @@ buildscript {
 	}
 	dependencies {
 		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
-		classpath 'org.codehaus.groovy:groovy-all:2.3.4'
+		classpath 'org.codehaus.groovy:groovy-all:2.4.1'
 	}
 }
 apply plugin: 'java'
@@ -22,7 +22,7 @@ sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
 
 // Release version that won't conflict with the bintray plugin
-def releaseVersion = "2.2.7"
+def releaseVersion = "2.2.8-SNAPSHOT"
 // variables that configure the Maven upload
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"

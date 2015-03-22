@@ -1,3 +1,8 @@
+Changes for 2.2.8
+=================
+- Fixed a bug in ```coberturaCheck``` that was causing all builds to fail when
+  the ```coverageCheckHaltOnFailure``` option was set (Issue #74)
+  
 Changes for 2.2.7
 =================
 - Fixed a bug that was preventing the ```coberturaCheck``` task from running
