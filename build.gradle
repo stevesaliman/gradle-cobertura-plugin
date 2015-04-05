@@ -22,7 +22,7 @@ sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
 
 // Release version that won't conflict with the bintray plugin
-def releaseVersion = "2.2.8-SNAPSHOT"
+def releaseVersion = "2.2.8"
 // variables that configure the Maven upload
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
