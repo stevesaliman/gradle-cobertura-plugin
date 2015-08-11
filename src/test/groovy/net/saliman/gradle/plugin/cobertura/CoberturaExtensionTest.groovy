@@ -411,7 +411,7 @@ class CoberturaExtensionTest {
 	@Test
 	void setAuxiliaryClasspathValid() {
 		extension.auxiliaryClasspath = project.files('tmp')
-		assertEquals("Failed to set the auxiliaryClasspath", project.files('tmp'), extension.auxiliaryClasspath)
+		assertEquals("Failed to set the auxiliaryClasspath", project.files('tmp') as Set, extension.auxiliaryClasspath as Set)
 	}
 
 
