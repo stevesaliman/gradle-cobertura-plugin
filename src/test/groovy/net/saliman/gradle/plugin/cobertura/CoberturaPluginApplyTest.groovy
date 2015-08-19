@@ -177,6 +177,19 @@ class CoberturaPluginApplyTest {
 		assertTrue(configuration.coverageSourceDirs.asList().get(0).path.endsWith("src/main/java"))
 	}
 
+	@Test
+	void applyPluginConfigurationGroovyPluginSourceDirs() {
+		project.apply plugin: 'groovy'
+		project.apply plugin: 'cobertura'
+		CoberturaExtension configuration = project.extensions.getByName('cobertura')
+		assertNotNull("We're missing the configuration", configuration)
+		Set srcDirs = configuration.coverageSourceDirs
+		assertNotNull("We're missing the srcDirs", srcDirs)
+		assertEquals("Wrong number of srcDirs", 2, srcDirs.size())
+		assertTrue(configuration.coverageSourceDirs.asList().get(0).path.endsWith("src/main/java"))
+		assertTrue(configuration.coverageSourceDirs.asList().get(1).path.endsWith("src/main/groovy"))
+	}
+
 	/**
 	 * Helper method to make sure a task depends on another task.  This method
 	 * will fail a test if the given task does not depend on the given other task.

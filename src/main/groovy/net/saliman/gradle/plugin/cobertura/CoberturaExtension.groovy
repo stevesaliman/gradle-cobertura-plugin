@@ -221,6 +221,9 @@ class CoberturaExtension {
 		auxiliaryClasspath = auxiliaryClasspath.plus(project.sourceSets.main.compileClasspath)
 
 		coverageSourceDirs = project.sourceSets.main.java.srcDirs
+		if (project.plugins.hasPlugin('groovy')) {
+			coverageSourceDirs += project.sourceSets.main.groovy.srcDirs
+		}
 
 		// By default instrumentation depends on the "classes" task
 		coverageClassesTasksSpec = {
