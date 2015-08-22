@@ -1,3 +1,7 @@
+Changes for 2.2.9
+=================
+- Fixed unit tests so that they run and pass (Issue #79)
+
 Changes for 2.2.8
 =================
 - Fixed a bug in ```coberturaCheck``` that was causing all builds to fail when
