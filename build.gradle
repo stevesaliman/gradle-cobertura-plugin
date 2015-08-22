@@ -30,10 +30,10 @@ version = releaseVersion
 ext.isSnapshot = releaseVersion.endsWith("SNAPSHOT")
 
 if ( isSnapshot ) {
-	println "using snapshot"
+	println "Using snapshot repository for artifact uploads"
 	ext.mavenCentralUploadUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
 } else {
-	println "using staging"
+	println "Using staging repository for artifact uploads"
 	ext.mavenCentralUploadUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
@@ -56,10 +56,6 @@ dependencies {
 	archives "org.apache.maven.wagon:wagon-ssh-external:2.8"
 }
 
-project.tasks.test.configure {
-	includes = [ '**/*Test.class' ]
-	useTestNG()
-}
 project.tasks.uploadArchives.dependsOn 'test'
 
 task sourceJar(type: Jar) {
@@ -214,5 +210,11 @@ bintray {
 	}
 }
 
-
-
+// The testclient links to this file in its buildSrc directory.  Gradle always
+// runs tests when it builds the buildSrc contents.  This creates a circular
+// reference which causes tests to hang.  Disable tests if we're building the
+// plugin from the testclient's buildSrc directory.
+if ( projectDir.name.endsWith('buildSrc') ) {
+  println "Disabling plugin tests when building from the 'buildSrc' directory"
+	test.enabled = false
+}

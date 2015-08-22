@@ -166,17 +166,6 @@ class CoberturaPluginApplyTest {
 		assertTaskDependsOn(task, GenerateReportTask.NAME)
 	}
 
-	@Test
-	void applyPluginConfiguration() {
-		project.apply plugin: 'cobertura'
-		CoberturaExtension configuration = project.extensions.getByName('cobertura')
-		assertNotNull("We're missing the configuration", configuration)
-		Set srcDirs = configuration.coverageSourceDirs
-		assertNotNull("We're missing the srcDirs", srcDirs)
-		assertEquals("Wrong number of srcDirs", 1, srcDirs.size())
-		assertTrue(configuration.coverageSourceDirs.asList().get(0).path.endsWith("src/main/java"))
-	}
-
 	/**
 	 * Helper method to make sure a task depends on another task.  This method
 	 * will fail a test if the given task does not depend on the given other task.

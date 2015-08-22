@@ -57,7 +57,6 @@ class CoberturaPluginExecutionTest {
 		if ( s != null ) {
 			stderr = s.split('\n')
 		}
-		System.out.println("here")
 	}
 
 	/**
@@ -124,8 +123,13 @@ class CoberturaPluginExecutionTest {
 		assertExecuted(":calculator:test")
 		assertExecuted(":calculator:generateCoberturaReport")
 		assertSkipped(":calculator:performCoverageCheck")
+		// TODO: Figure out how to verify that the correct default for srcDirs was
+		// passed to the runner.
 		System.out.println("here")
 	}
+
+	// TODO: Test that we can override the srcDirs when we have something in the
+	// CoberturaExtension.
 
 	/**
 	 * Execute the cobertura in a dry run.  Nothing should run in this case.
