@@ -79,14 +79,17 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		}
 
 		Set<File> sourceDirs = configuration.coverageSourceDirs
-		if ( sourceDirs == null ) {
-			// The Java plugin is always applied.
-			sourceDirs = project.sourceSets.main.java.srcDirs
-			if ( project.sourceSets.main.hasProperty('groovy') ) {
-				sourceDirs += project.sourceSets.main.groovy.srcDirs
-			}
-			if ( project.sourceSets.main.hasProperty('scala') ) {
-				sourceDirs += project.sourceSets.main.scala.srcDirs
+		if (sourceDirs == null) {
+			if (CoberturaPlugin.isAndroidProject(project)) {
+				sourceDirs = project.android.sourceSets.main.java.srcDirs
+			} else {
+				sourceDirs = project.sourceSets.main.java.srcDirs
+				if (project.sourceSets.main.hasProperty('groovy')) {
+					sourceDirs += project.sourceSets.main.groovy.srcDirs
+				}
+				if (project.sourceSets.main.hasProperty('scala')) {
+					sourceDirs += project.sourceSets.main.scala.srcDirs
+				}
 			}
 		}
 		project.logger.info("${path} - Generating reports...")
