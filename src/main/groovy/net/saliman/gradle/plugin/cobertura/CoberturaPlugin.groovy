@@ -80,19 +80,15 @@ class CoberturaPlugin implements Plugin<Project> {
 			project.afterEvaluate {
 				// When we're done evaluating, bring in the appropriate version of
 				// Cobertura.  Exclude logging dependencies because it causes conflicts
-				// with classes Gradle has already loaded.
+				// with classes Gradle has already loaded (on non android projects).
 				project.dependencies {
 					cobertura("net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}") {
-						exclude group: 'log4j', module: 'log4j'
-						exclude group: 'org.slf4j', module: 'slf4j-api'
+						if (!isAndroidProject(project)) {
+							exclude group: 'log4j', module: 'log4j'
+							exclude group: 'org.slf4j', module: 'slf4j-api'
+						}
 					}
 				}
-			}
-		}
-
-		if (isAndroidProject(project)) {
-			project.dependencies {
-				testCompile "net.sourceforge.cobertura:cobertura:${extension.coberturaVersion}"
 			}
 		}
 

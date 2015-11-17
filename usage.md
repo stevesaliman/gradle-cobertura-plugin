@@ -5,7 +5,7 @@ build.gradle file.
 
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '2.2.7'
+  id 'net.saliman.cobertura' version '2.3.0-SNAPSHOT'
 }
 ```
 
@@ -17,7 +17,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.2.7"
+        classpath "net.saliman:gradle-cobertura-plugin:2.3.0-SNAPSHOT"
     }
 }
 apply plugin: 'net.saliman.cobertura'
@@ -26,6 +26,8 @@ apply plugin: 'net.saliman.cobertura'
 If you are using Gradle 1.x, you will also need 
 ```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` in your
 build dependencies.
+
+If you are using the plugin on an android project, apply it after the android plugin.
 
 Tasks
 =====
@@ -217,3 +219,6 @@ following options:
   Defaults to project.buildDir.path/cobertura/cobertura.ser. The only time this
   should be changed is when users are merging datafiles and
   ```coverageMergeDatafiles``` contains the default datafile.
+
+- ```androidVariant = <String>```: The variant for android projects. The default is `debug`.
+  Running cobertura is only supported on a single test variant.
