@@ -25,6 +25,12 @@ class PerformCoverageCheckTask extends DefaultTask {
 	Configuration classpath
 	boolean coverageCheckFailed = false
 
+	PerformCoverageCheckTask() {
+		// Never consider this up to date.  We might be executing different tests
+		// from run to run.
+		outputs.upToDateWhen { false }
+	}
+
 	@TaskAction
 	def checkCoverage() {
 		project.logger.info("${path} - Checking coverage...")
