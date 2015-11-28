@@ -22,7 +22,7 @@ sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
 
 // Release version that won't conflict with the bintray plugin
-def releaseVersion = "2.2.9-SNAPSHOT"
+def releaseVersion = "2.3.0-SNAPSHOT"
 // variables that configure the Maven upload
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
@@ -81,7 +81,6 @@ signing {
 // Only *require* signing if we are uploading a non snapshot version.  If we
 // do need to sign, make sure we've got the properties we need to do the
 // signing.
-import org.gradle.plugins.signing.Sign
 gradle.taskGraph.whenReady { taskGraph ->
 	tasks.withType(org.gradle.plugins.signing.Sign).all {
 		required = taskGraph.hasTask(":uploadArchives") && !isSnapshot

@@ -2,6 +2,7 @@ package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.testing.Test
 
@@ -203,31 +204,21 @@ class CoberturaExtension {
 	File coverageReportDatafile
 
 	/**
+	 * The variant for android projects.
+	 */
+	String androidVariant = "debug"
+
+	/**
 	 * Constructor for the extension.  It needs a project handle to set the
 	 * coverageDirs sensible defaults.
 	 * @param project the Gradle project that owns the extension.
 	 */
 	CoberturaExtension(Project project) {
-		project.logger.info "Creating cobertura extension for project ${project.name}"
-		coverageDirs = [project.sourceSets.main.output.classesDir.path]
-		coverageInputDatafile = new File("${project.buildDir.path}/cobertura", 'coberturaInput.ser')
-		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
-		coverageReportDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
-		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
-
-		// Set the ausxiliaryClasspath to defaults. This is the classpath cobertura uses for
-		// resolving classes while instrumenting
-		auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
-		auxiliaryClasspath = auxiliaryClasspath.plus(project.sourceSets.main.compileClasspath)
-
-		// By default instrumentation depends on the "classes" task
-		coverageClassesTasksSpec = {
-			project.tasks.matching { it.name == 'classes' }
-		}
-
-		// By default the "cobertura" task depends on all test tasks
-		coverageTestTasksSpec = {
-			project.tasks.withType(Test)
+		initCommon(project)
+		if (CoberturaPlugin.isAndroidProject(project)) {
+			initAndroid(project)
+		} else {
+			initJava(project)
 		}
 	}
 
@@ -492,5 +483,65 @@ class CoberturaExtension {
 			}
 		}
 		this.coverageCheckRegexes = coverageCheckRegexes
+	}
+
+	/**
+	 * Initialize defaults for java/scala/groovy projects.
+	 * @param project The project.
+	 */
+	private void initJava(Project project) {
+		project.plugins.apply(JavaPlugin)
+		project.logger.info "Creating cobertura extension for project ${project.name}"
+
+		coverageDirs = [project.sourceSets.main.output.classesDir.path]
+		// Set the ausxiliaryClasspath to defaults. This is the classpath cobertura uses for
+		// resolving classes while instrumenting
+		auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
+		auxiliaryClasspath = auxiliaryClasspath.plus(project.sourceSets.main.compileClasspath)
+
+		// By default instrumentation depends on the "classes" task
+		coverageClassesTasksSpec = {
+			project.tasks.matching { it.name == 'classes' }
+		}
+
+		// By default the "cobertura" task depends on all test tasks
+		coverageTestTasksSpec = {
+			project.tasks.withType(Test)
+		}
+	}
+
+	/**
+	 * Initialize defaults for android projects.
+	 * @param project The project.
+	 */
+	private void initAndroid(Project project) {
+		project.logger.info "Creating cobertura extension for project ${project.name} and variant: ${androidVariant}"
+
+		auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${androidVariant}")
+		coverageDirs = auxiliaryClasspath.asList()
+		coverageSourceDirs = project.android.sourceSets.main.java.srcDirs
+
+		// By default instrumentation depends on the androidVariant compile task
+		coverageClassesTasksSpec = {
+			project.tasks.matching {
+				it.name == "compile${androidVariant.capitalize()}JavaWithJavac"
+			}
+		}
+
+		// By default the "cobertura" task depends on the androidVariant test task
+		coverageTestTasksSpec = {
+			project.tasks.withType(Test).matching { it.name.contains(androidVariant.capitalize()) }
+		}
+	}
+
+	/**
+	 * Initialize common defaults for all projects.
+	 * @param project The project.
+	 */
+	private void initCommon(Project project) {
+		coverageInputDatafile = new File("${project.buildDir.path}/cobertura", 'coberturaInput.ser')
+		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
+		coverageReportDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
+		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
 	}
 }

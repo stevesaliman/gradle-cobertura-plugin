@@ -8,10 +8,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.GroovyBasePlugin
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.ReportingBasePlugin
-import org.gradle.api.plugins.scala.ScalaBasePlugin
 import org.gradle.api.tasks.testing.Test
 
 /**
@@ -75,14 +72,6 @@ class CoberturaPlugin implements Plugin<Project> {
 
 	def void apply(Project project) {
 		project.logger.info("Applying cobertura plugin to $project.name")
-
-		// It doesn't make sense to have the cobertura plugin without the java
-		// plugin because it works with java classes, interacts with Java
-		// source sets, etc., so apply the Java plugin.  If the project is a Groovy
-		// or Scala project, we're still good because Groovy and Scala compiles to
-		// java classes under the hood, and the Groovy and Scala plugins will extend
-		// the Java plugin anyway.
-		project.plugins.apply(JavaPlugin)
 		project.plugins.apply(ReportingBasePlugin)
 
 		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
@@ -91,12 +80,14 @@ class CoberturaPlugin implements Plugin<Project> {
 			project.afterEvaluate {
 				// When we're done evaluating, bring in the appropriate version of
 				// Cobertura.  Exclude logging dependencies because it causes conflicts
-				// with classes Gradle has already loaded.
+				// with classes Gradle has already loaded (on non android projects).
 				project.dependencies {
 					cobertura("net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}") {
-                        exclude group: 'log4j', module: 'log4j'
-						            exclude group: 'org.slf4j', module: 'slf4j-api'
-                    }
+						if (!isAndroidProject(project)) {
+							exclude group: 'log4j', module: 'log4j'
+							exclude group: 'org.slf4j', module: 'slf4j-api'
+						}
+					}
 				}
 			}
 		}
@@ -323,5 +314,9 @@ class CoberturaPlugin implements Plugin<Project> {
 				}
 			}
 		}
+	}
+
+	static boolean isAndroidProject(Project project) {
+		return project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.library")
 	}
 }
