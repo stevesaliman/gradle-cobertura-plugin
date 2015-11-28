@@ -6,6 +6,11 @@ page for complete details on how to use this plugin.
 
 News
 ====
+###November 28, 2015
+The Gradle Cobertura plugin now supports Android projects, with thanks to Gautam
+Korlam (@kageiit).  It is worth noting that unlike Java projects, where plugins
+can be applied in any order, using this plugin on Android projects requires that
+the Android plugin be applied *before* the Cobertura plugin.
 ###March 2, 2015
 At long last, Cobertura has released version 2.1, with thanks to Dennis
 Lundberg.  As a result, the Gradle Cobertura plugin now uses version 2.1.1 of

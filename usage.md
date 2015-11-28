@@ -23,11 +23,14 @@ buildscript {
 apply plugin: 'net.saliman.cobertura'
 ```
 
-If you are using Gradle 1.x, you will also need 
+If you are using this plugin on an android project, you must apply it after the
+android plugin.
+
+If you are using Gradle 1.x, you should really consider upgrading Gradle.  If
+you can't update Gradle for some reason, you will also need to have 
 ```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` in your
 build dependencies.
 
-If you are using the plugin on an android project, apply it after the android plugin.
 
 Tasks
 =====
@@ -47,8 +50,8 @@ guarantee that tasks in child projects will run before tasks in the parent
 project.  We need to make sure we don't merge datafiles until all datafiles in
 child projects have been generated.
 
-2. The ```cobertura``` is intended to be a convenience task runs all of the 
-unit tests and generates a coverage report.  It does all the things
+2. The ```cobertura``` task is intended to be a convenience task runs all of the 
+unit tests and generate a coverage report.  It does all the things
 ```coberturaReport``` does, but after causing all tasks of type "Test" in the
 applying project to run before the coverage report is generated. The idea is 
 that if you want to see how well your code is covered, you'd want to know the 

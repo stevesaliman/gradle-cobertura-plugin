@@ -1,3 +1,8 @@
+Changes for 2.3.0
+=================
+- Added support for Android projects, with much thanks to Gautam Korlam 
+  (@kageiit) (Issue #90)
+  
 Changes for 2.2.9
 =================
 - Fixed unit tests so that they run and pass (Issue #79)
