@@ -1,17 +1,14 @@
 package net.saliman.gradle.plugin.cobertura
-
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertTrue
-import static org.junit.Assert.fail
+import static org.junit.Assert.*
 /**
  * Test case for things that should happen when the cobertura plugin is applied.
  * <p>
@@ -164,6 +161,73 @@ class CoberturaPluginApplyTest {
 		assertTaskDoesNotDependOn(task, InstrumentTask.NAME)
 		assertTaskDoesNotDependOn(task, CopyDatafileTask.NAME)
 		assertTaskDependsOn(task, GenerateReportTask.NAME)
+	}
+
+	@Test
+	void isAndroidProjectWithApplication() {
+		project.apply plugin: 'com.android.application'
+		project.apply plugin: 'cobertura'
+		assertTrue(project.plugins.getPlugin("cobertura").isAndroidProject(project))
+	}
+
+	@Test
+	void isAndroidProjectWithLibrary() {
+		project.apply plugin: 'com.android.library'
+		project.apply plugin: 'cobertura'
+		assertTrue(project.plugins.getPlugin("cobertura").isAndroidProject(project))
+	}
+
+	@Test
+	void isAndroidProjectDefault() {
+		project.apply plugin: 'cobertura'
+		assertFalse(project.plugins.getPlugin("cobertura").isAndroidProject(project))
+	}
+
+	@Test
+	void applyCoberturaAfterAndroidApplicationDoesNotApplyJavaPlugin() {
+		project.apply plugin: 'com.android.application'
+		project.apply plugin: 'cobertura'
+		assertFalse(project.plugins.hasPlugin(JavaPlugin))
+	}
+
+	@Test
+	void applyCoberturaAfterAndroidLibraryDoesNotApplyJavaPlugin() {
+		project.apply plugin: 'com.android.library'
+		project.apply plugin: 'cobertura'
+		assertFalse(project.plugins.hasPlugin(JavaPlugin))
+	}
+
+	@Test
+	void applyCoberturaAfterAndroidApplicationRetainsLoggingTransitiveDependencies() {
+		project.apply plugin: 'com.android.application'
+		project.apply plugin: 'cobertura'
+		project.evaluate()
+		DefaultExternalModuleDependency dependency =  project.configurations.getByName('cobertura')
+				.dependencies.find{ it.name.equals("cobertura")}
+		assertEquals(0, dependency.excludeRules.size())
+	}
+
+	@Test
+	void applyCoberturaAfterAndroidLibraryRetainsLoggingTransitiveDependencies() {
+		project.apply plugin: 'com.android.library'
+		project.apply plugin: 'cobertura'
+		project.evaluate()
+		DefaultExternalModuleDependency dependency =  project.configurations.getByName('cobertura')
+				.dependencies.find{ it.name.equals("cobertura")}
+		assertEquals(0, dependency.excludeRules.size())
+	}
+
+	@Test
+	void applyCoberturaWithoutAndroidDoesNotRetainLoggingTransitiveDependencies() {
+		project.apply plugin: 'cobertura'
+		project.evaluate()
+		DefaultExternalModuleDependency dependency =  project.configurations.getByName('cobertura')
+				.dependencies.find{ it.name.equals("cobertura")}
+		assertEquals(2, dependency.excludeRules.size())
+		dependency.excludeRules.each {
+			assertTrue(["log4j", "org.slf4j"].contains(it.group))
+			assertTrue(["log4j", "slf4j-api"].contains(it.module))
+		}
 	}
 
 	/**

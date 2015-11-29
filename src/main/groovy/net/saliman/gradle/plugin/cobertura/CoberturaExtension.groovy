@@ -517,8 +517,11 @@ class CoberturaExtension {
 	private void initAndroid(Project project) {
 		project.logger.info "Creating cobertura extension for project ${project.name} and variant: ${androidVariant}"
 
-		auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${androidVariant}")
-		coverageDirs = auxiliaryClasspath.asList()
+		project.afterEvaluate {
+			String classesDir = splitCamelCase(androidVariant).join("/").toLowerCase()
+			auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${classesDir}")
+			coverageDirs = auxiliaryClasspath.asList()
+		}
 		coverageSourceDirs = project.android.sourceSets.main.java.srcDirs
 
 		// By default instrumentation depends on the androidVariant compile task
@@ -530,7 +533,9 @@ class CoberturaExtension {
 
 		// By default the "cobertura" task depends on the androidVariant test task
 		coverageTestTasksSpec = {
-			project.tasks.withType(Test).matching { it.name.contains(androidVariant.capitalize()) }
+			project.tasks.withType(Test).matching {
+				it.name == "test${androidVariant.capitalize()}"
+			}
 		}
 	}
 
@@ -543,5 +548,9 @@ class CoberturaExtension {
 		coverageOutputDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDatafile = new File("${project.buildDir.path}/cobertura", 'cobertura.ser')
 		coverageReportDir = new File("${project.reporting.baseDir.path}/cobertura")
+	}
+
+	static String[] splitCamelCase(String input) {
+		return input.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 	}
 }
