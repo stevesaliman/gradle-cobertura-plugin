@@ -534,7 +534,7 @@ class CoberturaExtension {
 		// By default the "cobertura" task depends on the androidVariant test task
 		coverageTestTasksSpec = {
 			project.tasks.withType(Test).matching {
-				it.name == "test${androidVariant.capitalize()}"
+				it.name == "test${androidVariant.capitalize()}UnitTest"
 			}
 		}
 	}

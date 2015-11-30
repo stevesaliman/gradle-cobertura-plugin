@@ -436,7 +436,7 @@ class CoberturaExtensionTest {
 
 		TaskCollection testTasks = extension.getCoverageTestTasks()
 		assertEquals(1, testTasks.size())
-		assertNotNull(testTasks.getByName("testDebug"))
+		assertNotNull(testTasks.getByName("testDebugUnitTest"))
 
 	}
 
@@ -460,7 +460,7 @@ class CoberturaExtensionTest {
 
 		TaskCollection testTasks = extension.getCoverageTestTasks()
 		assertEquals(1, testTasks.size())
-		assertNotNull(testTasks.getByName("testFlavor1Debug"))
+		assertNotNull(testTasks.getByName("testFlavor1DebugUnitTest"))
 
 	}
 }

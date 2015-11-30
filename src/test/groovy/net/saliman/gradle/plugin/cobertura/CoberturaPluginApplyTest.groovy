@@ -198,27 +198,7 @@ class CoberturaPluginApplyTest {
 	}
 
 	@Test
-	void applyCoberturaAfterAndroidApplicationRetainsLoggingTransitiveDependencies() {
-		project.apply plugin: 'com.android.application'
-		project.apply plugin: 'cobertura'
-		project.evaluate()
-		DefaultExternalModuleDependency dependency =  project.configurations.getByName('cobertura')
-				.dependencies.find{ it.name.equals("cobertura")}
-		assertEquals(0, dependency.excludeRules.size())
-	}
-
-	@Test
-	void applyCoberturaAfterAndroidLibraryRetainsLoggingTransitiveDependencies() {
-		project.apply plugin: 'com.android.library'
-		project.apply plugin: 'cobertura'
-		project.evaluate()
-		DefaultExternalModuleDependency dependency =  project.configurations.getByName('cobertura')
-				.dependencies.find{ it.name.equals("cobertura")}
-		assertEquals(0, dependency.excludeRules.size())
-	}
-
-	@Test
-	void applyCoberturaWithoutAndroidDoesNotRetainLoggingTransitiveDependencies() {
+	void applyCoberturaDoesNotRetainLoggingTransitiveDependencies() {
 		project.apply plugin: 'cobertura'
 		project.evaluate()
 		DefaultExternalModuleDependency dependency =  project.configurations.getByName('cobertura')

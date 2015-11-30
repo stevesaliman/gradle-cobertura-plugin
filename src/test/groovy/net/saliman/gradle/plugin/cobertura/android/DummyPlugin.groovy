@@ -15,7 +15,7 @@ class DummyPlugin implements Plugin<Project> {
         project.task("compileFlavor1DebugJavaWithJavac")
 
         // Setup default debug and flavored test tasks
-        project.tasks.create("testDebug", Test)
-        project.tasks.create("testFlavor1Debug", Test)
+        project.tasks.create("testDebugUnitTest", Test)
+        project.tasks.create("testFlavor1DebugUnitTest", Test)
     }
 }
