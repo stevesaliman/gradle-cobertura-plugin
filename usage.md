@@ -15,6 +15,7 @@ To use the plugin with Gradle 2.0 or older, add the following to build.gradle:
 buildscript {
     repositories {
         mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" } // Needed only while using SNAPSHOT versions
     }
     dependencies {
         classpath "net.saliman:gradle-cobertura-plugin:2.3.0-SNAPSHOT"
@@ -30,7 +31,6 @@ If you are using Gradle 1.x, you should really consider upgrading Gradle.  If
 you can't update Gradle for some reason, you will also need to have 
 ```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` in your
 build dependencies.
-
 
 Tasks
 =====
