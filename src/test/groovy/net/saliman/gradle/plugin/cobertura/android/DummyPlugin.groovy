@@ -10,6 +10,11 @@ class DummyPlugin implements Plugin<Project> {
         // Setup android extension
         project.extensions.create("android", DummyExtension.class)
 
+        // Create configurations
+        project.configurations.create("compile")
+        project.configurations.create("debugCompile")
+        project.configurations.create("flavor1DebugCompile")
+
         // Setup default debug and flavored compile tasks
         project.task("compileDebugJavaWithJavac")
         project.task("compileFlavor1DebugJavaWithJavac")
