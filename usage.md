@@ -5,20 +5,22 @@ build.gradle file.
 
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '2.3.0-SNAPSHOT'
+  id 'net.saliman.cobertura' version '2.3.0'
 }
 ```
 
-To use the plugin with Gradle 2.0 or older, add the following to build.gradle:
+To use the plugin with Gradle 2.0 or older, or to use a snapshot release of the
+plugin, add the following to build.gradle:
 
 ```groovy
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" } // Needed only while using SNAPSHOT versions
+        // The next repo is only needed while using SNAPSHOT versions
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.3.0-SNAPSHOT"
+        classpath "net.saliman:gradle-cobertura-plugin:2.3.0"
     }
 }
 apply plugin: 'net.saliman.cobertura'

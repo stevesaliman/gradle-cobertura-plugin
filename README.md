@@ -6,7 +6,7 @@ page for complete details on how to use this plugin.
 
 News
 ====
-###November 28, 2015
+###December 27,2015
 The Gradle Cobertura plugin now supports Android projects, with thanks to Gautam
 Korlam (@kageiit).  It is worth noting that unlike Java projects, where plugins
 can be applied in any order, using this plugin on Android projects requires that
@@ -158,7 +158,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'net.saliman:gradle-cobertura-plugin:2.2.9-SNAPSHOT'
+		classpath 'net.saliman:gradle-cobertura-plugin:2.3.0'
 	}
 }
 ```
