@@ -1,5 +1,7 @@
 package net.saliman.gradle.plugin.cobertura
 
+import org.gradle.api.Project
+import org.gradle.api.tasks.TaskCollection
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
@@ -17,7 +19,7 @@ import static org.junit.Assert.assertEquals
  * @author Steven C. Saliman
  */
 class CoberturaExtensionTest {
-	def project = ProjectBuilder.builder().build()
+	Project project
 	CoberturaExtension extension
 
 	/**
@@ -27,6 +29,7 @@ class CoberturaExtensionTest {
 	 */
 	@Before
 	void setUp() {
+		project = ProjectBuilder.builder().build()
 		project.apply plugin: 'java'
 		extension = new CoberturaExtension(project)
 	}
@@ -414,5 +417,50 @@ class CoberturaExtensionTest {
 		assertEquals("Failed to set the auxiliaryClasspath", project.files('tmp') as Set, extension.auxiliaryClasspath as Set)
 	}
 
+	@Test
+	void androidProjectDefault() {
+		project = ProjectBuilder.builder().build()
+		project.apply plugin: 'com.android.application'
+		project.apply plugin: 'cobertura'
+		extension = project.cobertura
+		project.evaluate()
 
+		assertEquals(extension.androidVariant, "debug")
+		assertEquals(project.files("${project.buildDir.path}/intermediates/classes/debug") as Set,
+				extension.auxiliaryClasspath as Set)
+		assertEquals(project.android.sourceSets.main.java.srcDirs, extension.coverageSourceDirs)
+
+		TaskCollection classesTasks = extension.getCoverageClassesTasks()
+		assertEquals(1, classesTasks.size())
+		assertNotNull(classesTasks.getByName("compileDebugJavaWithJavac"))
+
+		TaskCollection testTasks = extension.getCoverageTestTasks()
+		assertEquals(1, testTasks.size())
+		assertNotNull(testTasks.getByName("testDebugUnitTest"))
+
+	}
+
+	@Test
+	void androidProjectWithFlavors() {
+		project = ProjectBuilder.builder().build()
+		project.apply plugin: 'com.android.application'
+		project.apply plugin: 'cobertura'
+		extension = project.cobertura
+		extension.androidVariant = "flavor1Debug"
+		project.evaluate()
+
+		assertEquals(extension.androidVariant, "flavor1Debug")
+		assertEquals(project.files("${project.buildDir.path}/intermediates/classes/flavor1/debug") as Set,
+				extension.auxiliaryClasspath as Set)
+		assertEquals(project.android.sourceSets.main.java.srcDirs, extension.coverageSourceDirs)
+
+		TaskCollection classesTasks = extension.getCoverageClassesTasks()
+		assertEquals(1, classesTasks.size())
+		assertNotNull(classesTasks.getByName("compileFlavor1DebugJavaWithJavac"))
+
+		TaskCollection testTasks = extension.getCoverageTestTasks()
+		assertEquals(1, testTasks.size())
+		assertNotNull(testTasks.getByName("testFlavor1DebugUnitTest"))
+
+	}
 }

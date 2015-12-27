@@ -80,13 +80,11 @@ class CoberturaPlugin implements Plugin<Project> {
 			project.afterEvaluate {
 				// When we're done evaluating, bring in the appropriate version of
 				// Cobertura.  Exclude logging dependencies because it causes conflicts
-				// with classes Gradle has already loaded (on non android projects).
+				// with classes Gradle has already loaded.
 				project.dependencies {
 					cobertura("net.sourceforge.cobertura:cobertura:${project.extensions.cobertura.coberturaVersion}") {
-						if (!isAndroidProject(project)) {
-							exclude group: 'log4j', module: 'log4j'
-							exclude group: 'org.slf4j', module: 'slf4j-api'
-						}
+						exclude group: 'log4j', module: 'log4j'
+						exclude group: 'org.slf4j', module: 'slf4j-api'
 					}
 				}
 			}
@@ -98,6 +96,17 @@ class CoberturaPlugin implements Plugin<Project> {
 		// task dependencies.
 		project.afterEvaluate {
 			fixTaskDependencies(project, extension)
+		}
+
+		// This marks the slf4j dependency as 'provided' for android projects.
+		// The actual dependency will be satisfied by the gradle distribution.
+		// This will not conflict with any dependencies in compile/test configurations.
+		if (isAndroidProject(project)) {
+			try {
+				project.dependencies {
+					provided 'org.slf4j:slf4j-api:1.7.5'
+				}
+			} catch (Exception ignored) { }
 		}
 
 		registerTaskFixupListener(project)
