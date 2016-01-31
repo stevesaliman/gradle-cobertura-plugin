@@ -29,6 +29,15 @@ apply plugin: 'net.saliman.cobertura'
 If you are using this plugin on an android project, you must apply it after the
 android plugin.
 
+If you are using this plugin on a project that does *not* use slf4j, and you
+run into ```ClassNotFoundException``` issues, you will need to add a version 
+of the slf4j api to the testRuntime dependencies, for example:
+```groovy
+dependencies {
+  testRuntime "org.slf4j:slf4j-api:1.7.10"
+}
+```
+
 If you are using Gradle 1.x, you should really consider upgrading Gradle.  If
 you can't update Gradle for some reason, you will also need to have 
 ```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` in your
