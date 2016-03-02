@@ -271,12 +271,17 @@ class CoberturaPlugin implements Plugin<Project> {
 		// "whenReady()" is a global event, so closure should be registered exactly
 		// once for single and multi-project builds.
 		Gradle gradle = project.gradle
+		CoberturaExtension extension = project.extensions.findByType(CoberturaExtension)
 		gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
 			// See if the user wants a coberturaReport.  If so, fix the classpath of
 			// any test task we are actually running. (we don't need to look for the
 			// cobertura task because it depends on coberturaReport).
 			if (graph.hasTask(project.tasks.findByName(COBERTURA_REPORT_TASK_NAME))) {
 				project.tasks.withType(Test).all { Test test ->
+					// Only apply classpath changes on Android to the variant we are covering.
+					if (isAndroidProject(project) && test.name != "test${extension.androidVariant.capitalize()}UnitTest") {
+						return
+					}
 					try {
 						Configuration config = test.project.configurations['cobertura']
 						test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
