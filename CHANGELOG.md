@@ -1,3 +1,7 @@
+Changes for 2.3.1
+=================
+- Fixed a classpath issue with Android projects, with thanks to Adam Peck
+  (@dampcake). (Issue #101)
 Changes for 2.3.0
 =================
 - Added support for Android projects, with much thanks to Gautam Korlam 

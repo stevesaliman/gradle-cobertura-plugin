@@ -6,6 +6,9 @@ page for complete details on how to use this plugin.
 
 News
 ====
+###March 3, 2016
+Version 2.3.1 fixes a minor issue with Android projects, with thanks to Adam
+Peck (@dampcake).
 ###December 27,2015
 The Gradle Cobertura plugin now supports Android projects, with thanks to Gautam
 Korlam (@kageiit).  It is worth noting that unlike Java projects, where plugins
@@ -20,78 +23,6 @@ the version of Groovy that the plugin uses.  This can cause issues in Gradle
 1.x.  The workaround is to add 
 ```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` to the
 buildscript dependencies.
-###October 12, 2014
-The Cobertura plugin now supports Cobertura 2.1, and is a part of Gradle 2.1's
-plugin repository.  See the [Usage] 
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/usage.md)
-page for more details.
-###June 11, 2014
-Gradle has made the first 2.0 release candidate available, and it looks like
-the cobertura plugin works fine with Gradle 2.0.
-###February 25, 2014:
-*Note:* This plugin will not work with Cobertura 2.0.4 snapshots at this time.
-All of the Cobertura classes that are called by this plugin have been renamed
-by the Cobertura team.  I'm currently working with the Cobertura team on this
-issue.
-
-Added suAdded support for customizing the auxiliary classpath, with thanks to
-Harald Schmitt
-
-###December 08, 2013:
-A special thank you to John Engelman for his help with the 2.2.0 release.
-
-The biggest changes in this release are the behavior of the ```cobertura```
-task, the addition of the ```checkCoverage``` task, and support for merging
-datafiles before generating coverage reports. See the [CHANGELOG]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG.md)
-for the full details, but the main thing is that applying the cobertura plugin
-to a project no longer changes anything in the task graphs of other projects
-in a multi-project build.
-
-There were also a lot of options added to the ```cobertura``` extension, so
-you may want to have a look there as well.
-
-###October 27, 2013:
-
-*Note:* If you have been using the ```coverageDatafile``` property in your
-```cobertura``` block, you'll need to change it to ```coverageOutputDatafile```,
-and you will probably want to add a ```coverageInputDatafile``` as well.
-
-Version 2.1.0 Has several important changes.
-See the [CHANGELOG]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG.md)
-for the full details, but there 4 main changes that are important:
-
-1. The ```cobertura``` task works a little differently than it did before. See
-   the [Usage]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/usage.md)
-   page for more details.
-
-2. There is a new ```coberturaReport``` task that allows finer control over
-which tests actually run.  See the [Usage]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/usage.md)
-   page for more details
-
-3. Instrumentation now happens only when it needs to, such as when the source
-code changes, or one of the options in the ```cobertura``` block of your
-build.gradle changes.
-
-4. The plugin now has better support for projects that use Groovy and Scala,
-but the groovy and scala plugins need to be applied before the cobertura plugin.
-
-###September 2013:
-Version 2.0.0 only works with Gradle 1.7 and newer.  If you are on an older
-version of gradle, you should use the latest 1.x release of this plugin.
-
-Version 2.0.0 uses new features of Gradle 1.7 and removed deprecation warnings.
-It also changed the dependencies slightly so that running ```gradle cobertura```
-executes all the tests in a multi-project build, similar to what 
-```gradle test``` does.
-
-Version 1.2.0 Added support for Cobertura 2.0, which introduced some new
-features.  Best among them are 2 new options, ```ignoreTrivial``` and
-```ignoreMethodAnnotation```, each of which are described in the usage section
-below. It also fixes some new issues found in multi-project builds.
 
 Introduction
 ============
@@ -158,7 +89,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'net.saliman:gradle-cobertura-plugin:2.3.0'
+		classpath 'net.saliman:gradle-cobertura-plugin:2.3.1'
 	}
 }
 ```
