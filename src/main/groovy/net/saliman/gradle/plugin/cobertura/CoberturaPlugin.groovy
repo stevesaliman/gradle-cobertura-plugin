@@ -141,13 +141,15 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		// Create the coberturaReport task.  This task, when invoked, indicates
 		// that users want a coverage report.
-		project.tasks.create(name: COBERTURA_REPORT_TASK_NAME, type: DefaultTask)
+		project.tasks.create(name: COBERTURA_REPORT_TASK_NAME,
+				group: 'Cobertura', type: DefaultTask)
 		Task reportTask = project.tasks.getByName(COBERTURA_REPORT_TASK_NAME)
 		reportTask.setDescription("Generate Cobertura reports after tests finish.")
 
 		// Create the cobertura task.  This task, when invoked, indicates that
 		// users want a coverage report, and they want all tests to run.
-		project.tasks.create(name: COBERTURA_TASK_NAME, type: DefaultTask)
+		project.tasks.create(name: COBERTURA_TASK_NAME,
+				group: 'Cobertura', type: DefaultTask)
 		Task coberturaTask = project.tasks.getByName(COBERTURA_TASK_NAME)
 		coberturaTask.setDescription("Run tests and generate Cobertura coverage reports.")
 		// If we make cobertura depend on reportTask, it is easier later on to
@@ -156,7 +158,8 @@ class CoberturaPlugin implements Plugin<Project> {
 
 		// Create the checkCoverage task.  This task, when invoked, indicates that
 		// users want to check coverage levels, but it does not run any tests..
-		project.tasks.create(name: COBERTURA_CHECK_TASK_NAME, type: DefaultTask)
+		project.tasks.create(name: COBERTURA_CHECK_TASK_NAME,
+				group: 'Cobertura', type: DefaultTask)
 		Task checkCoverageTask = project.tasks.getByName(COBERTURA_CHECK_TASK_NAME)
 		checkCoverageTask.setDescription("Check test coverage.")
 		// It doesn't make much sense to check coverage without generating a
@@ -198,14 +201,14 @@ class CoberturaPlugin implements Plugin<Project> {
 		generateReportTask.setDescription("Generate a Cobertura report after tests finish.")
 		generateReportTask.enabled = false
 		generateReportTask.runner = runner
-    generateReportTask.reports.all { report ->
-      report.conventionMapping.with {
-        enabled = true
-        destination = {
-          new File(extension.coverageReportDir, "index.html")
-        }
-      }
-    }
+		generateReportTask.reports.all { report ->
+			report.conventionMapping.with {
+				enabled = true
+				destination = {
+					new File(extension.coverageReportDir, "index.html")
+				}
+			}
+		}
 
 		// Create the performCoverageCheck task that will do the work of checking
 		// the coverage levels, and you guessed it, it is disabled.

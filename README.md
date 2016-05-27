@@ -89,7 +89,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'net.saliman:gradle-cobertura-plugin:2.3.1'
+		classpath 'net.saliman:gradle-cobertura-plugin:2.3.2'
 	}
 }
 ```
