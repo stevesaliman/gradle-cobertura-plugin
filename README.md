@@ -6,6 +6,9 @@ page for complete details on how to use this plugin.
 
 News
 ====
+###May 26,2016
+Version 2.3.2 Groups tasks better, and allows applying the plugin from 
+settings.gradle and init.gradle
 ###March 3, 2016
 Version 2.3.1 fixes a minor issue with Android projects, with thanks to Adam
 Peck (@dampcake).

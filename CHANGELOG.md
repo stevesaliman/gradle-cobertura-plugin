@@ -3,6 +3,9 @@ Changes for 2.3.2
 - Added the 3 user selectable tasks to the Cobertura group so they show up
   when you do a ```gradle tasks``` (Issue #103)
   
+- Added the ability to apply the plugin from ```settings.gradle``` and 
+  ```init.gradle``` (Issue #109)
+  
 Changes for 2.3.1
 =================
 - Fixed a classpath issue with Android projects, with thanks to Adam Peck

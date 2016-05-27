@@ -7,7 +7,9 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.plugins.PluginAware
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.testing.Test
 
@@ -63,18 +65,39 @@ import org.gradle.api.tasks.testing.Test
  * task dependencies are what they need to be for the users to get what they
  * want.
  */
-class CoberturaPlugin implements Plugin<Project> {
+class CoberturaPlugin implements Plugin<PluginAware> {
 	// Constants for the tasks created by this plugin that don't have their own
 	// classes.
 	static final String COBERTURA_TASK_NAME = 'cobertura'
 	static final String COBERTURA_REPORT_TASK_NAME = 'coberturaReport'
 	static final String COBERTURA_CHECK_TASK_NAME = 'coberturaCheck'
 
-	def void apply(Project project) {
+	def void apply(PluginAware pluginAware) {
+		if ( pluginAware instanceof Project ) {
+			doApply(pluginAware)
+		} else if ( pluginAware instanceof Settings ) {
+			pluginAware.gradle.allprojects { p ->
+				p.plugins.apply(CoberturaPlugin)
+			}
+		} else if ( pluginAware instanceof Gradle ) {
+			pluginAware.allprojects { p ->
+				p.plugins.apply(CoberturaPlugin)
+			}
+		} else {
+			throw new IllegalArgumentException("${pluginAware.getClass()} is currently not supported as an apply target, please report if you need it")
+		}
+	}
+
+	def void doApply(Project project) {
+		if ( project.plugins.hasPlugin(CoberturaPlugin) ) {
+			project.logger.info("Project ${project.name} already has the cobertura plugin")
+			return
+		}
 		project.logger.info("Applying cobertura plugin to $project.name")
+
 		project.plugins.apply(ReportingBasePlugin)
 
-		CoberturaExtension extension = project.extensions.create('cobertura', CoberturaExtension, project)
+		def extension = project.extensions.create('cobertura', CoberturaExtension, project)
 		if (!project.configurations.asMap['cobertura']) {
 			project.configurations.create('cobertura')
 			project.afterEvaluate {

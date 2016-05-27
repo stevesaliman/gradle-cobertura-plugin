@@ -38,10 +38,9 @@ dependencies {
 }
 ```
 
-If you are using Gradle 1.x, you should really consider upgrading Gradle.  If
-you can't update Gradle for some reason, you will also need to have 
-```classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'``` in your
-build dependencies.
+The cobertura plugin can also be applied in ```settings.gradle``` and 
+```init.gradle```.  In both cases, this will have the effect of applying the 
+plugin to all projects in the build, so use this option carefully.
 
 Tasks
 =====
