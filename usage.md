@@ -72,7 +72,8 @@ precisely control what tests actually get run.
 3. The ```coberturaCheck``` task does all the things ```coberturaReport``` does,
 but adds a test coverage check to the build.  It optionally fails the build if
 the coverage levels are not sufficient.  See the documentation in the
-```CoberturaExtension``` class for more details.
+```CoberturaExtension``` class for more details. Like the ```coberturaReport```
+task, ```coberturaCheck``` will not cause any tests to run.
 
 If you have a multi-project build, and you need to have classes from more than
 one of them, you'll need to add some code to the coverage block of your project
