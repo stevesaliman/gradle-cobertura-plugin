@@ -172,8 +172,8 @@ class CoberturaExtension {
 	 * Example:
 	 * <pre>
 	 coverageCheckRegexes = [
-	 [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
-	 [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+	    [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
+	    [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
 	 ]
 	 * </pre><p>
 	 */
@@ -454,8 +454,8 @@ class CoberturaExtension {
 	 * Example:
 	 * <pre>
 	 coverageCheckRegexes = [
-	 [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
-	 [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+	    [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
+	    [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
 	 ]
 	 * </pre>
 	 * @param coverageCheckRegexes the expressions to use.
