@@ -118,7 +118,7 @@ class CoberturaExtension {
 	 */
 	private Closure coverageTestTasksSpec
 
-  // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	// properties used for coverage checks.  Many of them are private to force
 	// using the "set" methods which check the value range.
 
@@ -171,11 +171,11 @@ class CoberturaExtension {
 	 * The branch and line rates need to be numbers from 0 to 100.
 	 * Example:
 	 * <pre>
-      coverageCheckRegexes = [
-	      [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
-	      [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
-	    ]
-   * </pre><p>
+	 coverageCheckRegexes = [
+	 [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
+	 [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+	 ]
+	 * </pre><p>
 	 */
 	private List<Map> coverageCheckRegexes = []
 
@@ -453,10 +453,10 @@ class CoberturaExtension {
 	 * The branch and line rates need to be numbers from 0 to 100.
 	 * Example:
 	 * <pre>
-	   coverageCheckRegexes = [
-	     [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
-	     [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
-	   ]
+	 coverageCheckRegexes = [
+	 [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
+	 [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+	 ]
 	 * </pre>
 	 * @param coverageCheckRegexes the expressions to use.
 	 * @throws IllegalArgumentException if any of the regular expressions or
@@ -519,7 +519,11 @@ class CoberturaExtension {
 
 		project.afterEvaluate {
 			String classesDir = splitCamelCase(androidVariant).join("/").toLowerCase()
-			auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${classesDir}")
+			if (auxiliaryClasspath != null) {
+				auxiliaryClasspath += project.files("${project.buildDir.path}/intermediates/classes/${classesDir}")
+			} else {
+				auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${classesDir}")
+			}
 			coverageDirs = auxiliaryClasspath.asList()
 			auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
 					project.configurations.getByName("${androidVariant}Compile")))
@@ -528,16 +532,12 @@ class CoberturaExtension {
 
 		// By default instrumentation depends on the androidVariant compile task
 		coverageClassesTasksSpec = {
-			project.tasks.matching {
-				it.name == "compile${androidVariant.capitalize()}JavaWithJavac"
-			}
+			project.tasks.matching { it.name == "compile${androidVariant.capitalize()}JavaWithJavac" }
 		}
 
 		// By default the "cobertura" task depends on the androidVariant test task
 		coverageTestTasksSpec = {
-			project.tasks.withType(Test).matching {
-				it.name == "test${androidVariant.capitalize()}UnitTest"
-			}
+			project.tasks.withType(Test).matching { it.name == "test${androidVariant.capitalize()}UnitTest" }
 		}
 
 		// Android archive dependencies (AARs) are extracted before compilation. They contain the classes.jar (among
@@ -550,9 +550,7 @@ class CoberturaExtension {
 				}
 			}
 
-			project.tasks.getByName(InstrumentTask.NAME).doFirst {
-				auxiliaryClasspath += getExtractedJars(project)
-			}
+			project.tasks.getByName(InstrumentTask.NAME).doFirst { auxiliaryClasspath += getExtractedJars(project) }
 		}
 	}
 

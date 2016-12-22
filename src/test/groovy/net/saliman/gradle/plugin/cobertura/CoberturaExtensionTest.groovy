@@ -463,4 +463,29 @@ class CoberturaExtensionTest {
 		assertNotNull(testTasks.getByName("testFlavor1DebugUnitTest"))
 
 	}
+	
+	@Test
+	void androidProjectWithAuxiliaryClasspath() {
+		project = ProjectBuilder.builder().build()
+		project.apply plugin: 'com.android.application'
+		project.apply plugin: 'cobertura'
+		extension = project.cobertura
+		extension.androidVariant = "flavor1Debug"
+		extension.auxiliaryClasspath = project.files('tmp')
+		project.evaluate()
+
+		assertEquals(extension.androidVariant, "flavor1Debug")
+		assertEquals(project.files("${project.buildDir.path}/intermediates/classes/flavor1/debug", project.files('tmp')) as Set,
+				extension.auxiliaryClasspath as Set)
+		assertEquals(project.android.sourceSets.main.java.srcDirs, extension.coverageSourceDirs)
+
+		TaskCollection classesTasks = extension.getCoverageClassesTasks()
+		assertEquals(1, classesTasks.size())
+		assertNotNull(classesTasks.getByName("compileFlavor1DebugJavaWithJavac"))
+
+		TaskCollection testTasks = extension.getCoverageTestTasks()
+		assertEquals(1, testTasks.size())
+		assertNotNull(testTasks.getByName("testFlavor1DebugUnitTest"))
+
+	}
 }
