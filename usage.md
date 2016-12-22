@@ -5,7 +5,7 @@ build.gradle file.
 
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '2.3.2'
+  id 'net.saliman.cobertura' version '2.4.0'
 }
 ```
 
@@ -20,7 +20,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.3.2"
+        classpath "net.saliman:gradle-cobertura-plugin:2.4.0"
     }
 }
 apply plugin: 'net.saliman.cobertura'
@@ -102,12 +102,15 @@ following options:
 - ```coberturaVersion = <version>```: The version of Cobertura that will be
   used to run the coverage reports.  The default is 2.1.1.
 
-- ```auxiliaryClasspath = <FileCollection>```: You can set the classpath that 
-  Cobertura uses while instrumenting your classes. It defaults to 
-  project.sourceSets.main.output.classesDir +
-  project.sourceSets.main.compileClasspath.  You can add to that easily with
-  something like:
-  ```auxiliaryClasspath += files(configurations.examplesCompile.files)```
+- ```auxiliaryClasspath = <FileCollection>```: You can add files and directories
+  to the classpath that Cobertura uses while instrumenting your classes. The
+  plugin will always include certain directories, based on the type of project.
+  Java projects will always include project.sourceSets.main.output.classesDir +
+  project.sourceSets.main.compileClasspath. Android projects will always include 	
+  ${project.buildDir.path}/intermediates/classes/${classesDir} + 
+  project.configurations.getByName("compile") + 
+  project.configurations.getByName("${androidVariant}Compile"))). 
+  There is no need to include them again.
 
 - ```coverageDirs = [ <dirnames> ]```: An array of directories under the base
   directory containing classes to be instrumented.  The default is

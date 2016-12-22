@@ -6,6 +6,12 @@ page for complete details on how to use this plugin.
 
 News
 ====
+###December 22, 2016
+Version 2.4.0 now builds under Gradle 3.2.  It also introduces a change to the
+way the auxiliaryClasspath is set up.  Previously, if you wanted to add to 
+the auxiliaryClasspath, you would need to explicitly set all the elements.  
+Starting with version 2.4.0, you only need to specify the things you want to
+add to the default auxiliaryClasspath.  Thanks to @Frank667 for the contribution.
 ###May 26,2016
 Version 2.3.2 Groups tasks better, and allows applying the plugin from 
 settings.gradle and init.gradle
@@ -92,7 +98,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'net.saliman:gradle-cobertura-plugin:2.3.2'
+		classpath 'net.saliman:gradle-cobertura-plugin:2.4.0'
 	}
 }
 ```

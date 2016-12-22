@@ -84,10 +84,14 @@ class CoberturaExtension {
 	List<String> coverageIgnores = []
 
 	/**
-	 * The classpath when instrumenting.
-	 * Defaults to 
-	 * project.sourceSets.main.output.classesDir,
-	 * project.sourceSets.main.compileClasspath,
+	 * Files to add to the classpath when instrumenting.  We'll always use
+	 * project.sourceSets.main.output.classesDir and
+	 * project.sourceSets.main.compileClasspath for Java projects, and
+	 * ${project.buildDir.path}/intermediates/classes/${classesDir},
+	 * project.configurations.getByName("compile") and ,
+	 * project.configurations.getByName("${androidVariant}Compile"))) for
+	 * Android projects.  Thw purpose of the auxiliaryClasspath is to add jars
+	 * and directories not covered by those defaults.
 	 */
 	FileCollection auxiliaryClasspath
 
@@ -491,12 +495,16 @@ class CoberturaExtension {
 	 */
 	private void initJava(Project project) {
 		project.plugins.apply(JavaPlugin)
-		project.logger.info "Creating cobertura extension for project ${project.name}"
+		project.logger.info "Creating cobertura extension for java project ${project.name}"
 
 		coverageDirs = [project.sourceSets.main.output.classesDir.path]
-		// Set the ausxiliaryClasspath to defaults. This is the classpath cobertura uses for
-		// resolving classes while instrumenting
-		auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
+		// Set the auxiliaryClasspath to defaults. This is the classpath
+		// cobertura uses for resolving classes while instrumenting.
+		if ( auxiliaryClasspath != null ) {
+			auxiliaryClasspath += project.files project.sourceSets.main.output.classesDir
+		} else {
+			auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
+		}
 		auxiliaryClasspath = auxiliaryClasspath.plus(project.sourceSets.main.compileClasspath)
 
 		// By default instrumentation depends on the "classes" task
@@ -515,7 +523,7 @@ class CoberturaExtension {
 	 * @param project The project.
 	 */
 	private void initAndroid(Project project) {
-		project.logger.info "Creating cobertura extension for project ${project.name} and variant: ${androidVariant}"
+		project.logger.info "Creating cobertura extension for android project ${project.name} and variant: ${androidVariant}"
 
 		project.afterEvaluate {
 			String classesDir = splitCamelCase(androidVariant).join("/").toLowerCase()

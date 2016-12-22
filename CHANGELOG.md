@@ -1,3 +1,12 @@
+Changes for 2.4.0
+=================
+- Changed the way auxiliaryClasspath is built.  In prior versions, it was 
+  necessary to re-specify the defaults when adding to the auxiliaryClasspath
+  (Issue #116 and Issue #124).  Now, the plugin adds the value of 
+  auxiliaryClasspath in the ```cobertura``` closuere to the defaults, with 
+  thanks to @Frank667
+- Updated the plugin to build with Gradle 3.2 and bumped the Gradle wrapper.
+  
 Changes for 2.3.2
 =================
 - Added the 3 user selectable tasks to the Cobertura group so they show up
