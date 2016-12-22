@@ -1,5 +1,6 @@
 package net.saliman.gradle.plugin.cobertura
 
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.reporting.Reporting
@@ -45,7 +46,18 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 
 	@Override
 	CoberturaReports reports(Closure closure) {
+		// return reports(new ClosureBackedAction<CoberturaReports>(closure))
 		reports.configure(closure)
+	}
+
+	// This version of the reports method is not introduced until gradle 3.
+	// Its presence doesn't cause any issues in Gradle 2, but we can't use
+	// the @Override annotation.  When we stop supporting Gradle 2, we can
+	// uncomment the annotation.
+//	@Override
+	CoberturaReports reports(Action<? extends CoberturaReports> configureAction) {
+	  configureAction.execute(reports)
+		return reports
 	}
 
 	/**
