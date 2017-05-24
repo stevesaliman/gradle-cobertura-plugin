@@ -1,7 +1,6 @@
 Usage
 =====
-See the [Usage]
-(http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/usage.md)
+See the [Usage](http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/usage.md)
 page for complete details on how to use this plugin.
 
 News
