@@ -6,24 +6,24 @@ page for complete details on how to use this plugin.
 
 News
 ====
-###December 22, 2016
+### December 22, 2016
 Version 2.4.0 now builds under Gradle 3.2.  It also introduces a change to the
 way the auxiliaryClasspath is set up.  Previously, if you wanted to add to 
 the auxiliaryClasspath, you would need to explicitly set all the elements.  
 Starting with version 2.4.0, you only need to specify the things you want to
 add to the default auxiliaryClasspath.  Thanks to @Frank667 for the contribution.
-###May 26,2016
+### May 26,2016
 Version 2.3.2 Groups tasks better, and allows applying the plugin from 
 settings.gradle and init.gradle
-###March 3, 2016
+### March 3, 2016
 Version 2.3.1 fixes a minor issue with Android projects, with thanks to Adam
 Peck (@dampcake).
-###December 27,2015
+### December 27,2015
 The Gradle Cobertura plugin now supports Android projects, with thanks to Gautam
 Korlam (@kageiit).  It is worth noting that unlike Java projects, where plugins
 can be applied in any order, using this plugin on Android projects requires that
 the Android plugin be applied *before* the Cobertura plugin.
-###March 2, 2015
+### March 2, 2015
 At long last, Cobertura has released version 2.1, with thanks to Dennis
 Lundberg.  As a result, the Gradle Cobertura plugin now uses version 2.1.1 of
 Cobertura by default.  This version should play better with Java 8 and fix
