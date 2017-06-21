@@ -5,7 +5,7 @@ build.gradle file.
 
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '2.4.0'
+  id 'net.saliman.cobertura' version '2.5.0'
 }
 ```
 
@@ -20,14 +20,15 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.4.0"
+        classpath "net.saliman:gradle-cobertura-plugin:2.5.0"
     }
 }
 apply plugin: 'net.saliman.cobertura'
 ```
 
-If you are using this plugin on an android project, you must apply it after the
-android plugin.
+If you are using this plugin on a java, groovy, or scala project, it is probably
+best to apply it after those plugins.  If you are using this plugin on an 
+android project, you must apply it after the android plugin.
 
 If you are using this plugin on a project that does *not* use slf4j, and you
 run into ```ClassNotFoundException``` issues, you will need to add a version 
@@ -105,7 +106,7 @@ following options:
 - ```auxiliaryClasspath = <FileCollection>```: You can add files and directories
   to the classpath that Cobertura uses while instrumenting your classes. The
   plugin will always include certain directories, based on the type of project.
-  Java projects will always include project.sourceSets.main.output.classesDir +
+  Java projects will always include project.sourceSets.main.output.classesDirs +
   project.sourceSets.main.compileClasspath. Android projects will always include 	
   ${project.buildDir.path}/intermediates/classes/${classesDir} + 
   project.configurations.getByName("compile") + 
@@ -113,8 +114,8 @@ following options:
   There is no need to include them again.
 
 - ```coverageDirs = [ <dirnames> ]```: An array of directories under the base
-  directory containing classes to be instrumented.  The default is
-  [ project.sourceSets.main.classesDir.path ]
+  directory containing classes to be instrumented.  The default is the names
+  of each directory in [ project.sourceSets.main.classesDirs ]
 
 - ```coverageInputDatafile = <file>```: The file object referring to the
   .ser file to create during instrumentation.

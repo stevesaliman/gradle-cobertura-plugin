@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class CalculatorDivideTest {
 	private Calculator calculator = new Calculator();
 
-	@Test
+	@Test(expected=ArithmeticException.class)
 	public void divideByZero() {
 		assertEquals(2, calculator.divide(4, 0));
 	 }

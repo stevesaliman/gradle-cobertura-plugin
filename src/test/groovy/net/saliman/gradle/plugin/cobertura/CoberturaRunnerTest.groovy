@@ -33,9 +33,13 @@ class CoberturaRunnerTest {
 		def configuration = new CoberturaExtension(project)
 		configuration.coverageInputDatafile = new File("${destDir.absolutePath}/cobertura.ser")
 
-		runner.instrument(configuration, "build/classes/main", destDir.absolutePath, ['.'])
-		File classesDir = new File('build/classes/main')
+		def x = ['build/classes/java/main', 'build/classes/groovy/main']
+		runner.instrument(configuration, null, destDir.absolutePath, x)
+
+		File classesDir = new File('build/classes/java/main')
 		int count = 0
+		classesDir.eachFileMatch FileType.FILES, ~/.*\.class/, { count++ }
+		classesDir = new File('build/classes/groovy/main')
 		classesDir.eachFileMatch FileType.FILES, ~/.*\.class/, { count++ }
 		int instrumentedCount = 0
 		destDir.eachFileMatch FileType.FILES, ~/.*\.class/, { instrumentedCount++ }

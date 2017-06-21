@@ -72,7 +72,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 	static final String COBERTURA_REPORT_TASK_NAME = 'coberturaReport'
 	static final String COBERTURA_CHECK_TASK_NAME = 'coberturaCheck'
 
-	def void apply(PluginAware pluginAware) {
+	void apply(PluginAware pluginAware) {
 		if ( pluginAware instanceof Project ) {
 			doApply(pluginAware)
 		} else if ( pluginAware instanceof Settings ) {
@@ -88,7 +88,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		}
 	}
 
-	def void doApply(Project project) {
+	void doApply(Project project) {
 		if ( project.plugins.hasPlugin(CoberturaPlugin) ) {
 			project.logger.info("Project ${project.name} already has the cobertura plugin")
 			return
@@ -179,8 +179,9 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		// determine of we need reports or not.
 		coberturaTask.dependsOn reportTask
 
-		// Create the checkCoverage task.  This task, when invoked, indicates that
-		// users want to check coverage levels, but it does not run any tests..
+		// Create the checkCoverage task.  This task, when invoked, indicates
+		// that users want to check coverage levels, but it does not run any
+		// tests..
 		project.tasks.create(name: COBERTURA_CHECK_TASK_NAME,
 				group: 'Cobertura', type: DefaultTask)
 		Task checkCoverageTask = project.tasks.getByName(COBERTURA_CHECK_TASK_NAME)
@@ -189,8 +190,8 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		// report
 		checkCoverageTask.dependsOn reportTask
 
-		// Create the instrument task that will instrument code. At the moment, it
-		// is disabled.
+		// Create the instrument task that will instrument code. At the moment,
+		// it is disabled.
 		project.tasks.create(name: InstrumentTask.NAME,
 						type: InstrumentTask,
 						{
@@ -212,8 +213,8 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		copyDatafileTask.enabled = false
 		copyDatafileTask.dependsOn instrumentTask
 
-		// Create the generateCoberturaReport task that will generate the reports.
-		// Like the others, it starts out disabled.
+		// Create the generateCoberturaReport task that will generate the
+		// reports.  Like the others, it starts out disabled.
 		project.tasks.create(name: GenerateReportTask.NAME,
 						             type: GenerateReportTask,
 						             {
@@ -233,8 +234,8 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 			}
 		}
 
-		// Create the performCoverageCheck task that will do the work of checking
-		// the coverage levels, and you guessed it, it is disabled.
+		// Create the performCoverageCheck task that will do the work of
+		// checking the coverage levels, and you guessed it, it is disabled.
 		project.tasks.create(name: PerformCoverageCheckTask.NAME,
 						type: PerformCoverageCheckTask,
 						{

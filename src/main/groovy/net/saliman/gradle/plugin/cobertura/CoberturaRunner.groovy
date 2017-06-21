@@ -8,15 +8,15 @@ import java.lang.reflect.Method
 /**
  * Wrapper for Cobertura's main classes.
  */
-public class CoberturaRunner {
+class CoberturaRunner {
 
 	private Set<File> classpath
 
-	public CoberturaRunner withClasspath(Set<File> classpath) {
+	CoberturaRunner withClasspath(Set<File> classpath) {
 		return new CoberturaRunner(classpath: classpath)
 	}
 
-	public void instrument(CoberturaExtension configuration,
+	void instrument(CoberturaExtension configuration,
 	                       String baseDir,
 	                       String destinationDir,
 	                       List<String> instrumentDirs) {
@@ -85,6 +85,8 @@ public class CoberturaRunner {
 //	    </path>
 
 		args.addAll(instrumentDirs)
+//		System.out.println("---------------- args:")
+//		System.out.println("${args}")
 		if ( compareVersions(configuration.coberturaVersion, "2.1.0") > -1 ) {
 			executeCobertura("net.sourceforge.cobertura.instrument.InstrumentMain", "instrument", false, args)
 		} else {
@@ -92,7 +94,7 @@ public class CoberturaRunner {
 		}
 	}
 
-	public void generateCoverageReport(CoberturaExtension configuration,
+	void generateCoverageReport(CoberturaExtension configuration,
 	                                   String format,
 	                                   List<String> sourceDirectories) throws Exception {
 		List<String> args = new ArrayList<String>()
@@ -117,7 +119,7 @@ public class CoberturaRunner {
 		}
 	}
 
-	public int checkCoverage(CoberturaExtension configuration) throws Exception {
+	int checkCoverage(CoberturaExtension configuration) throws Exception {
 		List<String> args = new ArrayList<String>()
 		args.add("--datafile")
 		args.add(configuration.coverageOutputDatafile.path)
@@ -203,15 +205,15 @@ public class CoberturaRunner {
 //		System.out.println("${args}")
 		// We need to replace the classloader for the thread with one that finds
 		// Cobertura's dependencies first.
-		ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
+		ClassLoader prevCl = Thread.currentThread().getContextClassLoader()
 
 		if ( classpath ) {
 			def urls = classpath.collect { it.toURI().toURL() }
 			ClassLoader cl = new ChildFirstUrlClassLoader(urls as URL[], prevCl)
-			Thread.currentThread().setContextClassLoader(cl);
+			Thread.currentThread().setContextClassLoader(cl)
 		}
 
-		def SecurityManager oldSm = System.getSecurityManager()
+		SecurityManager oldSm = System.getSecurityManager()
 		CoberturaSecurityManager sm = new CoberturaSecurityManager(oldSm)
 		def exitStatus = 0
 
@@ -234,7 +236,7 @@ public class CoberturaRunner {
 			// Restore the classLoader.  Then, if we're dealing with a Security
 			// Exception (checkCoverage did a System.exit), set the exit status
 			// to whatever code the security manager says should be returned.
-			Thread.currentThread().setContextClassLoader(prevCl);
+			Thread.currentThread().setContextClassLoader(prevCl)
 			if ( useSecurityManager ) {
 				System.setSecurityManager(oldSm)
 				exitStatus = sm.exitStatus
@@ -257,11 +259,11 @@ public class CoberturaRunner {
 			return true
 		}
 		if ( !InvocationTargetException.class.isAssignableFrom(e.class) ) {
-			return false;
+			return false
 		}
 		def cause = e.targetException
 		if ( cause == null ) {
-			return false;
+			return false
 		}
 		return SecurityException.class.isAssignableFrom(cause.class)
 	}

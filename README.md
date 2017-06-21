@@ -5,6 +5,12 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### June 20, 2017
+Version 2.5.0 now supports Gradle 4.0.  In particular, the plugin has been 
+enhanced to be aware of where Gradle 4.0 is putting class files.  Prior versions
+of the plugin will run in Gradle 4.0, but it might not run correctly.  See the
+[CHANGELOG](http://github.com/stevesaliman/gradle-cobertura-plugin/blob/master/CHANGELOG.md)
+for more details.
 ### December 22, 2016
 Version 2.4.0 now builds under Gradle 3.2.  It also introduces a change to the
 way the auxiliaryClasspath is set up.  Previously, if you wanted to add to 

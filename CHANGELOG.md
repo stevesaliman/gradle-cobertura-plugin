@@ -1,3 +1,12 @@
+Changes for 4.5.0
+=================
+Prior to version 4.0, Gradle put the compiled class files from Java, Groovy, and
+Scala sources into the same directory (`build/classes/main`),  Starting with 
+Gradle 4.0, each language gets its own directory (`build/classes/java/main`, 
+`build/classes/groovy/main`, etc.) for compiled classes.  The Cobertura plugin
+now adds all of the correct directories based on which version of Gradle you are
+running, and which plugins have been applied.
+
 Changes for 2.4.0
 =================
 - Changed the way auxiliaryClasspath is built.  In prior versions, it was 

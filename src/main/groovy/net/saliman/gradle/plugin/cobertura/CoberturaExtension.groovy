@@ -20,7 +20,8 @@ class CoberturaExtension {
 
 	/**
 	 * Directories under the base directory containing classes to be
-	 * instrumented. Defaults to [project.sourceSets.main.classesDir.path]
+	 * instrumented. Defaults to the names of each directory in
+	 * [project.sourceSets.main.classesDirs]
 	 */
 	List<String> coverageDirs
 
@@ -85,7 +86,7 @@ class CoberturaExtension {
 
 	/**
 	 * Files to add to the classpath when instrumenting.  We'll always use
-	 * project.sourceSets.main.output.classesDir and
+	 * project.sourceSets.main.output.classesDirs and
 	 * project.sourceSets.main.compileClasspath for Java projects, and
 	 * ${project.buildDir.path}/intermediates/classes/${classesDir},
 	 * project.configurations.getByName("compile") and ,
@@ -497,13 +498,31 @@ class CoberturaExtension {
 		project.plugins.apply(JavaPlugin)
 		project.logger.info "Creating cobertura extension for java project ${project.name}"
 
-		coverageDirs = [project.sourceSets.main.output.classesDir.path]
-		// Set the auxiliaryClasspath to defaults. This is the classpath
-		// cobertura uses for resolving classes while instrumenting.
-		if ( auxiliaryClasspath != null ) {
-			auxiliaryClasspath += project.files project.sourceSets.main.output.classesDir
+		// As of Gradle 4, Java, Groovy, and Scala files were compiled into
+		// the different directories.  We know we're in Gradle 4 if the output
+		// has a 'classesDirs' property, which is a FileCollection.
+		if ( project.sourceSets.main.output.hasProperty('classesDirs') ) {
+			coverageDirs = []
+			def outputClassesDirs = project.sourceSets.main.output.classesDirs
+			outputClassesDirs.each {
+				coverageDirs << it.path
+			}
+			if ( auxiliaryClasspath != null ) {
+				auxiliaryClasspath.add(outputClassesDirs)
+			} else {
+				auxiliaryClasspath = outputClassesDirs
+			}
 		} else {
-			auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
+			// Prior to Gradle 4, the 3 kinds of files were compiled into a
+			// single directory represented by a File.
+			coverageDirs = [project.sourceSets.main.output.classesDir.path]
+			// Set the auxiliaryClasspath to defaults. This is the classpath
+			// cobertura uses for resolving classes while instrumenting.
+			if ( auxiliaryClasspath != null ) {
+				auxiliaryClasspath += project.files project.sourceSets.main.output.classesDir
+			} else {
+				auxiliaryClasspath = project.files project.sourceSets.main.output.classesDir
+			}
 		}
 		auxiliaryClasspath = auxiliaryClasspath.plus(project.sourceSets.main.compileClasspath)
 
