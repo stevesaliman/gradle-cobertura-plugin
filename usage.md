@@ -240,3 +240,9 @@ following options:
 
 - ```androidVariant = <String>```: The variant for android projects. The default is `debug`.
   Running cobertura is only supported on a single test variant.
+
+Troubleshooting
+===============
+
+Visit our Wiki for Troubleshooting and Tips from our community.
+https://github.com/stevesaliman/gradle-cobertura-plugin/wiki
