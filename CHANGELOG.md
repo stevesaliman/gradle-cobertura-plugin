@@ -1,4 +1,4 @@
-Changes for 4.5.0
+Changes for 2.5.0
 =================
 Prior to version 4.0, Gradle put the compiled class files from Java, Groovy, and
 Scala sources into the same directory (`build/classes/main`),  Starting with 
