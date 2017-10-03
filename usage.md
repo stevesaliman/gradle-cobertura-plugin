@@ -214,14 +214,18 @@ following options:
   optionally specify minimum branch and line coverage rates for individual
   classes using any number of regular expressions. Each expression is a map with
   3 keys like this:
-  ```coverageCheckRegexes = [
+  ```
+  coverageCheckRegexes = [
     [ regex: 'com.example.reallyimportant.*', branchRate: 80, lineRate: 90 ],
-	[ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
-  ]```  The keys are:
+    [ regex: 'com.example.boringcode.*', branchRate: 40, lineRate: 30 ]
+  ]
+  ```
+  
+  The keys are:
     - ```regex```: A regular expression identifying classes classes that need
       special rates
     - ```branchRate```: The branch rate for the selected classes
-	- ```lineRate```: The line rate for the selected classes
+    - ```lineRate```: The line rate for the selected classes
 
 - ```coverageCheckHaltOnFailure = <true|false>```: Whether or not the
   ```coberturaCheck``` should fail the build if the minimum coverage rates are
