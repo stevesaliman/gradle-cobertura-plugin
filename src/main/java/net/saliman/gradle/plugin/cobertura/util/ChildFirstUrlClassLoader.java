@@ -55,12 +55,19 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
 				}
 				catch (ClassNotFoundException ignored) {
 				}
+				catch (NoClassDefFoundError alsoIgnored) {
+				}
 			}
 			if (c == null) {
 				try {
 					// checking local
 					c = findClass(name);
 				} catch (ClassNotFoundException e) {
+					// checking parent
+					// This call to loadClass may eventually call findClass again, in case the parent doesn't find anything.
+					c = super.loadClass(name, resolve);
+				}
+				catch (NoClassDefFoundError e2) {
 					// checking parent
 					// This call to loadClass may eventually call findClass again, in case the parent doesn't find anything.
 					c = super.loadClass(name, resolve);
