@@ -5,6 +5,9 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### October 22, 2017
+Version 2.5.1 works around a bug described in Issue #89
+
 ### June 20, 2017
 Version 2.5.0 now supports Gradle 4.0.  In particular, the plugin has been 
 enhanced to be aware of where Gradle 4.0 is putting class files.  Prior versions

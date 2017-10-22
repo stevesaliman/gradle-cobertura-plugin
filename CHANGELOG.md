@@ -1,3 +1,8 @@
+Changes for 2.5.1
+=================
+- Added `NoClassDefFoundErrors` to the exceptions I'm catching in the 
+  `ChildFirstUrlClassLoader`, thanks to @boschi's suggestion in Issue #89.
+
 Changes for 2.5.0
 =================
 Prior to version 4.0, Gradle put the compiled class files from Java, Groovy, and
