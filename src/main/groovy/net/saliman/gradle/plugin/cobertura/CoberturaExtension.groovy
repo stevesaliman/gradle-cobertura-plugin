@@ -552,8 +552,13 @@ class CoberturaExtension {
 				auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${classesDir}")
 			}
 			coverageDirs = auxiliaryClasspath.asList()
-			auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
-					project.configurations.getByName("${androidVariant}Compile")))
+
+			if (CoberturaPlugin.isAndroidToolsGradleVersion3(project)) {
+				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("${androidVariant}CompileClasspath")))
+			} else {
+				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
+						project.configurations.getByName("${androidVariant}Compile")))
+			}
 		}
 		coverageSourceDirs = project.android.sourceSets.main.java.srcDirs
 
