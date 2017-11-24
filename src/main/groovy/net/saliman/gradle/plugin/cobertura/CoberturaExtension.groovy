@@ -551,9 +551,16 @@ class CoberturaExtension {
 			} else {
 				auxiliaryClasspath = project.files("${project.buildDir.path}/intermediates/classes/${classesDir}")
 			}
+			if(CoberturaPlugin.containsAndroidKotlinSources(project) && CoberturaPlugin.isAndroidToolsGradleVersion3(project)) {
+				auxiliaryClasspath = auxiliaryClasspath.plus(project.files("${project.buildDir.path}/tmp/kotlin-classes/${androidVariant}"))
+			}
 			coverageDirs = auxiliaryClasspath.asList()
-			auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
+			if (CoberturaPlugin.isAndroidToolsGradleVersion3(project)) {
+				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("${androidVariant}CompileClasspath")))
+			} else {
+				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
 					project.configurations.getByName("${androidVariant}Compile")))
+			}
 		}
 		coverageSourceDirs = project.android.sourceSets.main.java.srcDirs
 

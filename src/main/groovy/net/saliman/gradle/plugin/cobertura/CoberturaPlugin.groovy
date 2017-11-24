@@ -126,8 +126,14 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		// This will not conflict with any dependencies in compile/test configurations.
 		if (isAndroidProject(project)) {
 			try {
-				project.dependencies {
-					provided 'org.slf4j:slf4j-api:1.7.5'
+				if (isAndroidToolsGradleVersion3(project)) {
+					project.dependencies {
+						testApi 'org.slf4j:slf4j-api:1.7.5'
+					}
+				} else {
+					project.dependencies {
+						provided 'org.slf4j:slf4j-api:1.7.5'
+					}
 				}
 			} catch (Exception ignored) { }
 		}
@@ -359,5 +365,19 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 
 	static boolean isAndroidProject(Project project) {
 		return project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.library")
+	}
+
+	static boolean containsAndroidKotlinSources(Project project) {
+		return project.plugins.hasPlugin("kotlin-android")
+	}
+
+	static boolean isAndroidToolsGradleVersion3(Project project) {
+		for(def dependency : project.rootProject.buildscript.configurations.classpath) {
+			def find = (dependency.name =~ /^gradle-(\w+)\.\w+\.\w+\.jar$/)
+			if (find.size() > 0) {
+				return find[0][1].toInteger() >= 3
+			}
+		}
+		return false
 	}
 }
