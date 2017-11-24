@@ -1,3 +1,8 @@
+Changes for 2.5.2
+=================
+- Added support for Android Tools 3 and Kotlin with thanks to Christoph Walcher 
+  (@wiomoc)
+  
 Changes for 2.5.1
 =================
 - Added `NoClassDefFoundErrors` to the exceptions I'm catching in the 

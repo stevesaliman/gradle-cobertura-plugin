@@ -5,6 +5,10 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### November 24, 2017
+Version 2.5.2 now supports Android Tools 3.0 and Android Kotlin projects with 
+thanks to Christoph Walcher (@wiomoc)
+
 ### October 22, 2017
 Version 2.5.1 works around a bug described in Issue #89
 
@@ -106,7 +110,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'net.saliman:gradle-cobertura-plugin:2.4.0'
+		classpath 'net.saliman:gradle-cobertura-plugin:2.5.2'
 	}
 }
 ```
