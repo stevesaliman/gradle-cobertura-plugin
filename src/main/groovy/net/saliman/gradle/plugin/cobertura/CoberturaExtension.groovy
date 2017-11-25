@@ -555,11 +555,11 @@ class CoberturaExtension {
 				auxiliaryClasspath = auxiliaryClasspath.plus(project.files("${project.buildDir.path}/tmp/kotlin-classes/${androidVariant}"))
 			}
 			coverageDirs = auxiliaryClasspath.asList()
-			if (CoberturaPlugin.isAndroidToolsGradleVersion3(project)) {
-				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("${androidVariant}CompileClasspath")))
-			} else {
+
+			// Gradle 3.0.0 doesn't need auxiliaryClasspath
+			if (!CoberturaPlugin.isAndroidToolsGradleVersion3(project)) {
 				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
-					project.configurations.getByName("${androidVariant}Compile")))
+						project.configurations.getByName("${androidVariant}Compile")))
 			}
 		}
 		coverageSourceDirs = project.android.sourceSets.main.java.srcDirs
