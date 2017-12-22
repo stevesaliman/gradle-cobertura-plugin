@@ -13,3 +13,4 @@ gradle-app.setting
 testclient/buildSrc/build
 testclient/buildSrc/.gradle
 *.bak
+local.properties
