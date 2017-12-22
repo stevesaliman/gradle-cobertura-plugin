@@ -556,8 +556,8 @@ class CoberturaExtension {
 			}
 			coverageDirs = auxiliaryClasspath.asList()
 
-			// Gradle 3.0.0 doesn't need auxiliaryClasspath
-			if (!CoberturaPlugin.isAndroidToolsGradleVersion3(project)) {
+			// Android Tools 3.0.0 doesn't need auxiliaryClasspath
+			if ( !CoberturaPlugin.isAndroidToolsVersion3(project) ) {
 				auxiliaryClasspath = auxiliaryClasspath.plus(project.files(project.configurations.getByName("compile"),
 						project.configurations.getByName("${androidVariant}Compile")))
 			}

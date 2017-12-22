@@ -371,10 +371,13 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		return project.plugins.hasPlugin("kotlin-android")
 	}
 
-	static boolean isAndroidToolsGradleVersion3(Project project) {
-		for(def dependency : project.rootProject.buildscript.configurations.classpath) {
+	static boolean isAndroidToolsVersion3(Project project) {
+		if ( !isAndroidProject(project) ) {
+			return false;
+		}
+		for ( def dependency : project.rootProject.buildscript.configurations.classpath ) {
 			def find = (dependency.name =~ /^gradle-(\w+)\.\w+\.\w+\.jar$/)
-			if (find.size() > 0) {
+			if ( find.size() > 0 ) {
 				return find[0][1].toInteger() >= 3
 			}
 		}

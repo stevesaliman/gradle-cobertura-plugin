@@ -1,5 +1,9 @@
 Changes for 2.5.2
 =================
+- Fixed Android Tools 3 support with thanks to Eduardo Giménez (@edu-gimenez)
+
+Changes for 2.5.2
+=================
 - Added support for Android Tools 3 and Kotlin with thanks to Christoph Walcher 
   (@wiomoc)
   

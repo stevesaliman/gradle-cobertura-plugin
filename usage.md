@@ -5,7 +5,7 @@ build.gradle file.
 
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '2.5.2'
+  id 'net.saliman.cobertura' version '2.5.3'
 }
 ```
 
@@ -20,7 +20,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:2.5.2"
+        classpath "net.saliman:gradle-cobertura-plugin:2.5.3"
     }
 }
 apply plugin: 'net.saliman.cobertura'
