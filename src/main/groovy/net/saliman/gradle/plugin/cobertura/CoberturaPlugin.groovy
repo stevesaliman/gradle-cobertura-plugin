@@ -371,7 +371,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		return project.plugins.hasPlugin("kotlin-android")
 	}
 
-	static boolean isAndroidToolsVersion3(Project project) {
+	static boolean isAndroidToolsGradleVersion3(Project project) {
 		if ( !isAndroidProject(project) ) {
 			return false;
 		}
