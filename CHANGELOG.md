@@ -1,4 +1,4 @@
-Changes for 2.5.2
+Changes for 2.5.3
 =================
 - Fixed Android Tools 3 support with thanks to Eduardo Giménez (@edu-gimenez)
 
