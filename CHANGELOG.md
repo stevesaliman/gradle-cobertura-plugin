@@ -1,3 +1,7 @@
+Changes for 2.5.4
+=================
+- Fixed issues introduced by earlier refactorings (Issue #146)
+
 Changes for 2.5.3
 =================
 - Fixed Android Tools 3 support with thanks to Eduardo Giménez (@edu-gimenez)
@@ -26,7 +30,7 @@ Changes for 2.4.0
 - Changed the way auxiliaryClasspath is built.  In prior versions, it was 
   necessary to re-specify the defaults when adding to the auxiliaryClasspath
   (Issue #116 and Issue #124).  Now, the plugin adds the value of 
-  auxiliaryClasspath in the ```cobertura``` closuere to the defaults, with 
+  auxiliaryClasspath in the ```cobertura``` closure to the defaults, with 
   thanks to @Frank667
 - Updated the plugin to build with Gradle 3.2 and bumped the Gradle wrapper.
   

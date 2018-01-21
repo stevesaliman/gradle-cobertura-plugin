@@ -126,7 +126,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		// This will not conflict with any dependencies in compile/test configurations.
 		if (isAndroidProject(project)) {
 			try {
-				if (isAndroidToolsGradleVersion3(project)) {
+				if ( isAndroidGradlePluginVersion3(project) ) {
 					project.dependencies {
 						testApi 'org.slf4j:slf4j-api:1.7.5'
 					}
@@ -371,7 +371,14 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		return project.plugins.hasPlugin("kotlin-android")
 	}
 
-	static boolean isAndroidToolsGradleVersion3(Project project) {
+	/**
+	 * Try to detect if this project is using version 3 of the Android Gradle
+	 * Plugin.
+	 * @param project the project of interest.
+	 * @return true if the project has version 3 of the Android Gradle Plugin
+	 * in its dependencies.
+	 */
+	static boolean isAndroidGradlePluginVersion3(Project project) {
 		if ( !isAndroidProject(project) ) {
 			return false;
 		}
