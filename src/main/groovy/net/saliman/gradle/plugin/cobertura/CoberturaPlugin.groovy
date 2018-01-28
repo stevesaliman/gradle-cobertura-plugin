@@ -311,21 +311,22 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 			// cobertura task because it depends on coberturaReport).
 			if (graph.hasTask(project.tasks.findByName(COBERTURA_REPORT_TASK_NAME))) {
 				project.tasks.withType(Test).all { Test test ->
-					// Only apply classpath changes on Android to the variant we are covering.
-					if (isAndroidProject(project) && test.name != "test${extension.androidVariant.capitalize()}UnitTest") {
-						return
-					}
-					try {
-						Configuration config = test.project.configurations['cobertura']
-						test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
-						test.classpath += config
-						test.outputs.upToDateWhen { false }
-						test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
-					} catch (UnknownConfigurationException e) {
-						// Eat this. It just means we have a multi-project build, and
-						// there is test in a project that doesn't have cobertura applied.
+					// Only apply classpath changes to non-Android projects, or
+					// on Android to the variant we are covering
+					if ( !isAndroidProject(project) || test.name == "test${extension.androidVariant.capitalize()}UnitTest") {
+						try {
+							Configuration config = test.project.configurations['cobertura']
+							test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
+							test.classpath += config
+							test.outputs.upToDateWhen { false }
+							test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
+						} catch (UnknownConfigurationException e) {
+							// Eat this. It just means we have a multi-project build, and
+							// there is test in a project that doesn't have cobertura applied.
+						}
 					}
 				}
+
 				// If we are not doing a dry-run We also need to enable
 				// instrumentation, file copying and report generation, but not
 				// coverage checking
