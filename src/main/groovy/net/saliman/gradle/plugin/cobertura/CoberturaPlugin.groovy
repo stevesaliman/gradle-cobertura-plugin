@@ -124,7 +124,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		// This marks the slf4j dependency as 'provided' for android projects.
 		// The actual dependency will be satisfied by the gradle distribution.
 		// This will not conflict with any dependencies in compile/test configurations.
-		if (isAndroidProject(project)) {
+		if ( isAndroidProject(project) ) {
 			try {
 				if ( isAndroidGradlePluginVersion3(project) ) {
 					project.dependencies {
@@ -315,6 +315,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 					// on Android to the variant we are covering
 					if ( !isAndroidProject(project) || test.name == "test${extension.androidVariant.capitalize()}UnitTest") {
 						try {
+							project.logger.debug("Fixing the classpath of :${project.name} tests")
 							Configuration config = test.project.configurations['cobertura']
 							test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
 							test.classpath += config
@@ -331,6 +332,7 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 				// instrumentation, file copying and report generation, but not
 				// coverage checking
 				if ( !project.gradle.startParameter.dryRun ) {
+					project.logger.debug("The ${COBERTURA_REPORT_TASK_NAME} task was requested for project :${project.name}.  Enabling Cobertura report tasks.")
 					project.tasks.withType(InstrumentTask).all {
 						it.enabled = true
 					}
@@ -340,13 +342,18 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 					project.tasks.withType(GenerateReportTask).each {
 						it.enabled = true
 					}
+				} else {
+					project.logger.debug("The ${COBERTURA_REPORT_TASK_NAME} task was requested for project :${project.name}, but we're doing a dry run.  Leaving Cobertura report tasks disabled.")
 				}
+			} else {
+				project.logger.debug("The ${COBERTURA_REPORT_TASK_NAME} task was NOT requested for project :${project.name}.  Leaving Cobertura report tasks disabled.")
 			}
 
 			// If the user wants to check coverage levels, and we're not doing a
 			// dry-run we need to enable all 4 of the tasks that do actual work.
 			if (graph.hasTask(project.tasks.findByName(COBERTURA_CHECK_TASK_NAME))) {
 				if ( !project.gradle.startParameter.dryRun ) {
+					project.logger.debug("The ${COBERTURA_CHECK_TASK_NAME} task was requested for project :${project.name}.  Enabling Cobertura check tasks.")
 					project.tasks.withType(InstrumentTask).all {
 						it.enabled = true
 					}
@@ -359,7 +366,11 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 					project.tasks.withType(PerformCoverageCheckTask).each {
 						it.enabled = true
 					}
+				} else {
+					project.logger.debug("The ${COBERTURA_REPORT_TASK_NAME} task was requested for project :${project.name}, but we're doing a dry run.  Leaving Cobertura report tasks disabled.")
 				}
+			} else {
+				project.logger.debug("The ${COBERTURA_CHECK_TASK_NAME} task was NOT requested for project :${project.name}.  Leaving Cobertura check tasks disabled.")
 			}
 		}
 	}
