@@ -5,6 +5,10 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### January 24, 2018
+Version 2.5.4 fixes some bugs with the Android Tools support, and the enabling
+of tasks in Android projects.
+
 ### December 22, 2017
 Version 2.5.3 now supports Android Tools 3.0 and Android Kotlin projects with 
 thanks to Christoph Walcher (@wiomoc) and Eduardo Giménez (@edu-gimenez)

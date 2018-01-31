@@ -1,6 +1,8 @@
 Changes for 2.5.4
 =================
 - Fixed issues introduced by earlier refactorings (Issue #146)
+- Fixed a bug that was preventing Cobertura tasks from running on Android 
+  projects (Issue #148)
 
 Changes for 2.5.3
 =================
