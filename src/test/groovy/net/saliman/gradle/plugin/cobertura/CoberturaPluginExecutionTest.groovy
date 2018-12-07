@@ -267,47 +267,26 @@ class CoberturaPluginExecutionTest {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		for ( String s : stdout ) {
-			// if the line is just the task name, it executed.
-			if ( s.equals(task) ) {
-				return
-			}
-			// If the line starts with the task name and a space, it was either
-			// skipped or up to date.  The assert statement just gives us a nice
-			// message.
-			if ( s.startsWith("${task} ") ) {
-				assertEquals("${task} did not execute.", task, s)
-				return  // we know it executed, return.
-			}
+		return !stdout.any {
+			it.contains("$task SKIPPED") || it.contains("$task UP-TO-DATE")
 		}
-		fail "${task} was not in the output, so it did not execute."
 	}
 
 	def assertSkipped(String task) {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		for ( String s : stdout ) {
-			if ( s.startsWith("${task} ") ) {
-				// need 2 Groovy Strings...
-				assertEquals("${task} did not execute.", "${task} SKIPPED", "${s}")
-				return // we know it was skipped, return
-			}
+		return stdout.any {
+			it.contains("$task SKIPPED")
 		}
-		fail "${task} was not in the output, is it a valid task?"
 	}
 
 	def assertUpToDate(String task) {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		for ( String s : stdout ) {
-			if ( s.startsWith("${task} ") ) {
-				// Need 2 Groovy strings...
-				assertEquals("${task} did not execute.", "${task} UP-TO-DATE", "${s}")
-				return // we know it was skipped, return
-			}
+		return stdout.any {
+			it.contains("$task UP-TO-DATE")
 		}
-		fail "${task} was not in the output, is it a valid task?"
 	}
 }

@@ -3,6 +3,7 @@ package net.saliman.gradle.plugin.cobertura
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
@@ -32,8 +33,8 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
   private final CoberturaReportsImpl reports
 
   @Inject
-  GenerateReportTask(Instantiator instantiator) {
-    reports = instantiator.newInstance(CoberturaReportsImpl, this)
+  GenerateReportTask(Instantiator instantiator, CollectionCallbackActionDecorator collectionCallbackActionDecorator) {
+    reports = instantiator.newInstance(CoberturaReportsImpl, this, collectionCallbackActionDecorator)
 	  // Never consider this up to date.  We might be executing different tests
 	  // from run to run.
 	  outputs.upToDateWhen { false }
