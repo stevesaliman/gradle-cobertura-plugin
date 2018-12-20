@@ -1,14 +1,15 @@
 package net.saliman.gradle.plugin.cobertura
-
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
-
+import org.gradle.util.DeprecationLogger
+import org.gradle.internal.Factory
 import javax.inject.Inject
 
 /**
@@ -33,11 +34,20 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 
   @Inject
   GenerateReportTask(Instantiator instantiator) {
-    reports = instantiator.newInstance(CoberturaReportsImpl, this)
+    reports = createReports(instantiator, this)
 	  // Never consider this up to date.  We might be executing different tests
 	  // from run to run.
 	  outputs.upToDateWhen { false }
   }
+
+	private CoberturaReportsImpl createReports(Instantiator instantiator, Task task) {
+		return DeprecationLogger.whileDisabled(new Factory<CoberturaReportsImpl>() {
+			@Override
+			CoberturaReportsImpl create() {
+				return instantiator.newInstance(CoberturaReportsImpl, task)
+			}
+		})
+	}
 
 	@Override
 	CoberturaReports getReports() {
