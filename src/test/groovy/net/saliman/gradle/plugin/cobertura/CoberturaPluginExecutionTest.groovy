@@ -5,7 +5,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 import static org.junit.Assert.fail
 
 /**
@@ -266,7 +266,7 @@ class CoberturaPluginExecutionTest {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		return !stdout.any {
+		assertTrue !stdout.any {
 			it.contains("$task SKIPPED") || it.contains("$task UP-TO-DATE")
 		}
 	}
@@ -275,7 +275,7 @@ class CoberturaPluginExecutionTest {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		return stdout.any {
+		assertTrue stdout.any {
 			it.contains("$task SKIPPED")
 		}
 	}
@@ -284,7 +284,7 @@ class CoberturaPluginExecutionTest {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		return stdout.any {
+		assertTrue stdout.any {
 			it.contains("$task UP-TO-DATE")
 		}
 	}
