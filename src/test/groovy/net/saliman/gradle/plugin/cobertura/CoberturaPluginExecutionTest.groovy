@@ -266,26 +266,27 @@ class CoberturaPluginExecutionTest {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		assertTrue !stdout.any {
-			it.contains("$task SKIPPED") || it.contains("$task UP-TO-DATE")
-		}
+		// The task executed if any of the lines of stdout ends with the task
+		// name.  The space in the regex guards against false positives caused
+		// by a task that ends with the same string as another task.
+		def pattern = ".* ${task}\$"
+		assertTrue("Task ${task} failed to execute",
+				stdout.any { it ==~ /${pattern}/ })
 	}
 
 	def assertSkipped(String task) {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		assertTrue stdout.any {
-			it.contains("$task SKIPPED")
-		}
+		assertTrue("Task ${task} was not skipped",
+				stdout.any { it.contains("$task SKIPPED") })
 	}
 
 	def assertUpToDate(String task) {
 		if ( stdout == null || stdout.length < 1 ) {
 			fail "Standard Output not set. Did Gradle run?"
 		}
-		assertTrue stdout.any {
-			it.contains("$task UP-TO-DATE")
-		}
+		assertTrue("Task ${task} was not up to date",
+				stdout.any { it.contains("$task UP-TO-DATE") })
 	}
 }
