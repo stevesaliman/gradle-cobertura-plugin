@@ -22,7 +22,8 @@ subprojects {
 
 apply plugin: 'net.saliman.cobertura'
 cobertura {
-  // coberturaVersion = '2.1.1'
+  coberturaVersion = '2.1.1'
+//  coberturaVersion = '2.1.2-SNAPSHOT'
 
   coverageMergeDatafiles = [
     new File("util/build/cobertura/cobertura.ser"),

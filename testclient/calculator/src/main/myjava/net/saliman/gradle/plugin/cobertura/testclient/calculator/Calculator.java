@@ -1,6 +1,7 @@
 package net.saliman.gradle.plugin.cobertura.testclient.calculator;
 
 import net.saliman.gradle.plugin.cobertura.testclient.logger.Logger;
+import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +19,7 @@ import net.saliman.gradle.plugin.cobertura.testclient.dao.CalculatorDao;
  *
  * @author Steven C. Saliman
  */
+@EqualsAndHashCode
 public class Calculator {
 	private Properties properties;
 	private String someValue;

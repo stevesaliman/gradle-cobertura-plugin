@@ -13,6 +13,7 @@ dependencies {
 }
 
 cobertura {
+//  coberturaVersion = '2.1.2-SNAPSHOT'
   coverageFormats = [ 'xml', 'html' ]
   coverageIgnoreTrivial = true;
 }
