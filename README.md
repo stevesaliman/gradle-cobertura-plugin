@@ -5,6 +5,9 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### January 5, 2019
+Version 2.6.0 supports Gradle 5.1, with thanks to Roberto Alcolea (@rpalcolea)
+
 ### January 24, 2018
 Version 2.5.4 fixes some bugs with the Android Tools support, and the enabling
 of tasks in Android projects.
@@ -114,7 +117,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'net.saliman:gradle-cobertura-plugin:2.5.4'
+		classpath 'net.saliman:gradle-cobertura-plugin:2.6.0'
 	}
 }
 ```

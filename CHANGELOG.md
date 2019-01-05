@@ -1,3 +1,7 @@
+Changes for 2.6.0
+=================
+- The plugin now supports Gradle 5.1, with thanks to Roberto Alcolea (@rpalcolea)
+
 Changes for 2.5.4
 =================
 - Fixed issues introduced by earlier refactorings (Issue #146)
