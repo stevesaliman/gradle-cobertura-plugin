@@ -116,6 +116,10 @@ following options:
 - ```coverageDirs = [ <dirnames> ]```: An array of directories under the base
   directory containing classes to be instrumented.  The default is the names
   of each directory in [ project.sourceSets.main.classesDirs ]
+  
+  Note that `coverageDirs` is different from `coverageSourceDirs`.  The former
+  is compiled code that is instrumented before tests, and the latter is raw
+  source files that are shown in reports after the tests.
 
 - ```coverageInputDatafile = <file>```: The file object referring to the
   .ser file to create during instrumentation.
@@ -141,9 +145,13 @@ following options:
   default encoding of the OS.
   
 - ```coverageSourceDirs = <set of directories>```: Tells the plugin where to
-  look for source files to instrument and include in reports.  By default,
+  look for source files to mark up and include in reports.  By default,
   the plugin will include project.sourceSets.main.java.srcDirs,
-  project.sourceSets.main.groovy.srcDirs, and project.sourceSets.main.scala.srcDirs
+  project.sourceSets.main.groovy.srcDirs, and project.sourceSets.main.scala.srcDirs.
+  
+  Note that `coverageSourceDirs` is different from `coverageDirs`.  The latter
+  is compiled code that is instrumented before tests, and the former is raw
+  source files that are shown in reports after the tests.
 
 - ```coverageIncludes = [ <regexes> ]```: An array of regular expressions
   representing classes you want to include.  Cobertura will compare these
