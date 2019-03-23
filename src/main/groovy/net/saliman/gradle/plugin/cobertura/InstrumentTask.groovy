@@ -1,5 +1,6 @@
 package net.saliman.gradle.plugin.cobertura
 
+import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Input
@@ -7,6 +8,10 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+
+import java.nio.file.Files
+
+import static groovy.io.FileType.FILES
 
 /**
  * Gradle task that instruments java sources for Cobertura coverage reports.
@@ -126,11 +131,11 @@ class InstrumentTask extends DefaultTask {
 		// Doing this here means we only need to do it when we need to instrument.
 		def instrumentDirs = [] as Set
 		project.files(classesDirs).each { File f ->
-			if (f.isDirectory()) {
+			if ( f.isDirectory() ) {
 				// Copy directories from main source to instrumented path
 				project.copy {
 					from f
-					into "${project.buildDir}/instrumented_classes"
+					into outputClassesDir
 				}
 			} else {
 				// add files to the instrumented dir list.
@@ -138,11 +143,80 @@ class InstrumentTask extends DefaultTask {
 			}
 		}
 		// add the instrumented dir to the list.
-		instrumentDirs << ("${project.buildDir}/instrumented_classes" as String)
+		instrumentDirs << outputClassesDir.path
 
 		runner.withClasspath(classpath.files).instrument(configuration,
-						null,
-						getDestinationDir()?.path,
-						instrumentDirs as List)
+				null,
+				getDestinationDir()?.path,
+				instrumentDirs as List)
+
+		// Delete any classes from the instrumented classes that are no
+		// different from the original class file.
+		project.files(classesDirs).each { File f ->
+			deleteSameFiles(f, outputClassesDir)
+		}
 	}
+
+	/**
+	 * Helper method to find the files that are the same in the given
+	 * directories, after instrumentation is done.
+	 * @param inputDir a directory containing uninstrumented classes.
+	 * @param outputDir a directory containing instrumented classes.
+	 */
+	def deleteSameFiles(inputDir, outputDir) {
+		def outputPath = outputDir.toPath()
+		def inputFiles = findFiles(inputDir)
+		def identicalFiles = findFiles(outputDir, { f ->
+			// When we decide to drop Gradle 4 support, we can use the easier
+			// def relativePath = outputDir.relativePath(f)
+			def relativePath = outputPath.relativize(f.toPath()).toString()
+			inputFiles.contains(relativePath) && isSameFile(inputDir, outputDir, relativePath)
+		})
+
+		identicalFiles.each { f ->
+			Files.deleteIfExists(outputDir.toPath().resolve(f))
+		}
+	}
+
+	/**
+	 * Helper method that finds all the files in a directory that meet a given
+	 * condition, or all files in the directory if no condition is given.
+	 * @param dir the directory to search.
+	 * @param condition the optional condition to check.
+	 * @return a collection of files, relative to the directory, that meet the
+	 * condition.
+	 */
+	def findFiles(File dir, condition = null) {
+
+		def files = []
+
+		if (dir.exists()) {
+			def dirPath = dir.toPath()
+			dir.eachFileRecurse(FILES) { f ->
+				if (condition == null || condition(f)) {
+					// When we decide to drop Gradle 4 support, we can use the easier
+					// def relativePath = dir.relativePath(f)
+					def relativePath = dirPath.relativize(f.toPath()).toString()
+					files << relativePath
+				}
+			}
+		}
+
+		return files
+	}
+
+	/**
+	 * Helper method to determine if a given file is the same in 2 directories.
+	 * @param dirA The first directory to check
+	 * @param dirB The second directory to check
+	 * @param relativeFile the file to check, as a relative path.  This file
+	 *        is assumed to exist in both directories.
+	 * @return whether or not the file is the same in the 2 directories.
+	 */
+	def isSameFile(dirA, dirB, relativeFile) {
+		def fileA = new File(dirA, relativeFile)
+		def fileB = new File(dirB, relativeFile)
+		return FileUtils.contentEquals(fileA, fileB)
+	}
+
 }

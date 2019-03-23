@@ -320,7 +320,8 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 							test.systemProperties.put('net.sourceforge.cobertura.datafile', test.project.extensions.cobertura.coverageOutputDatafile)
 							test.classpath += config
 							test.outputs.upToDateWhen { false }
-							test.classpath = project.files("${project.buildDir}/instrumented_classes") + test.classpath
+							Task instrumentTask = project.tasks.getByName(InstrumentTask.NAME)
+							test.classpath = project.files(instrumentTask.outputClassesDir) + test.classpath
 						} catch (UnknownConfigurationException e) {
 							// Eat this. It just means we have a multi-project build, and
 							// there is test in a project that doesn't have cobertura applied.
