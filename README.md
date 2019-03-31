@@ -5,6 +5,11 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### March 23, 2019
+Version 2.6.1 is a minor release that is meant to get the Cobertura plugin 
+working better with the Scoverage Scala plugin.  Thank you to Eyal Roth
+(@eyalroth) for his suggestions and code examples.
+
 ### January 5, 2019
 Version 2.6.0 supports Gradle 5.1, with thanks to Roberto Alcolea (@rpalcolea)
 

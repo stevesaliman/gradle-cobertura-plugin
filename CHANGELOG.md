@@ -1,3 +1,9 @@
+Changes for 2.6.1
+=================
+- This is a minor release that tries to make the plugin work better with other
+  coverage tools like Scoverage by deleting classes from the
+  instrumented_classes directory that didn't actually change. (Issue #160)
+  
 Changes for 2.6.0
 =================
 - The plugin now supports Gradle 5.1, with thanks to Roberto Alcolea (@rpalcolea)
