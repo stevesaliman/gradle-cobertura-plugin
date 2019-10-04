@@ -2,6 +2,9 @@ package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.tooling.BuildException
 
@@ -19,10 +22,15 @@ import org.gradle.tooling.BuildException
  */
 class PerformCoverageCheckTask extends DefaultTask {
 	static final String NAME = 'performCoverageCheck'
+	@Internal
 	File destinationDir
+	@Internal
 	CoberturaExtension configuration
+	@Internal
 	CoberturaRunner runner
+	@Classpath
 	Configuration classpath
+	@Internal
 	boolean coverageCheckFailed = false
 
 	PerformCoverageCheckTask() {

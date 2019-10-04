@@ -1,7 +1,9 @@
 package net.saliman.gradle.plugin.cobertura
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
@@ -22,6 +24,8 @@ import org.gradle.api.tasks.TaskAction
  */
 class CopyDatafileTask extends DefaultTask {
 	static final String NAME = 'copyCoberturaDatafile'
+
+	@Internal
 	CoberturaExtension configuration
 
 	/**

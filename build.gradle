@@ -50,11 +50,11 @@ repositories {
 }
 
 dependencies {
-	compile localGroovy()
-	compile gradleApi()
-	compile 'commons-io:commons-io:2.6'
-	testCompile 'junit:junit:4.12'
-	testRuntime 'net.sourceforge.cobertura:cobertura:2.1.1'
+	implementation localGroovy()
+	implementation gradleApi()
+	implementation 'commons-io:commons-io:2.6'
+	testImplementation 'junit:junit:4.12'
+	testRuntimeOnly 'net.sourceforge.cobertura:cobertura:2.1.1'
 //	archives "org.apache.maven.wagon:wagon-ssh:2.8"
 //	archives "org.apache.maven.wagon:wagon-ssh-external:2.8"
 }

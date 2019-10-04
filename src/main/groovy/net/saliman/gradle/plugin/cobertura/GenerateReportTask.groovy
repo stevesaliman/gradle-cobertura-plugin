@@ -4,7 +4,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.reporting.Reporting
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
@@ -26,8 +28,11 @@ import javax.inject.Inject
  */
 class GenerateReportTask extends DefaultTask implements Reporting<CoberturaReports> {
 	static final String NAME = 'generateCoberturaReport'
+	@Internal
 	CoberturaExtension configuration
+	@Internal
 	CoberturaRunner runner
+	@Classpath
 	Configuration classpath
   @Nested
   private final CoberturaReportsImpl reports
@@ -49,6 +54,7 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		})
 	}
 
+	@Internal
 	@Override
 	CoberturaReports getReports() {
 		reports

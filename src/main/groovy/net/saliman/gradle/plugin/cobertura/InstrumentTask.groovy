@@ -3,8 +3,10 @@ package net.saliman.gradle.plugin.cobertura
 import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -27,9 +29,13 @@ import static groovy.io.FileType.FILES
  */
 class InstrumentTask extends DefaultTask {
 	static final String NAME = 'instrument'
+	@Internal
 	File destinationDir
+	@Internal
 	CoberturaExtension configuration
+	@Internal
 	CoberturaRunner runner
+	@Classpath
 	Configuration classpath
 
 	/**

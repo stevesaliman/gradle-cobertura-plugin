@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.Test
  * Extension class for configuring the Cobertura plugin.  Most of the properties
  * in this extension match options in Cobertura itself.
  */
-class CoberturaExtension {
+class CoberturaExtension  {
 	static ENCODING_UNDEFINED = 'undefined'
 
 	/**
