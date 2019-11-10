@@ -1,3 +1,12 @@
+Changes for 3.0.0
+=================
+- Dropped support for Versions of Java older than version 8.
+
+- Dropped support for Cobertura 1.x
+
+- Added support for Gradle 6.x, with thanks to Roberto Perez Alcolea (Issues
+  #164 and #165).
+  
 Changes for 2.6.1
 =================
 - This is a minor release that tries to make the plugin work better with other
