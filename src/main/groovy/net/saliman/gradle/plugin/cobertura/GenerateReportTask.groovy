@@ -34,16 +34,16 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 	CoberturaRunner runner
 	@Classpath
 	Configuration classpath
-  @Nested
-  private final CoberturaReportsImpl reports
+	@Nested
+	private final CoberturaReportsImpl reports
 
-  @Inject
-  GenerateReportTask(Instantiator instantiator) {
-    reports = createReports(instantiator, this)
-	  // Never consider this up to date.  We might be executing different tests
-	  // from run to run.
-	  outputs.upToDateWhen { false }
-  }
+	@Inject
+	GenerateReportTask(Instantiator instantiator) {
+		reports = createReports(instantiator, this)
+		// Never consider this up to date.  We might be executing different tests
+		// from run to run.
+		outputs.upToDateWhen { false }
+	}
 
 	private CoberturaReportsImpl createReports(Instantiator instantiator, Task task) {
 		return DeprecationLogger.whileDisabled(new Factory<CoberturaReportsImpl>() {
@@ -66,10 +66,10 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		reports.configure(closure)
 	}
 
-	// This version of the reports method is not introduced until gradle 3.
-	// Its presence doesn't cause any issues in Gradle 2, but we can't use
-	// the @Override annotation.  When we stop supporting Gradle 2, we can
-	// uncomment the annotation.
+	// The reports method uses "super" instead of "extends", but changing it
+	// here breaks the build for reasons I'm still trying to figure out.
+	// Until then, we need this method, but we can't use the Override
+	// annotation.
 //	@Override
 	CoberturaReports reports(Action<? extends CoberturaReports> configureAction) {
 	  configureAction.execute(reports)

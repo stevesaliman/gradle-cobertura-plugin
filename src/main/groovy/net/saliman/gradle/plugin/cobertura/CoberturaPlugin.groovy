@@ -222,11 +222,11 @@ class CoberturaPlugin implements Plugin<PluginAware> {
 		// Create the generateCoberturaReport task that will generate the
 		// reports.  Like the others, it starts out disabled.
 		project.tasks.create(name: GenerateReportTask.NAME,
-						             type: GenerateReportTask,
-						             {
-							             configuration = project.extensions.cobertura
-							             classpath = project.configurations.cobertura
-						             })
+						     type: GenerateReportTask,
+						     {
+							     configuration = project.extensions.cobertura
+							     classpath = project.configurations.cobertura
+						     })
 		Task generateReportTask = project.tasks.getByName(GenerateReportTask.NAME)
 		generateReportTask.setDescription("Generate a Cobertura report after tests finish.")
 		generateReportTask.enabled = false
