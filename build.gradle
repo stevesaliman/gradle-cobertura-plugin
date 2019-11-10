@@ -17,18 +17,17 @@ buildscript {
 
 apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'java-gradle-plugin'
-//apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'eclipse'
 apply plugin: 'com.jfrog.bintray'
 
-sourceCompatibility = '1.6'
-targetCompatibility = '1.6'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 // Release version that won't conflict with the bintray plugin
-def releaseVersion = "2.6.1"
+def releaseVersion = "3.0.0-SNAPSHOT"
 // variables that configure the Maven upload
 group = "net.saliman"
 archivesBaseName = "gradle-cobertura-plugin"
@@ -55,8 +54,6 @@ dependencies {
 	implementation 'commons-io:commons-io:2.6'
 	testImplementation 'junit:junit:4.12'
 	testRuntimeOnly 'net.sourceforge.cobertura:cobertura:2.1.1'
-//	archives "org.apache.maven.wagon:wagon-ssh:2.8"
-//	archives "org.apache.maven.wagon:wagon-ssh-external:2.8"
 }
 
 project.tasks.publish.dependsOn 'test'

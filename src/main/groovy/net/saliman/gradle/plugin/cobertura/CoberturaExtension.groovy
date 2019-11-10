@@ -10,7 +10,7 @@ import org.gradle.api.tasks.testing.Test
  * Extension class for configuring the Cobertura plugin.  Most of the properties
  * in this extension match options in Cobertura itself.
  */
-class CoberturaExtension  {
+class CoberturaExtension {
 	static ENCODING_UNDEFINED = 'undefined'
 
 	/**
@@ -239,14 +239,9 @@ class CoberturaExtension  {
 
 	/**
 	 * Whether or not to ignore trivial methods like simple getters and setters.
-	 * Available in in Cobertura 2.0.0 and later.  Attempting to set this
-	 * property when using Cobertura 1.x will result in an error.
 	 * @param ignoreTrivial whether or not we should ignore trivial methods.
 	 */
 	void setCoverageIgnoreTrivial(boolean ignoreTrivial) {
-		if ( coberturaVersion == null || coberturaVersion.startsWith("1") ) {
-			throw new IllegalArgumentException("cobertura-plugin: Setting the coverageIgnoreTrivial property requires cobertura 2.0.0 or later")
-		}
 		coverageIgnoreTrivial = ignoreTrivial
 	}
 
@@ -260,15 +255,10 @@ class CoberturaExtension  {
 	/**
 	 * List of fully qualified annotation names that, if present on a method,
 	 * will cause it to be ignored by Cobertura for coverage purposes.
-	 * Available in Cobertura 2.0.0 and later.  Attempting to set this property
-	 * when using Cobertura 1.x will result in an error.
 	 * @param ignoreMethodAnnotations the names of annotations used to flag
 	 *        methods to be ignored
 	 */
 	void setCoverageIgnoreMethodAnnotations(List<String> ignoreMethodAnnotations) {
-		if ( coberturaVersion == null || coberturaVersion.startsWith("1") ) {
-			throw new IllegalArgumentException("cobertura-plugin: Setting the coverageIgnoreMethodAnnotations property requires cobertura 2.0.0 or later")
-		}
 		coverageIgnoreMethodAnnotations = ignoreMethodAnnotations
 	}
 

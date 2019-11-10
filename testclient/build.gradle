@@ -15,8 +15,8 @@ subprojects {
 	dependencies {
 		// Cobertura declares a dependency on the slf4j API, so we need to supply
 		// a runtime implementation to avoid NoClassDefFoundErrors
-		testRuntime "org.slf4j:slf4j-log4j12:1.7.5"
-		testRuntime "log4j:log4j:1.2.17"
+		testRuntimeOnly "org.slf4j:slf4j-log4j12:1.7.5"
+		testRuntimeOnly "log4j:log4j:1.2.17"
 	}
 }
 
@@ -34,10 +34,10 @@ cobertura {
 test.dependsOn([":calculator:test", ":util:test"])
 project(':calculator') {
   dependencies {
-    compile project(':logger')
-    compile project(':util')
-    runtime project(':logger')
-    runtime project(':util')
+    implementation project(':logger')
+    implementation project(':util')
+    runtimeOnly project(':logger')
+    runtimeOnly project(':util')
   }
 }
 

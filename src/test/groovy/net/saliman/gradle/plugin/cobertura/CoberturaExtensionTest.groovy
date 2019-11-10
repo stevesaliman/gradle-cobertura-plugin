@@ -35,56 +35,15 @@ class CoberturaExtensionTest {
 	}
 
 	/**
-	 * Try setting a value for coverageIgnores when we can't determine what
-	 * version of Cobertura we have.  Expect an error.
-	 */
-	@Test(expected=IllegalArgumentException)
-	void ignoreTrivialNullCobertura() {
-		extension.coberturaVersion = null;
-		extension.setCoverageIgnoreTrivial(true);
-	}
-
-	/**
-	 * Try setting a value for coverageIgnores when we have an old version of
-	 * Cobertura.Expect an error.
-	 */
-	@Test(expected=IllegalArgumentException)
-	void ignoreTrivialOldCobertura() {
-		extension.coberturaVersion = "1";
-		extension.setCoverageIgnoreTrivial(true);
-	}
-
-	/**
 	 * Try setting a value for coverageIgnores when we have the required version
 	 * of Cobertura. We know we're good if we don't get an error.
 	 */
 	@Test
 	void ignoreTrivial() {
-		extension.coberturaVersion = "2.0.0";
 		extension.setCoverageIgnoreTrivial(true);
 		assertTrue("Failed to set the ignoreTrivial flag", extension.getCoverageIgnoreTrivial())
 	}
 
-
-	/**
-	 * Try setting a value for coverageIgnoreMethodAnnotations when we can't
-	 * determine what version of Cobertura we have.  Expect an error.
-	 */
-	@Test(expected=IllegalArgumentException)
-	void ignoreMethodAnnotationsNullCobertura() {
-		extension.coberturaVersion = null;
-		extension.setCoverageIgnoreMethodAnnotations(new ArrayList<String>());
-	}
-
-	/**
-	 * Try setting a value for coverageIgnoreMethodAnnotations when we have an
-	 * old version of Cobertura.Expect an error.
-	 */
-	@Test(expected=IllegalArgumentException)
-	void ignoreMethodAnnotationsOldCobertura() {
-		extension.coberturaVersion = "1";
-		extension.setCoverageIgnoreMethodAnnotations(new ArrayList<String>());
-	}
 
 	/**
 	 * Try setting a value for coverageIgnoreMethodAnnotations when we have the
@@ -92,7 +51,6 @@ class CoberturaExtensionTest {
 	 */
 	@Test
 	void ignoreMethodAnnotations() {
-		extension.coberturaVersion = "2.0.0";
 		extension.setCoverageIgnoreMethodAnnotations(new ArrayList<String>());
 		assertNotNull("Failed to set the coverageIgnoreMethodAnnotations", extension.getCoverageIgnoreTrivial())
 	}
