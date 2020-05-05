@@ -10,7 +10,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
-import org.gradle.util.DeprecationLogger
+import org.gradle.internal.deprecation.DeprecationLogger
 import org.gradle.internal.Factory
 import javax.inject.Inject
 
