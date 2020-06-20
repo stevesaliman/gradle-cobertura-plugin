@@ -10,8 +10,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
-import org.gradle.util.DeprecationLogger
 import org.gradle.internal.Factory
+import org.gradle.util.SingleMessageLogger
+
 import javax.inject.Inject
 
 /**
@@ -46,7 +47,7 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 	}
 
 	private CoberturaReportsImpl createReports(Instantiator instantiator, Task task) {
-		return DeprecationLogger.whileDisabled(new Factory<CoberturaReportsImpl>() {
+		return SingleMessageLogger.whileDisabled(new Factory<CoberturaReportsImpl>() {
 			@Override
 			CoberturaReportsImpl create() {
 				return instantiator.newInstance(CoberturaReportsImpl, task)

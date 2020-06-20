@@ -5,6 +5,11 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### June 20, 2020
+Version 3.0.1-SNAPSHOT has been published to the Maven Snapshot repository, 
+which should solve issues running with Gradle 6.2+.  I appreciate any feedback 
+on how this new version runs in any version of Gradle.
+
 ### November 10, 2019
 Version 3.0.0 of the Cobertura plugin now supports Gradle 6.0, with thanks to
 Roberto Perez Alcolea.  This release no longer supports or works on older 

@@ -1,3 +1,8 @@
+Changes for 3.0.1
+=================
+- Fixed an issue in newer versions of gradle caused by the movement of the 
+  DeprecationLogger class to another package (Issue #168)
+  
 Changes for 3.0.0
 =================
 - Dropped support for Versions of Java older than version 8.
