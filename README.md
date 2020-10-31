@@ -5,6 +5,13 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### October 31, 2020
+In February, Gradle 6.2 was released with a breaking change to the internal 
+api.  The master branch moved forward to support this change, and the 3.x 
+branch of the gradle plugin was created in case we need to backport a patch
+to older versions of gradle.  This is unlikely, but the branch exists just in
+case.
+
 ### November 10, 2019
 Version 3.0.0 of the Cobertura plugin now supports Gradle 6.0, with thanks to
 Roberto Perez Alcolea.  This release no longer supports or works on older 
