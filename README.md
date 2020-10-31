@@ -5,6 +5,15 @@ page for complete details on how to use this plugin.
 
 News
 ====
+### October 31, 2020
+It's been almost a year since Gradle first released version 6.2, with its 
+breaking change to an internal Gradle API, and most people have probably 
+updated gradle to at least taht version.  It is probably time to make the fix
+for this issue official.  Version 4.0.0 of the Cobertura plugin now supports
+Gradle 6.2+, but it no longer works with 6.1 or older.  If you want to continue
+using this plugin, you'll need to either update Gradle to at least 6.2, or use
+an older version of the plugin.
+
 ### June 20, 2020
 Version 3.0.1-SNAPSHOT has been published to the Maven Snapshot repository, 
 which should solve issues running with Gradle 6.2+.  I appreciate any feedback 

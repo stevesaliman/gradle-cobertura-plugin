@@ -1,17 +1,16 @@
 Applying the plugin
 ===================
-To use the plugin with Gradle 2.1 or later, add the following to your 
+To use the plugin with Gradle 6.2 or later, add one of the following to your 
 build.gradle file.
 
+The new way:
 ```groovy
 plugins {
-  id 'net.saliman.cobertura' version '3.0.0'
+  id 'net.saliman.cobertura' version '4.0.0'
 }
 ```
 
-To use the plugin with Gradle 2.0 or older, or to use a snapshot release of the
-plugin, add the following to build.gradle:
-
+The old way:
 ```groovy
 buildscript {
     repositories {
@@ -20,11 +19,14 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:3.0.0"
+        classpath "net.saliman:gradle-cobertura-plugin:4.0.0"
     }
 }
 apply plugin: 'net.saliman.cobertura'
 ```
+
+To use the plugin with Gradle 6.1 or older, you will need to use the 3.0.0 
+release of the plugin.
 
 If you are using this plugin on a java, groovy, or scala project, it is probably
 best to apply it after those plugins.  If you are using this plugin on an 
