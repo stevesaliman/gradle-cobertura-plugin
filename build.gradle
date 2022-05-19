@@ -3,15 +3,14 @@
 
 buildscript {
 	repositories {
-		jcenter()
 		mavenCentral()
 		maven {
 		  url 'https://plugins.gradle.org/m2/'
 		}
 	}
 	dependencies {
-		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-		classpath 'com.gradle.publish:plugin-publish-plugin:0.12.0'
+		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+		classpath 'com.gradle.publish:plugin-publish-plugin:0.21.0'
 	}
 }
 
@@ -58,8 +57,15 @@ dependencies {
 
 project.tasks.publish.dependsOn 'test'
 
+project.tasks.processResources.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+//task processResources(type: Copy) {
+//	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//}
+
 task sourceJar(type: Jar) {
 	description = "An archive of the source code for Maven Central"
+//	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	classifier = 'sources'
 	from sourceSets.main.allSource
 }
@@ -198,13 +204,26 @@ signing {
 // When we're ready to go, there are a couple of things we'll need to do before
 // we execute anything.
 gradle.taskGraph.whenReady { taskGraph ->
+	// Workaround for: https://github.com/gradle/gradle/issues/17236
+
+	//taskGraph.allTasks.findAll { it.name == "processResources" }.duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//	project.tasks.named("processResources", Copy::class.java) {
+//		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//	}
+//
+//	taskGraph.allTasks
+//		.filter { it.hasProperty("duplicatesStrategy") } // Because it's some weird decorated wrapper that I can't cast.
+//		.forEach {
+//			it.setProperty("duplicatesStrategy", DuplicatesStrategy.EXCLUDE)
+//		}
+
 	// This is a rather nasty little hack.  When we apply java-gradle-plugin,
 	// It creates some maven-publish tasks that conflict with the manual 
 	// configuration - it tries to publish a net.saliman.cobertura artifact,
 	// which is wrong.  The quick and very dirty solution is to disable those
 	// tasks.
 	// Comment this to publish to Gradle and Bintray, Uncomment for Maven Central
-	 taskGraph.allTasks.findAll { it.name ==~ /.*MavenPublication.*/ }*.enabled = false
+	taskGraph.allTasks.findAll { it.name ==~ /.*MavenPublication.*/ }*.enabled = false
 
 	// Only *require* signing if we are uploading a release version.  If we do
 	// need to sign, make sure we've got the properties we need to do the signing.

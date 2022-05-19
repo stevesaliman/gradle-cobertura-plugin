@@ -35,7 +35,8 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 	CoberturaRunner runner
 	@Classpath
 	Configuration classpath
-	@Nested
+
+	//@Nested
 	private final CoberturaReportsImpl reports
 
 	@Inject
@@ -55,6 +56,7 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		})
 	}
 
+	@Internal
 	@Override
 	CoberturaReports getReports() {
 		reports
@@ -114,6 +116,9 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 				sourceDirs = project.sourceSets.main.java.srcDirs
 				if (project.sourceSets.main.hasProperty('groovy')) {
 					sourceDirs += project.sourceSets.main.groovy.srcDirs
+				}
+				if (project.sourceSets.main.hasProperty('kotlin')) {
+					sourceDirs += project.sourceSets.main.kotlin.srcDirs
 				}
 				if (project.sourceSets.main.hasProperty('scala')) {
 					sourceDirs += project.sourceSets.main.scala.srcDirs
