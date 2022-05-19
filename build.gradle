@@ -44,7 +44,6 @@ if ( isReleaseVersion ) {
 
 repositories {
 	mavenLocal()
-	jcenter()
 	mavenCentral()
 	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
@@ -52,8 +51,8 @@ repositories {
 dependencies {
 	implementation localGroovy()
 	implementation gradleApi()
-	implementation 'commons-io:commons-io:2.6'
-	testImplementation 'junit:junit:4.12'
+	implementation 'commons-io:commons-io:2.11.0'
+	testImplementation 'junit:junit:4.13.2'
 	testRuntimeOnly 'net.sourceforge.cobertura:cobertura:2.1.1'
 }
 

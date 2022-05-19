@@ -55,7 +55,6 @@ class GenerateReportTask extends DefaultTask implements Reporting<CoberturaRepor
 		})
 	}
 
-	@Internal
 	@Override
 	CoberturaReports getReports() {
 		reports
