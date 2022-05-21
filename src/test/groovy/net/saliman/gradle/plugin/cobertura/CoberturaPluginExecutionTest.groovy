@@ -1,4 +1,5 @@
 package net.saliman.gradle.plugin.cobertura
+
 import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
 import org.junit.After
@@ -64,7 +65,7 @@ class CoberturaPluginExecutionTest {
 	 */
 	@Test
 	void executeTestNoCobrtura() {
-		executeClean();
+		executeClean()
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 		ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 		connection.newBuild()
@@ -98,7 +99,7 @@ class CoberturaPluginExecutionTest {
 	 */
 	@Test
 	void executeCobertura() {
-		executeClean();
+		executeClean()
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 		ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 		connection.newBuild()
@@ -135,7 +136,7 @@ class CoberturaPluginExecutionTest {
 	 */
 	@Test
 	void executeCoberturaDryRun() {
-		executeClean();
+		executeClean()
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 		ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 		connection.newBuild()
@@ -168,7 +169,7 @@ class CoberturaPluginExecutionTest {
 	 */
 	@Test
 	void executeTestCoberturaReport() {
-		executeClean();
+		executeClean()
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 		ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 		connection.newBuild()
@@ -202,7 +203,7 @@ class CoberturaPluginExecutionTest {
 	 */
 	@Test
 	void executeTestCoberturaCheck() {
-		executeClean();
+		executeClean()
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 		ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 		connection.newBuild()
@@ -235,7 +236,7 @@ class CoberturaPluginExecutionTest {
 	 */
 	@Test
 	void executeTestCoberturaCheckDryRun() {
-		executeClean();
+		executeClean()
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 		ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 		connection.newBuild()

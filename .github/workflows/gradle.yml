@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: [ '1.8', '11', '17' ]
+        jdk: [ '1.8', '11', '16' ] # Need to use newer Gradle to support JDK 17 & 18
         #os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
