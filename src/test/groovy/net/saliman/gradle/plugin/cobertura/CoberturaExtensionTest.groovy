@@ -40,7 +40,7 @@ class CoberturaExtensionTest {
 	 */
 	@Test
 	void ignoreTrivial() {
-		extension.setCoverageIgnoreTrivial(true);
+		extension.setCoverageIgnoreTrivial(true)
 		assertTrue("Failed to set the ignoreTrivial flag", extension.getCoverageIgnoreTrivial())
 	}
 
@@ -51,7 +51,7 @@ class CoberturaExtensionTest {
 	 */
 	@Test
 	void ignoreMethodAnnotations() {
-		extension.setCoverageIgnoreMethodAnnotations(new ArrayList<String>());
+		extension.setCoverageIgnoreMethodAnnotations(new ArrayList<String>())
 		assertNotNull("Failed to set the coverageIgnoreMethodAnnotations", extension.getCoverageIgnoreTrivial())
 	}
 
@@ -228,7 +228,7 @@ class CoberturaExtensionTest {
 	 */
 	@Test
 	void setCoverageCheckRegexesNull() {
-		extension.coverageCheckRegexes = null;
+		extension.coverageCheckRegexes = null
 	}
 
 	/**

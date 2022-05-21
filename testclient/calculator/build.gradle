@@ -3,7 +3,7 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'scala'
 apply plugin: 'net.saliman.cobertura'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 repositories {
 	mavenCentral()

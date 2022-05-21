@@ -1,0 +1,26 @@
+name: Build & Verify
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: JDK ${{ matrix.jdk }}
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk: [ '1.8', '11', '16' ] # Need to use newer Gradle to support JDK 17 & 18
+        #os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+
+    - name: build
+      run: ./gradlew build
+
+    - name: check
+      run: ./gradlew check
